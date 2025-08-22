@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:insta_food/features/BottomNavBar/presentation/pages/bottom_nav_bar.dart';
-import 'package:insta_food/features/home/presentation/pages/home_page.dart';
+import 'package:insta_food/home_page.dart';
 
 class AppRouter {
   Map<String, WidgetBuilder> getRoutes(BuildContext context) {

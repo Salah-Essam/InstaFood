@@ -25,6 +25,5 @@ class ProfileDrawerItem {
     ],
     ['Help & FAQs', 'assets/icons/help_faqs.svg', AppRoutes.helpPageRouteName],
     ['Settings', 'assets/icons/settings.svg', AppRoutes.settingsPageRouteName],
-    ['Logout', 'assets/icons/logout.svg'],
   ];
 }

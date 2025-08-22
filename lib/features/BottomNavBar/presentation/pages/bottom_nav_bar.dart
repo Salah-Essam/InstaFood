@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:insta_food/core/app_colors.dart';
 import 'package:insta_food/features/BottomNavBar/presentation/bloc/drawer_cubit.dart';
-import 'package:insta_food/features/home/presentation/pages/home_page.dart';
 import 'package:insta_food/features/BottomNavBar/presentation/pages/app_drawer.dart';
+import 'package:insta_food/home_page.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 
 class BottomNavBar extends StatelessWidget {
