@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:insta_food/core/app_router.dart';
 
 void main() {
   runApp(const InstaFood());
@@ -9,6 +10,11 @@ class InstaFood extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp();
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'InstaFood',
+      initialRoute: AppRoutes.bottomNavBarRouteName,
+      routes: AppRouter().getRoutes(context),
+    );
   }
 }
