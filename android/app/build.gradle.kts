@@ -21,6 +21,7 @@ android {
     compileSdk = flutter.compileSdkVersion
 
     // Pin NDK to the highest required version by plugins (backward compatible)
+
     ndkVersion = "27.0.12077973"
 
     compileOptions {
@@ -35,7 +36,9 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.example.insta_food"
+
         // firebase_core requires at least 23
+
         minSdk = 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
