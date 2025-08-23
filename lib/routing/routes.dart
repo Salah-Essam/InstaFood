@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../features/onboarding/logic/cubit/onboarding_cubit.dart';
 import '../features/onboarding/view/onboarding_screen.dart';
+import '../core/theme/colors.dart';
 
 class Routes {
   static const String splash = '/';
@@ -21,10 +22,11 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: Routes.onboarding,
-      builder: (context, state) => BlocProvider(
-        create: (_) => OnboardingCubit(),
-        child: const OnboardingScreen(),
-      ),
+      builder:
+          (context, state) => BlocProvider(
+            create: (_) => OnboardingCubit(),
+            child: const OnboardingScreen(),
+          ),
     ),
     GoRoute(
       path: Routes.home,
@@ -39,14 +41,57 @@ class _SplashGate extends StatefulWidget {
   State<_SplashGate> createState() => _SplashGateState();
 }
 
-class _SplashGateState extends State<_SplashGate> {
+class _SplashGateState extends State<_SplashGate>
+    with TickerProviderStateMixin {
+  late AnimationController _fadeController;
+  late AnimationController _scaleController;
+  late Animation<double> _fadeAnimation;
+  late Animation<double> _scaleAnimation;
+
   @override
   void initState() {
     super.initState();
+    _fadeController = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    );
+    _scaleController = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    );
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
+    );
+
+    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+      CurvedAnimation(parent: _scaleController, curve: Curves.elasticOut),
+    );
+
+    _startAnimations();
     _decide();
   }
 
+  void _startAnimations() async {
+    await Future.delayed(const Duration(milliseconds: 300));
+    if (mounted) {
+      _fadeController.forward();
+      _scaleController.forward();
+    }
+  }
+
+  @override
+  void dispose() {
+    _fadeController.dispose();
+    _scaleController.dispose();
+    super.dispose();
+  }
+
   Future<void> _decide() async {
+    // Add a minimum delay to show the splash screen
+    await Future.delayed(const Duration(milliseconds: 2500));
+    if (!mounted) return;
+
     final prefs = await SharedPreferences.getInstance();
     final seen = prefs.getBool(OnboardingCubit.keySeenOnboarding) ?? false;
     if (!mounted) return;
@@ -59,16 +104,23 @@ class _SplashGateState extends State<_SplashGate> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Colors.white,
+    return Scaffold(
+      backgroundColor: AppColors.splashBackground,
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 16),
-            Text('Loading...'),
-          ],
+        child: AnimatedBuilder(
+          animation: Listenable.merge([_fadeController, _scaleController]),
+          builder: (context, child) {
+            return FadeTransition(
+              opacity: _fadeAnimation,
+              child: ScaleTransition(
+                scale: _scaleAnimation,
+                child: Image.asset(
+                  'assets/images/splashscreen1.png',
+                  fit: BoxFit.contain,
+                ),
+              ),
+            );
+          },
         ),
       ),
     );
@@ -91,26 +143,16 @@ class _HomeScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.restaurant,
-              size: 64,
-              color: Colors.orange,
-            ),
+            Icon(Icons.restaurant, size: 64, color: Colors.orange),
             SizedBox(height: 16),
             Text(
               'Welcome to InstaFood!',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
             Text(
               'Your onboarding is complete.',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
           ],
         ),
