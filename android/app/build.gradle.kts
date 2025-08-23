@@ -3,7 +3,6 @@ plugins {
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
-    id("com.google.gms.google-services")
 }
 
 dependencies {
@@ -23,7 +22,8 @@ dependencies {
 android {
     namespace = "com.example.insta_food"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    // Pin NDK to the highest required version by plugins (backward compatible)
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -39,7 +39,8 @@ android {
         applicationId = "com.example.insta_food"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+    // firebase_core requires at least 23
+    minSdk = 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -52,6 +53,15 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+}
+
+// Apply Google Services plugin only when google-services.json exists to allow
+// building the app without Firebase configured in local dev.
+if (file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
+    println("Google Services plugin applied.")
+} else {
+    println("google-services.json not found; skipping Google Services plugin for this build.")
 }
 
 flutter {
