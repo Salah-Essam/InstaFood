@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:insta_food/core/app_router.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'routing/routes.dart';
 
 void main() {
   runApp(const InstaFood());
@@ -10,11 +12,32 @@ class InstaFood extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'InstaFood',
-      initialRoute: AppRoutes.bottomNavBarRouteName,
-      routes: AppRouter().getRoutes(context),
+    return ScreenUtilInit(
+      designSize: const Size(393, 852),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          title: 'InstaFood',
+          routerConfig: appRouter,
+          theme: ThemeData(
+            useMaterial3: true,
+            scaffoldBackgroundColor: Colors.white,
+          ),
+          builder: (context, child) {
+            // Set global status bar style
+            SystemChrome.setSystemUIOverlayStyle(
+              const SystemUiOverlayStyle(
+                statusBarColor: Colors.transparent,
+                statusBarIconBrightness: Brightness.dark,
+                statusBarBrightness: Brightness.light,
+              ),
+            );
+            return child!;
+          },
+        );
+      },
     );
   }
 }

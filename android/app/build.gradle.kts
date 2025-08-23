@@ -3,18 +3,14 @@ plugins {
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
-    id("com.google.gms.google-services")
 }
 
 dependencies {
   // Import the Firebase BoM
   implementation(platform("com.google.firebase:firebase-bom:34.1.0"))
 
-
-  // TODO: Add the dependencies for Firebase products you want to use
-  // When using the BoM, don't specify versions in Firebase dependencies
+  // Add the dependencies for Firebase products you want to use
   implementation("com.google.firebase:firebase-analytics")
-
 
   // Add the dependencies for any other desired Firebase products
   // https://firebase.google.com/docs/android/setup#available-libraries
@@ -23,7 +19,9 @@ dependencies {
 android {
     namespace = "com.example.insta_food"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = "27.0.12077973" 
+
+    // Pin NDK to the highest required version by plugins (backward compatible)
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -37,8 +35,7 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.example.insta_food"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
+        // firebase_core requires at least 23
         minSdk = 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -52,6 +49,15 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+}
+
+// Apply Google Services plugin only when google-services.json exists to allow
+// building the app without Firebase configured in local dev.
+if (file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
+    println("Google Services plugin applied.")
+} else {
+    println("google-services.json not found; skipping Google Services plugin for this build.")
 }
 
 flutter {
