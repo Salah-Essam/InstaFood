@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -9,6 +8,7 @@ import 'package:insta_food/core/theme/colors.dart';
 import 'package:insta_food/core/theme/styles.dart';
 import 'package:insta_food/core/theme/strings.dart';
 import 'package:insta_food/core/widgets/status_bar_bg.dart';
+import 'package:insta_food/core/widgets/app_button.dart';
 import 'package:insta_food/routing/routes.dart';
 import 'package:go_router/go_router.dart';
 import '../logic/cubit/onboarding_cubit.dart';
@@ -61,15 +61,18 @@ class OnboardingScreen extends StatelessWidget {
                     child: TextButton(
                       onPressed: cubit.skip,
                       style: TextButton.styleFrom(
-                        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-                        backgroundColor: Colors.white.withValues(alpha: 0.9),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.r),
-                        ),
+                        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                        backgroundColor: Colors.transparent,
+                        minimumSize: Size(0, 0),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
-                      child: Text(
-                        '${AppStrings.skip} >',
-                        style: AppTextStyles.skipButton,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(AppStrings.skip, style: AppTextStyles.skipButton),
+                          SizedBox(width: 2.w),
+                          Icon(Icons.chevron_right, size: 18.sp, color: AppTextStyles.skipButton.color),
+                        ],
                       ),
                     ),
                   ),
@@ -145,28 +148,20 @@ class OnboardingScreen extends StatelessWidget {
                           ),
                           SizedBox(height: 24.h),
                           
-                          // Next/Get Started button
-                          SizedBox(
-                            width: 1.sw,
-                            height: 48.h,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primary,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12.r),
-                                ),
-                                elevation: 0,
-                              ),
+                          // Next/Get Started button (133x36)
+                          Center(
+                            child: AppButton(
+                              label: state.index == 2 ? AppStrings.getStarted : AppStrings.next,
                               onPressed: () async {
                                 final done = await cubit.next();
                                 if (done && context.mounted) {
                                   context.go(Routes.home);
                                 }
                               },
-                              child: Text(
-                                state.index == 2 ? AppStrings.getStarted : AppStrings.next,
-                                style: AppTextStyles.button,
-                              ),
+                              textStyle: AppTextStyles.button,
+                              width: 133.w,
+                              height: 36.h,
+                              borderRadius: 24,
                             ),
                           ),
                         ],
