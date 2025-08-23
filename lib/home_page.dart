@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:insta_food/features/BottomNavBar/presentation/bloc/drawer_cubit.dart';
+import 'package:insta_food/features/BottomNavBar/presentation/cubit/drawer_cubit.dart';
 
 class HomePage extends StatelessWidget {
   static const String routeName = '/home';
@@ -8,12 +8,11 @@ class HomePage extends StatelessWidget {
   const HomePage({super.key, this.scaffoldKey, this.openDrawerCallback});
 
   final GlobalKey<ScaffoldState>? scaffoldKey;
-  final Function(DrawerCubit, String)? openDrawerCallback;
+  final Function(DrawerCubit, DrawerType)? openDrawerCallback;
 
   @override
   Widget build(BuildContext context) {
-    final drawerCubit = context.read<DrawerCubit>();
-
+    final drawerCubit = BlocProvider.of<DrawerCubit>(context);
     return Scaffold(
       appBar: AppBar(title: const Text('InstaFood')),
       body: Center(
@@ -21,7 +20,7 @@ class HomePage extends StatelessWidget {
           children: [
             ElevatedButton(
               onPressed: () {
-                openDrawerCallback!(drawerCubit, "profile");
+                openDrawerCallback!(drawerCubit, DrawerType.profile);
                 scaffoldKey?.currentState?.openEndDrawer();
               },
               child: const Text('profile Drawer'),
@@ -29,7 +28,7 @@ class HomePage extends StatelessWidget {
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                openDrawerCallback!(drawerCubit, "cart");
+                openDrawerCallback!(drawerCubit, DrawerType.cart);
                 scaffoldKey?.currentState?.openEndDrawer();
               },
               child: const Text('cart Drawer'),
@@ -37,7 +36,7 @@ class HomePage extends StatelessWidget {
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                openDrawerCallback!(drawerCubit, "notifications");
+                openDrawerCallback!(drawerCubit, DrawerType.notifications);
                 scaffoldKey?.currentState?.openEndDrawer();
               },
               child: const Text('notifications Drawer'),

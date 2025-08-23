@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:insta_food/core/app_colors.dart';
-import 'package:insta_food/features/BottomNavBar/presentation/bloc/drawer_cubit.dart';
+import 'package:insta_food/features/BottomNavBar/presentation/cubit/drawer_cubit.dart';
 import 'package:insta_food/features/BottomNavBar/presentation/pages/app_drawer.dart';
 import 'package:insta_food/home_page.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
@@ -18,14 +18,8 @@ class BottomNavBar extends StatelessWidget {
       PersistentTabConfig(
         screen: HomePage(
           scaffoldKey: _scaffoldKey,
-          openDrawerCallback: (DrawerCubit cubit, String drawerName) {
-            drawerName == "profile"
-                ? cubit.showProfileDrawer()
-                : drawerName == "cart"
-                ? cubit.showCartDrawer()
-                : drawerName == "notifications"
-                ? cubit.showNotificationsDrawer()
-                : null;
+          openDrawerCallback: (DrawerCubit cubit, DrawerType type) {
+            cubit.getDrawerData(type);
           },
         ),
         item: ItemConfig(
@@ -82,17 +76,36 @@ class BottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => DrawerCubit(),
-      child: BlocBuilder<DrawerCubit, Widget>(
+      create: (context) {
+        final cubit = DrawerCubit();
+
+        return cubit;
+      },
+      child: BlocBuilder<DrawerCubit, DrawerState>(
         builder: (context, drawerContent) {
           return Scaffold(
             key: _scaffoldKey,
-            endDrawer: AppDrawer(drawerContent: drawerContent),
+            endDrawer: AppDrawer(
+              drawerContent:
+                  drawerContent is ShowProfileDrawer
+                      ? drawerContent.profileDrawer
+                      : drawerContent is ShowCartDrawer
+                      ? drawerContent.cartDrawer
+                      : drawerContent is ShowNotificationsDrawer
+                      ? drawerContent.notificationsDrawer
+                      : Center(child: Text("No Data")),
+            ),
             body: PersistentTabView(
               tabs: _tabs(),
+
+              screenTransitionAnimation: ScreenTransitionAnimation(
+                curve: Curves.ease,
+                duration: Duration(milliseconds: 300),
+              ),
               navBarBuilder:
                   (p0) => NeumorphicBottomNavBar(
                     navBarConfig: p0,
+
                     navBarDecoration: NavBarDecoration(
                       color: AppColors.orangeBase,
                       borderRadius: BorderRadius.only(

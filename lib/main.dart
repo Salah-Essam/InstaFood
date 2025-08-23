@@ -13,7 +13,7 @@ class InstaFood extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'InstaFood',
-      initialRoute: AppRoutes.bottomNavBarRouteName,
+      initialRoute: AppRoutes.bottomNavBar,
       routes: AppRouter().getRoutes(context),
     );
   }

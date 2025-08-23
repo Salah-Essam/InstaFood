@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:insta_food/core/app_colors.dart';
+import 'package:insta_food/core/app_router.dart';
 import 'package:insta_food/features/BottomNavBar/data/profile_drawer_items.dart';
 
 class ProfileDrawer extends StatelessWidget {
@@ -50,7 +51,9 @@ class ProfileDrawer extends StatelessWidget {
                 return Column(
                   children: [
                     DrawerItem(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.pushNamed(context, AppRoutes.profilePage);
+                      },
                       label: ProfileDrawerItem.items[item][0],
                       icon: ProfileDrawerItem.items[item][1],
                     ),
@@ -101,6 +104,7 @@ class DrawerItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      borderRadius: BorderRadius.circular(16),
       onTap: onTap,
       child: Row(
         children: [
