@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "822499329892",
+    "project_id": "instafood-1",
+    "storage_bucket": "instafood-1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:822499329892:android:1cb1b724d79fb397379c71",
+        "android_client_info": {
+          "package_name": "com.example.insta_food"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBb3AccE6npvbeEggcyZKMDilFErYphVLI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
