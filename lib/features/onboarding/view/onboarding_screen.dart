@@ -61,7 +61,10 @@ class OnboardingScreen extends StatelessWidget {
                     child: TextButton(
                       onPressed: cubit.skip,
                       style: TextButton.styleFrom(
-                        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8.w,
+                          vertical: 4.h,
+                        ),
                         backgroundColor: Colors.transparent,
                         minimumSize: Size(0, 0),
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -69,9 +72,16 @@ class OnboardingScreen extends StatelessWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(AppStrings.skip, style: AppTextStyles.skipButton),
+                          Text(
+                            AppStrings.skip,
+                            style: AppTextStyles.skipButton,
+                          ),
                           SizedBox(width: 2.w),
-                          Icon(Icons.chevron_right, size: 18.sp, color: AppTextStyles.skipButton.color),
+                          Icon(
+                            Icons.chevron_right,
+                            size: 18.sp,
+                            color: AppTextStyles.skipButton.color,
+                          ),
                         ],
                       ),
                     ),
@@ -115,7 +125,7 @@ class OnboardingScreen extends StatelessWidget {
                             ),
                           ),
                           SizedBox(height: 16.h),
-                          
+
                           // Title
                           Text(
                             _getTitleForIndex(state.index),
@@ -123,7 +133,7 @@ class OnboardingScreen extends StatelessWidget {
                             textAlign: TextAlign.center,
                           ),
                           SizedBox(height: 12.h),
-                          
+
                           // Description
                           Text(
                             AppStrings.onbBody,
@@ -131,7 +141,7 @@ class OnboardingScreen extends StatelessWidget {
                             textAlign: TextAlign.center,
                           ),
                           SizedBox(height: 24.h),
-                          
+
                           // Page indicator dots
                           SmoothPageIndicator(
                             controller: cubit.pageController,
@@ -147,15 +157,18 @@ class OnboardingScreen extends StatelessWidget {
                             onDotClicked: (index) => cubit.goTo(index),
                           ),
                           SizedBox(height: 24.h),
-                          
+
                           // Next/Get Started button (133x36)
                           Center(
                             child: AppButton(
-                              label: state.index == 2 ? AppStrings.getStarted : AppStrings.next,
+                              label:
+                                  state.index == 2
+                                      ? AppStrings.getStarted
+                                      : AppStrings.next,
                               onPressed: () async {
                                 final done = await cubit.next();
                                 if (done && context.mounted) {
-                                  context.go(Routes.home);
+                                  context.go(Routes.bottomNavBar);
                                 }
                               },
                               textStyle: AppTextStyles.button,
@@ -209,7 +222,7 @@ class _OnboardPage extends StatelessWidget {
   final String icon;
   final String title;
   final String body;
-  
+
   const _OnboardPage({
     required this.image,
     required this.icon,

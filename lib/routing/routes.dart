@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:insta_food/features/BottomNavBar/presentation/pages/bottom_nav_bar.dart';
+import 'package:insta_food/features/Profile/presentation/pages/profile_page.dart';
+import 'package:insta_food/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -11,6 +14,8 @@ class Routes {
   static const String splash = '/';
   static const String onboarding = '/onboarding';
   static const String home = '/home';
+  static const String bottomNavBar = '/bottom_nav_bar';
+  static const String profilePage = '/profile_page';
 }
 
 final GoRouter appRouter = GoRouter(
@@ -28,9 +33,14 @@ final GoRouter appRouter = GoRouter(
             child: const OnboardingScreen(),
           ),
     ),
+    GoRoute(path: Routes.home, builder: (context, state) => const HomePage()),
     GoRoute(
-      path: Routes.home,
-      builder: (context, state) => const _HomeScreen(),
+      path: Routes.bottomNavBar,
+      builder: (context, state) => const BottomNavBar(),
+    ),
+    GoRoute(
+      path: Routes.profilePage,
+      builder: (context, state) => const ProfilePage(),
     ),
   ],
 );
@@ -96,7 +106,7 @@ class _SplashGateState extends State<_SplashGate>
     final seen = prefs.getBool(OnboardingCubit.keySeenOnboarding) ?? false;
     if (!mounted) return;
     if (seen) {
-      context.go(Routes.home);
+      context.go(Routes.bottomNavBar);
     } else {
       context.go(Routes.onboarding);
     }
@@ -127,36 +137,36 @@ class _SplashGateState extends State<_SplashGate>
   }
 }
 
-class _HomeScreen extends StatelessWidget {
-  const _HomeScreen();
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text('InstaFood'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        elevation: 0,
-      ),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.restaurant, size: 64, color: Colors.orange),
-            SizedBox(height: 16),
-            Text(
-              'Welcome to InstaFood!',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Your onboarding is complete.',
-              style: TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+// class _HomeScreen extends StatelessWidget {
+//   const _HomeScreen();
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: Colors.white,
+//       appBar: AppBar(
+//         title: const Text('InstaFood'),
+//         backgroundColor: Colors.white,
+//         foregroundColor: Colors.black,
+//         elevation: 0,
+//       ),
+//       body: const Center(
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: [
+//             Icon(Icons.restaurant, size: 64, color: Colors.orange),
+//             SizedBox(height: 16),
+//             Text(
+//               'Welcome to InstaFood!',
+//               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+//             ),
+//             SizedBox(height: 8),
+//             Text(
+//               'Your onboarding is complete.',
+//               style: TextStyle(fontSize: 16, color: Colors.grey),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }

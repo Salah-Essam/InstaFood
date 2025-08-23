@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:insta_food/core/app_colors.dart';
-import 'package:insta_food/core/app_router.dart';
 import 'package:insta_food/features/BottomNavBar/data/profile_drawer_items.dart';
+import 'package:insta_food/routing/routes.dart';
 
 class ProfileDrawer extends StatelessWidget {
   const ProfileDrawer({super.key});
@@ -52,7 +53,8 @@ class ProfileDrawer extends StatelessWidget {
                   children: [
                     DrawerItem(
                       onTap: () {
-                        Navigator.pushNamed(context, AppRoutes.profilePage);
+                        // Navigator.pushNamed(context, AppRoutes.profilePage);
+                        context.go(Routes.profilePage);
                       },
                       label: ProfileDrawerItem.items[item][0],
                       icon: ProfileDrawerItem.items[item][1],
