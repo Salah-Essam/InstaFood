@@ -19,6 +19,7 @@ class InstaFood extends StatelessWidget {
       builder: (context, child) {
         return MaterialApp.router(
           debugShowCheckedModeBanner: false,
+          title: 'InstaFood',
           routerConfig: appRouter,
           theme: ThemeData(
             useMaterial3: true,
