@@ -6,7 +6,7 @@ import 'package:insta_food/core/routes/router.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/core/utils/app_strings.dart';
-import 'package:insta_food/presentation/widgets/app_button.dart';
+import 'package:insta_food/presentation/widgets/app_button_onb.dart';
 import 'package:insta_food/presentation/widgets/status_bar_bg.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:go_router/go_router.dart';

@@ -5,7 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/core/utils/app_strings.dart';
-import 'package:insta_food/presentation/widgets/app_button.dart';
+import 'package:insta_food/presentation/widgets/app_button_onb.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../../logic/cubit/onboarding_cubit.dart';
 
