@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart' show immutable;
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 import 'package:insta_food/presentation/features/items/data/repositories/item_repository.dart';
 
 part 'item_state.dart';

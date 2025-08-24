@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:insta_food/core/errors/failures.dart';
-import 'package:insta_food/core/remote/api_service.dart';
-import 'package:insta_food/core/remote/constant/api_constants.dart';
+import 'package:insta_food/core/network/APIs/api_constants.dart';
+import 'package:insta_food/core/network/APIs/api_service.dart';
 import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 
 abstract class ItemsRemoteDataSource {

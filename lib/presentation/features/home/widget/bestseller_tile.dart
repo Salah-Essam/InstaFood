@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:insta_food/core/app_colors.dart';
-import 'package:insta_food/core/app_textstyles.dart';
+import 'package:insta_food/core/theme/app_colors.dart';
+import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 
 class BestsellerTile extends StatelessWidget {
@@ -38,7 +38,7 @@ class BestsellerTile extends StatelessWidget {
                 alignment: Alignment.center,
                 child: Text(
                   "\$${item.itemPrice..toStringAsFixed(1)}",
-                  style: AppTextstyles.price,
+                  style: AppTextStyles.price,
                 ),
               ),
             ),

@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:insta_food/core/di/di.dart';
-import 'package:insta_food/core/router/router.dart';
-import 'package:insta_food/core/theme/app_theme.dart';
-import 'package:insta_food/presentation/features/wrapper/wrapper.dart';
 import 'package:flutter/services.dart';
-import 'routing/routes.dart';
-
+import 'package:insta_food/core/routes/router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,7 +16,6 @@ class InstaFood extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-
       designSize: const Size(393, 852),
       minTextAdapt: true,
       splitScreenMode: true,

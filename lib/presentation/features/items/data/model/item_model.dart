@@ -1,6 +1,6 @@
-import 'package:insta_food/core/remote/api_keys.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-part 'item_model.g.dart';
+import 'package:insta_food/core/network/APIs/api_keys.dart';
+part '../../../../../core/storage/hive_adapters/item_model.g.dart';
 
 @HiveType(typeId: 0)
 class ItemModel {

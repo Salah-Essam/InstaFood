@@ -1,8 +1,8 @@
 import 'dart:developer';
 
 import 'package:dartz/dartz.dart';
-import 'package:insta_food/core/connection/networkInfo.dart';
 import 'package:insta_food/core/errors/failures.dart';
+import 'package:insta_food/core/network/network_info.dart';
 import 'package:insta_food/presentation/features/items/data/data%20sources/local_data_source.dart';
 import 'package:insta_food/presentation/features/items/data/data%20sources/remote_data_source.dart';
 import 'package:insta_food/presentation/features/items/data/repositories/item_repository.dart';

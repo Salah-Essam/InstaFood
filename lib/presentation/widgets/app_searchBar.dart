@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:insta_food/core/app_assets.dart';
-import 'package:insta_food/core/app_colors.dart';
-import 'package:insta_food/core/app_strings.dart';
-import 'package:insta_food/core/app_textstyles.dart';
+import 'package:insta_food/core/theme/app_assets.dart';
+import 'package:insta_food/core/theme/app_colors.dart';
+import 'package:insta_food/core/theme/app_text_styles.dart';
+import 'package:insta_food/core/utils/app_strings.dart';
 
 class searchBar extends StatefulWidget {
   const searchBar({super.key, required this.enabled, this.onPressed});
@@ -35,7 +35,7 @@ class _searchBarState extends State<searchBar> {
               left: 16,
               right: 2,
             ),
-            hint: Text(AppStrings.search, style: AppTextstyles.search),
+            hint: Text(AppStrings.search, style: AppTextStyles.search),
             suffixIcon: IconButton(
               icon: SvgPicture.asset(
                 AppAssets.filter,

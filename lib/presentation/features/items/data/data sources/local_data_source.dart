@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:insta_food/core/errors/failures.dart';
-import 'package:insta_food/core/hive/hive_setup.dart';
+import 'package:insta_food/core/storage/hive_service.dart';
 
 abstract class ItemsLocalDataSource {
   Future<void> cacheItems(dynamic data);

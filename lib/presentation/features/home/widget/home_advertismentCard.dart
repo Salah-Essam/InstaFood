@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:insta_food/core/app_assets.dart';
-import 'package:insta_food/core/app_colors.dart';
-import 'package:insta_food/core/app_strings.dart';
-import 'package:insta_food/core/app_textstyles.dart';
+import 'package:insta_food/core/theme/app_assets.dart';
+import 'package:insta_food/core/theme/app_colors.dart';
+import 'package:insta_food/core/theme/app_text_styles.dart';
+import 'package:insta_food/core/utils/app_strings.dart';
 import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 
 class AdvertismentCard extends StatelessWidget {
@@ -29,9 +29,9 @@ class AdvertismentCard extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(AppStrings.advertisment, style: AppTextstyles.ad),
-                      Text(AppStrings.ad2, style: AppTextstyles.ad),
-                      Text(AppStrings.ad3, style: AppTextstyles.greeting),
+                      Text(AppStrings.advertisment, style: AppTextStyles.ad),
+                      Text(AppStrings.ad2, style: AppTextStyles.ad),
+                      Text(AppStrings.ad3, style: AppTextStyles.greeting),
                     ],
                   ),
                 ),

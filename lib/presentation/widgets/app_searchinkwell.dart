@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:insta_food/core/router/app_routes.dart';
+import 'package:insta_food/core/routes/router_constants.dart';
 import 'package:insta_food/presentation/widgets/app_searchBar.dart';
 
 class Searchinkwell extends StatelessWidget {

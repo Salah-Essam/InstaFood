@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:insta_food/core/app_assets.dart';
-import 'package:insta_food/core/app_colors.dart';
+import 'package:insta_food/core/theme/app_assets.dart';
+import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/presentation/widgets/app_backbutton.dart';
 import 'package:insta_food/presentation/widgets/app_searchBar.dart';
 import 'package:insta_food/presentation/widgets/app_searchinkwell.dart';
@@ -20,16 +20,15 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: AppColors.yellowBase,
-      leading:
-          leading
-              ? Align(
-                alignment: Alignment.bottomLeft,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 30.0, bottom: 8),
-                  child: AppBackButton(),
-                ),
-              )
-              : SizedBox(),
+      leading: leading
+          ? Align(
+              alignment: Alignment.bottomLeft,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 30.0, bottom: 8),
+                child: AppBackButton(),
+              ),
+            )
+          : SizedBox(),
       actions: [
         Align(
           alignment: Alignment.bottomCenter,

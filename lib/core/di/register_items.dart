@@ -1,10 +1,9 @@
 import 'package:hive/hive.dart';
-import 'package:insta_food/core/connection/networkInfo.dart';
 import 'package:insta_food/core/di/di.dart';
-import 'package:insta_food/core/remote/api_service.dart';
+import 'package:insta_food/core/network/APIs/api_service.dart';
+import 'package:insta_food/core/network/network_info.dart';
 import 'package:insta_food/presentation/features/items/data/data%20sources/local_data_source.dart';
 import 'package:insta_food/presentation/features/items/data/data%20sources/remote_data_source.dart';
-import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 import 'package:insta_food/presentation/features/items/data/repositories/item_repository.impl.dart';
 import 'package:insta_food/presentation/features/items/data/repositories/item_repository.dart';
 import 'package:insta_food/presentation/features/items/presentation/cubit/item_cubit.dart';

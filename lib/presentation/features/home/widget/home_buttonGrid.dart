@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:insta_food/core/app_assets.dart';
-import 'package:insta_food/core/app_colors.dart';
-import 'package:insta_food/core/app_strings.dart';
-import 'package:insta_food/core/app_textstyles.dart';
+import 'package:insta_food/core/theme/app_assets.dart';
+import 'package:insta_food/core/theme/app_colors.dart';
+import 'package:insta_food/core/theme/app_text_styles.dart';
+import 'package:insta_food/core/utils/app_strings.dart';
 
 class ButtonGrid extends StatelessWidget {
   const ButtonGrid({super.key});
@@ -30,10 +30,10 @@ class ButtonGrid extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () {},
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
+                      backgroundColor: WidgetStateProperty.all(
                         AppColors.yellow2,
                       ),
-                      padding: MaterialStateProperty.all(EdgeInsets.all(4)),
+                      padding: WidgetStateProperty.all(EdgeInsets.all(4)),
                     ),
                     child: SvgPicture.asset(
                       AppAssets.catagories[index],
@@ -44,7 +44,7 @@ class ButtonGrid extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 8),
-                Text(AppStrings.catagories[index], style: AppTextstyles.small),
+                Text(AppStrings.catagories[index], style: AppTextStyles.small),
               ],
             ),
           );
