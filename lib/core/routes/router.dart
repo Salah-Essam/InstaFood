@@ -52,18 +52,6 @@ final GoRouter appRouter = GoRouter(
       path: Routes.search,
       builder: (context, state) => const SearchPage(),
     ),
-    GoRoute(
-      path: Routes.cartDrawer,
-      builder: (context, state) => const CartDrawer(),
-    ),
-    GoRoute(
-      path: Routes.profileDrawer,
-      builder: (context, state) => const ProfileDrawer(),
-    ),
-    GoRoute(
-      path: Routes.notificationsDrawer,
-      builder: (context, state) => const NotificationsDrawer(),
-    ),
   ],
 );
 
