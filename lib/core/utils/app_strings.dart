@@ -10,9 +10,9 @@ class AppStrings {
   static const String skip = 'Skip';
   static const String getStarted = 'Get Started';
   // ==========================================
-  static const String morningGreeting = 'Good Morning';
-  static const String afternoonGreeting = 'Good Afternoon';
-  static const String eveningGreeting = 'Good Evening';
+  static const String goodMorining = 'Good Morning';
+  static const String goodAfternoon = 'Good Afternoon';
+  static const String goodEvening = 'Good Evening';
   static const String morningDialoug = "Rise and shine! It's breakfast time";
   static const String afternoonDialoug = "Lunchtime! Refuel and recharge";
   static const String eveningDialoug =
@@ -23,7 +23,6 @@ class AppStrings {
   static const String meals = 'Meals';
   static const String vegan = 'Vegan';
   static const String snacks = 'Snacks';
-  static const List catagories = [drinks, desserts, meals, vegan, snacks];
   static const String advertisment = "Experience our ";
   static const String ad2 = "delicious new dish";
   static const String ad3 = "30% OFF";

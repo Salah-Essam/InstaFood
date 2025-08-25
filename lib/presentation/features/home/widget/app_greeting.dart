@@ -23,13 +23,13 @@ class _GreetingsState extends State<Greetings> {
   // Sets greetings based on time
   void _setGreeting(DateTime now) {
     if (now.hour >= 6 && now.hour < 12) {
-      greeting = AppStrings.morningGreeting;
+      greeting = AppStrings.goodMorining;
       dialoge = AppStrings.morningDialoug;
     } else if (now.hour >= 12 && now.hour < 19) {
-      greeting = AppStrings.afternoonGreeting;
+      greeting = AppStrings.goodAfternoon;
       dialoge = AppStrings.afternoonDialoug;
     } else {
-      greeting = AppStrings.eveningGreeting;
+      greeting = AppStrings.goodEvening;
       dialoge = AppStrings.eveningDialoug;
     }
   }

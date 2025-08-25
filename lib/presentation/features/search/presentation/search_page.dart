@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:insta_food/presentation/widgets/custom_appbar.dart';
 
-class SearchScreen extends StatelessWidget {
-  const SearchScreen({super.key});
+class SearchPage extends StatelessWidget {
+  const SearchPage({super.key});
 
   @override
   Widget build(BuildContext context) {

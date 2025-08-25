@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
+import 'package:insta_food/core/routes/router_constants.dart';
 import 'package:insta_food/core/theme/app_assets.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/presentation/widgets/app_backbutton.dart';
@@ -19,7 +21,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: AppColors.yellowBase,
+      backgroundColor: AppColors.statusBar,
       leading: leading
           ? Align(
               alignment: Alignment.bottomLeft,
@@ -44,7 +46,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          ;
+                        },
                         child: SvgPicture.asset(
                           AppAssets.cart,
                           width: 26,
@@ -53,7 +57,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                       SizedBox(width: 7),
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          ;
+                        },
                         child: SvgPicture.asset(
                           AppAssets.notification,
                           width: 26,

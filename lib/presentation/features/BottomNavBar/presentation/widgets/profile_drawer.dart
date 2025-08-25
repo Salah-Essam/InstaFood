@@ -21,7 +21,7 @@ class ProfileDrawer extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 24,
-                  backgroundColor: AppColors.orange2,
+                  backgroundColor: AppColors.primary,
                   child: Icon(Icons.person, color: Colors.black, size: 30),
                 ),
                 SizedBox(width: 16),
@@ -31,7 +31,7 @@ class ProfileDrawer extends StatelessWidget {
                     Text(
                       'Username',
                       style: TextStyle(
-                        color: AppColors.font2,
+                        color: AppColors.fontWhite,
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
@@ -114,7 +114,6 @@ class DrawerItem extends StatelessWidget {
           const SizedBox(width: 16),
           Text(
             label,
-
             style: TextStyle(
               color: AppColors.orange2,
               fontSize: fontSize ?? 18,

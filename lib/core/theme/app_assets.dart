@@ -9,7 +9,6 @@ class AppAssets {
   static const String snacks = "assets/icons/Snacks.svg";
   static const String vegan = "assets/icons/Vegan.svg";
   static const String drinks = "assets/icons/Drinks.svg";
-  static const List catagories = [drinks, desserts, meals, vegan, snacks];
   static const String line = "assets/icons/Line.svg";
   static const String ellipse = "assets/icons/Ellipse.svg";
   static const String ellipse2 = "assets/icons/Ellipse2.svg";
