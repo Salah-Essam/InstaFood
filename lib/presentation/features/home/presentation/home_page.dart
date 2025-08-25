@@ -29,6 +29,7 @@ class HomePage extends StatelessWidget {
     return BlocProvider(
       create: (context) => sl<ItemCubit>()..getallItems(),
       child: Scaffold(
+        backgroundColor: AppColors.statusBar,
         appBar: CustomAppBar(),
         body: BlocBuilder<ItemCubit, ItemState>(
           builder: (context, state) {

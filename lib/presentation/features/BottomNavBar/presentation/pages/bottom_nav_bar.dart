@@ -96,7 +96,6 @@ class BottomNavBar extends StatelessWidget {
             ),
             body: PersistentTabView(
               tabs: _tabs(),
-
               screenTransitionAnimation: ScreenTransitionAnimation(
                 curve: Curves.ease,
                 duration: Duration(milliseconds: 300),
