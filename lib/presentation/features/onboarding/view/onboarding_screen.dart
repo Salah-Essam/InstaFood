@@ -7,7 +7,6 @@ import 'package:insta_food/presentation/widgets/status_bar_bg.dart';
 import 'package:go_router/go_router.dart';
 import '../logic/cubit/onboarding_cubit.dart';
 import '../logic/constants/onboarding_constants.dart';
-import 'widgets/onb_images_text.dart';
 import 'widgets/onb_skip_button.dart';
 import 'widgets/onb_bottom_sheet.dart';
 
@@ -55,47 +54,31 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget build(BuildContext context) {
     return StatusBarBackground(
       backgroundColor: AppColors.statusBar,
-      child: Scaffold(
-        backgroundColor: AppColors.statusBar,
-        body: BlocBuilder<OnboardingCubit, OnboardingState>(
-          builder: (context, state) {
-            final cubit = context.read<OnboardingCubit>();
-            return Stack(
+      child: BlocBuilder<OnboardingCubit, OnboardingState>(
+        builder: (context, state) {
+          final cubit = context.read<OnboardingCubit>();
+          return Scaffold(
+            backgroundColor: AppColors.statusBar,
+            // الصورة في body
+            body: PageView(
+              controller: cubit.pageController,
+              onPageChanged: cubit.onPageChanged,
               children: [
-                // Full background image
-                PageView(
-                  controller: cubit.pageController,
-                  onPageChanged: cubit.onPageChanged,
-                  children: [
-                    _buildFullBackgroundImage(
-                      OnboardingConstants.firstPageImage,
-                    ),
-                    _buildFullBackgroundImage(
-                      OnboardingConstants.secondPageImage,
-                    ),
-                    _buildFullBackgroundImage(
-                      OnboardingConstants.thirdPageImage,
-                    ),
-                  ],
-                ),
-
-                // Bottom sheet positioned on top of the image
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: OnbBottomSheet(
-                    onDone: () {
-                      if (context.mounted) {
-                        context.go(Routes.bottomNavBar);
-                      }
-                    },
-                  ),
-                ),
+                _buildFullBackgroundImage(OnboardingConstants.firstPageImage),
+                _buildFullBackgroundImage(OnboardingConstants.secondPageImage),
+                _buildFullBackgroundImage(OnboardingConstants.thirdPageImage),
               ],
-            );
-          },
-        ),
+            ),
+            // BottomSheet في مكانه الطبيعي
+            bottomSheet: OnbBottomSheet(
+              onDone: () {
+                if (context.mounted) {
+                  context.go(Routes.bottomNavBar);
+                }
+              },
+            ),
+          );
+        },
       ),
     );
   }

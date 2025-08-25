@@ -41,29 +41,37 @@ onboarding/
 - Easy to test and mock dependencies
 
 ### 4. **Clean Widget Structure**
-- `onboarding_screen.dart`: Main orchestrator with efficient Stack for layering
+- `onboarding_screen.dart`: Main orchestrator using Scaffold.bottomSheet
 - `onb_bottom_sheet.dart`: Handles bottom sheet UI and interactions
 - `onb_skip_button.dart`: Skip button functionality using Overlay
 - `onb_images_text.dart`: Legacy component (kept for reference)
 
 ## Current Implementation
 
-### **Efficient Stack Usage**
-- **Full Background Images**: Images extend to full screen height
-- **Layered Bottom Sheet**: Bottom sheet positioned on top of images
-- **Skip Button**: Uses Overlay for lightweight positioning
-- **Performance**: Minimal Stack overhead, only for essential layering
+### **Scaffold.bottomSheet Approach - Zero Stack**
+- **Background Images**: Full screen images in Scaffold.body
+- **Bottom Sheet**: Natural Scaffold.bottomSheet positioning
+- **Skip Button**: Overlay for lightweight positioning
+- **Performance**: Zero Stack overhead, native Flutter layout
 
 ### **Layout Structure**
 ```
-Stack
-├── PageView (full screen background images)
+Scaffold
+├── body: PageView (full screen background images)
 │   ├── Full Image 1
 │   ├── Full Image 2
 │   └── Full Image 3
-└── Positioned Bottom Sheet (overlayed on images)
-    └── OnbBottomSheet (338px height, 20px radius)
+└── bottomSheet: OnbBottomSheet (338px height, 20px radius)
+
+Skip Button: Overlay (lightweight)
 ```
+
+### **Key Benefits**
+- **Native Flutter Layout**: Uses Scaffold's built-in bottomSheet property
+- **No Stack Overhead**: Eliminates complex positioning completely
+- **Automatic Positioning**: Flutter handles bottom sheet positioning
+- **Better Performance**: Native layout engine optimization
+- **Cleaner Code**: Simpler, more maintainable structure
 
 ## Service Layer
 
@@ -104,25 +112,27 @@ Stack
 3. **Reusability**: Widgets can be reused in other parts of the app
 4. **Scalability**: Easy to add new features or modify existing ones
 5. **Consistency**: Follows established patterns used throughout the app
-6. **Performance**: Efficient Stack usage only where necessary
-7. **Visual Appeal**: Full background images with layered bottom sheet
+6. **Performance**: Zero Stack overhead, native Flutter layout
+7. **Visual Appeal**: Full background images with natural bottom sheet
+8. **Clean Architecture**: Uses Flutter's built-in layout system
 
 ## Usage Example
 
 ```dart
-// The main screen now efficiently layers full images with bottom sheet
+// The main screen now uses Scaffold.bottomSheet - no Stack at all!
 class OnboardingScreen extends StatefulWidget {
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        PageView(/* full background images */),
-        Positioned(
-          bottom: 0,
-          child: OnbBottomSheet(onDone: () => navigateToHome()),
-        ),
-      ],
+    return Scaffold(
+      body: PageView(/* full background images */),
+      bottomSheet: OnbBottomSheet(onDone: () => navigateToHome()),
     );
+  }
+  
+  // Skip button uses Overlay for lightweight positioning
+  void _showSkipButton() {
+    _skipButtonOverlay = OverlayEntry(/* ... */);
+    Overlay.of(context).insert(_skipButtonOverlay!);
   }
 }
 ```
@@ -134,3 +144,4 @@ class OnboardingScreen extends StatefulWidget {
 - Add analytics tracking service
 - Create onboarding data models for dynamic content
 - Optimize image loading and caching
+- Add smooth transitions between pages
