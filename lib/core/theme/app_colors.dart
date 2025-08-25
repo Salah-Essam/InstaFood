@@ -24,12 +24,13 @@ class AppColors {
   static var orangeBase = Colors.orange;
 
   static var white = Colors.white;
+  static var lightYellow = Color(0xFFF3E9B5);
 
-  static var font2;
+  static var fontWhite = Color(0xFFF8F8F8);
 
-  static var grey;
+  static var grey = Color(0xFF4E5457);
 
-  static var darktext;
+  static var darktext = Color(0xFF452521);
 
   static var yellowBase;
 

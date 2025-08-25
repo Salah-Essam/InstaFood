@@ -1,24 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:insta_food/core/theme/app_assets.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
+import 'package:insta_food/core/utils/Image_error.dart';
 import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 
-class BestsellerTile extends StatelessWidget {
+class ItemTile extends StatelessWidget {
   final ItemModel item;
-  const BestsellerTile({super.key, required this.item});
+  final double height;
+  final double width;
+  final bool showButtons;
+  const ItemTile({
+    super.key,
+    required this.item,
+    required this.height,
+    required this.width,
+    this.showButtons = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 108,
-      width: 71.7,
+      height: height,
+      width: width,
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
       child: Stack(
         children: [
           Positioned.fill(
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
-              child: Image.network(item.imageUrl, fit: BoxFit.cover),
+              child: Image.network(
+                item.imageUrl,
+                fit: BoxFit.cover,
+                errorBuilder: ImageError.imageErrorLoader(),
+              ),
             ),
           ),
           Positioned(
@@ -32,7 +48,7 @@ class BestsellerTile extends StatelessWidget {
                   topLeft: Radius.circular(30),
                   bottomLeft: Radius.circular(30),
                 ),
-                color: AppColors.orangeBase,
+                color: AppColors.primary,
               ),
               child: Align(
                 alignment: Alignment.center,
@@ -41,6 +57,22 @@ class BestsellerTile extends StatelessWidget {
                   style: AppTextStyles.price,
                 ),
               ),
+            ),
+          ),
+          Positioned(
+            left: 13,
+            top: 10,
+            child: Visibility(
+              visible: showButtons,
+              child: SvgPicture.asset(AppAssets.rating),
+            ),
+          ),
+          Positioned(
+            left: 52,
+            top: 10,
+            child: Visibility(
+              visible: showButtons,
+              child: SvgPicture.asset(AppAssets.fav),
             ),
           ),
         ],

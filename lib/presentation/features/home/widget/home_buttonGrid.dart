@@ -4,47 +4,52 @@ import 'package:insta_food/core/theme/app_assets.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/core/utils/app_strings.dart';
+import 'package:insta_food/presentation/widgets/app_button.dart';
 
 class ButtonGrid extends StatelessWidget {
-  const ButtonGrid({super.key});
-
+  ButtonGrid({super.key});
+  final Map<String, String> categories = {
+    AppStrings.snacks: AppAssets.snacks,
+    AppStrings.meals: AppAssets.meals,
+    AppStrings.vegan: AppAssets.vegan,
+    AppStrings.desserts: AppAssets.desserts,
+    AppStrings.drinks: AppAssets.drinks,
+  };
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 100,
       child: ListView.builder(
-        itemCount: AppAssets.catagories.length,
+        itemCount: categories.length,
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, index) {
+          // Get the category key and asset path by index
+          final categoryName = categories.keys.elementAt(index);
+          final asset = categories[categoryName]!;
           return Padding(
             padding: const EdgeInsets.only(right: 19, left: 1),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                SizedBox(
+                AppButton(
+                  onPressed: () {},
+                  backgroundColor: AppColors.lightYellow,
+                  borderRadius: 30,
                   width: 49,
                   height: 62,
-
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.all(
-                        AppColors.yellow2,
-                      ),
-                      padding: WidgetStateProperty.all(EdgeInsets.all(4)),
-                    ),
-                    child: SvgPicture.asset(
-                      AppAssets.catagories[index],
-                      height: 37,
-                      width: 33,
-                      fit: BoxFit.scaleDown,
+                  child: SizedBox(
+                    height: 37,
+                    width: 33,
+                    child: Transform.scale(
+                      scale: 1,
+                      child: SvgPicture.asset(asset, fit: BoxFit.contain),
                     ),
                   ),
                 ),
                 SizedBox(height: 8),
-                Text(AppStrings.catagories[index], style: AppTextStyles.small),
+                Text(categoryName, style: AppTextStyles.small),
               ],
             ),
           );

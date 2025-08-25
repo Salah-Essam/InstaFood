@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/presentation/features/BottomNavBar/presentation/pages/bottom_nav_bar.dart';
+import 'package:insta_food/presentation/features/BottomNavBar/presentation/widgets/cart_drawer.dart';
+import 'package:insta_food/presentation/features/BottomNavBar/presentation/widgets/notifications_drawer.dart';
+import 'package:insta_food/presentation/features/BottomNavBar/presentation/widgets/profile_drawer.dart';
 import 'package:insta_food/presentation/features/Profile/presentation/pages/profile_page.dart';
 import 'package:insta_food/presentation/features/home/presentation/home_page.dart';
 import 'package:insta_food/presentation/features/onboarding/logic/cubit/onboarding_cubit.dart';
 import 'package:insta_food/presentation/features/onboarding/view/onboarding_screen.dart';
+import 'package:insta_food/presentation/features/search/presentation/search_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -15,6 +19,7 @@ class Routes {
   static const String home = '/home';
   static const String bottomNavBar = '/bottom_nav_bar';
   static const String profilePage = '/profile_page';
+  static const String search = '/search';
 }
 
 final GoRouter appRouter = GoRouter(
@@ -39,6 +44,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: Routes.profilePage,
       builder: (context, state) => const ProfilePage(),
+    ),
+    GoRoute(
+      path: Routes.search,
+      builder: (context, state) => const SearchPage(),
     ),
   ],
 );
