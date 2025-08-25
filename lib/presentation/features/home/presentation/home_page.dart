@@ -61,10 +61,7 @@ class HomePage extends StatelessWidget {
                         color: AppColors.white,
                       ),
                       child: ListView(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 36.0,
-                          vertical: 31,
-                        ),
+                        padding: const EdgeInsets.fromLTRB(36, 31, 36, 32+72),
                         children: [
                           ButtonGrid(),
                           SizedBox(height: 5),
@@ -105,23 +102,30 @@ class HomePage extends StatelessWidget {
                               style: AppTextStyles.header,
                             ),
                           ),
-                          Row(
-                            spacing: 7,
-                            children: [
-                              ItemTile(
-                                height: 140,
-                                width: 159,
-                                showButtons: true,
-                                item: state.itemList[10],
-                              ),
-                              ItemTile(
-                                height: 140,
-                                width: 159,
-                                showButtons: true,
-                                item: state.itemList[4],
-                              ),
-                            ],
+                          LayoutBuilder(
+                            builder: (context, constraints) {
+                              const gap = 7.0;
+                              final double tileWidth = (constraints.maxWidth - gap) / 2;
+                              return Row(
+                                children: [
+                                  ItemTile(
+                                    height: 140,
+                                    width: tileWidth,
+                                    showButtons: true,
+                                    item: state.itemList[10],
+                                  ),
+                                  const SizedBox(width: gap),
+                                  ItemTile(
+                                    height: 140,
+                                    width: tileWidth,
+                                    showButtons: true,
+                                    item: state.itemList[4],
+                                  ),
+                                ],
+                              );
+                            },
                           ),
+                          const SizedBox(height: 24),
                         ],
                       ),
                     ),

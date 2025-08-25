@@ -9,26 +9,24 @@ class BestSellerRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: SizedBox(
-        height: 108,
-        child: ListView.builder(
-          itemCount: featuredItems.length - 1,
-          shrinkWrap: true,
-          scrollDirection: Axis.horizontal,
-          physics: NeverScrollableScrollPhysics(),
-          itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.only(right: 10, left: 1),
-              child: ItemTile(
-                height: 108,
-                width: 71.7,
-                item: featuredItems[index],
-              ),
-            );
-          },
-        ),
+    return SizedBox(
+      height: 112,
+      child: ListView.builder(
+        itemCount: featuredItems.length - 1,
+        shrinkWrap: true,
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.only(left: 8, right: 8),
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: ItemTile(
+              height: 108,
+              width: 88,
+              item: featuredItems[index],
+            ),
+          );
+        },
       ),
     );
   }
