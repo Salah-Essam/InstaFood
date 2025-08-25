@@ -20,9 +20,6 @@ class Routes {
   static const String bottomNavBar = '/bottom_nav_bar';
   static const String profilePage = '/profile_page';
   static const String search = '/search';
-  static const String profileDrawer = '/profile_drawer';
-  static const String cartDrawer = '/cart_drawer';
-  static const String notificationsDrawer = '/notifications_drawer';
 }
 
 final GoRouter appRouter = GoRouter(
