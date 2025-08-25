@@ -21,7 +21,7 @@ class OnbBottomSheet extends StatelessWidget {
       width: 1.sw,
       height: OnboardingConstants.bottomSheetHeight.h,
       decoration: BoxDecoration(
-        color: AppColors.sheetBg,
+        color: AppColors.sheetBg.withOpacity(0.95), // Slightly transparent
         boxShadow: [
           BoxShadow(
             color: AppColors.sheetShadow,

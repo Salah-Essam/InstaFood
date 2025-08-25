@@ -17,7 +17,7 @@ onboarding/
 ├── view/
 │   ├── widgets/
 │   │   ├── onb_bottom_sheet.dart          # Bottom sheet UI component
-│   │   ├── onb_images_text.dart           # Image and text display component
+│   │   ├── onb_images_text.dart           # Image and text display component (legacy)
 │   │   └── onb_skip_button.dart           # Skip button component
 │   └── onboarding_screen.dart             # Main screen orchestrator
 └── README.md                              # This file
@@ -41,10 +41,29 @@ onboarding/
 - Easy to test and mock dependencies
 
 ### 4. **Clean Widget Structure**
-- `onboarding_screen.dart`: Main orchestrator, minimal logic
+- `onboarding_screen.dart`: Main orchestrator with efficient Stack for layering
 - `onb_bottom_sheet.dart`: Handles bottom sheet UI and interactions
-- `onb_images_text.dart`: Displays images and text content
-- `onb_skip_button.dart`: Skip button functionality
+- `onb_skip_button.dart`: Skip button functionality using Overlay
+- `onb_images_text.dart`: Legacy component (kept for reference)
+
+## Current Implementation
+
+### **Efficient Stack Usage**
+- **Full Background Images**: Images extend to full screen height
+- **Layered Bottom Sheet**: Bottom sheet positioned on top of images
+- **Skip Button**: Uses Overlay for lightweight positioning
+- **Performance**: Minimal Stack overhead, only for essential layering
+
+### **Layout Structure**
+```
+Stack
+├── PageView (full screen background images)
+│   ├── Full Image 1
+│   ├── Full Image 2
+│   └── Full Image 3
+└── Positioned Bottom Sheet (overlayed on images)
+    └── OnbBottomSheet (338px height, 20px radius)
+```
 
 ## Service Layer
 
@@ -85,24 +104,24 @@ onboarding/
 3. **Reusability**: Widgets can be reused in other parts of the app
 4. **Scalability**: Easy to add new features or modify existing ones
 5. **Consistency**: Follows established patterns used throughout the app
+6. **Performance**: Efficient Stack usage only where necessary
+7. **Visual Appeal**: Full background images with layered bottom sheet
 
 ## Usage Example
 
 ```dart
-// The main screen is now clean and focused
-class OnboardingScreen extends StatelessWidget {
+// The main screen now efficiently layers full images with bottom sheet
+class OnboardingScreen extends StatefulWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<OnboardingCubit, OnboardingState>(
-      builder: (context, state) {
-        return Stack(
-          children: [
-            PageView(/* ... */),
-            OnbSkipButton(onPressed: cubit.skip),
-            OnbBottomSheet(onDone: () => navigateToHome()),
-          ],
-        );
-      },
+    return Stack(
+      children: [
+        PageView(/* full background images */),
+        Positioned(
+          bottom: 0,
+          child: OnbBottomSheet(onDone: () => navigateToHome()),
+        ),
+      ],
     );
   }
 }
@@ -114,3 +133,4 @@ class OnboardingScreen extends StatelessWidget {
 - Implement dependency injection for better testability
 - Add analytics tracking service
 - Create onboarding data models for dynamic content
+- Optimize image loading and caching
