@@ -61,7 +61,14 @@ class HomePage extends StatelessWidget {
                         color: AppColors.white,
                       ),
                       child: ListView(
-                        padding: const EdgeInsets.fromLTRB(36, 31, 36, 32+72),
+                        // Keep a small bottom padding so content doesn't hide under the bottom nav,
+                        // but avoid excessive blank space on shorter screens.
+                        padding: EdgeInsets.fromLTRB(
+                          36,
+                          31,
+                          36,
+                          20 + MediaQuery.of(context).padding.bottom + 16,
+                        ),
                         children: [
                           ButtonGrid(),
                           SizedBox(height: 5),
@@ -125,7 +132,7 @@ class HomePage extends StatelessWidget {
                               );
                             },
                           ),
-                          const SizedBox(height: 24),
+                          const SizedBox(height: 12),
                         ],
                       ),
                     ),
