@@ -48,14 +48,14 @@ class _AdSliderState extends State<AdSlider> {
               onTap: () => _carouselController.animateToPage(entry.key),
               child: AnimatedContainer(
                 duration: Duration(milliseconds: 300),
-                width: _currentIndex == entry.key ? 24 : 16, // ✅ Animated width
+                width: _currentIndex == entry.key ? 24 : 16, //  Animated width
                 height: 4,
                 margin: EdgeInsets.symmetric(horizontal: 4.0),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(2),
                   color: _currentIndex == entry.key
-                      ? AppColors.orangeBase
-                      : AppColors.yellow2,
+                      ? AppColors.primary
+                      : AppColors.lightYellow,
                 ),
               ),
             );

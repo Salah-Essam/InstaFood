@@ -105,7 +105,7 @@ class BottomNavBar extends StatelessWidget {
                 navBarConfig: p0,
 
                 navBarDecoration: NavBarDecoration(
-                  color: AppColors.orangeBase,
+                  color: AppColors.primary,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(32),
                     topRight: Radius.circular(32),

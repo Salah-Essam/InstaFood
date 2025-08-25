@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:insta_food/core/theme/app_assets.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
+import 'package:insta_food/core/utils/Image_error.dart';
 import 'package:insta_food/core/utils/app_strings.dart';
 import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 
@@ -17,7 +18,7 @@ class AdvertismentCard extends StatelessWidget {
       height: 128,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        color: AppColors.orangeBase,
+        color: AppColors.primary,
       ),
       child: Stack(
         children: [
@@ -47,6 +48,7 @@ class AdvertismentCard extends StatelessWidget {
                     width: 161.5,
                     height: double.infinity,
                     fit: BoxFit.cover,
+                    errorBuilder: ImageError.imageErrorLoader(),
                   ),
                 ),
               ),

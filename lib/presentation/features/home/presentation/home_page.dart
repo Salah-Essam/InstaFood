@@ -11,7 +11,7 @@ import 'package:insta_food/presentation/features/home/widget/adSlider.dart';
 import 'package:insta_food/presentation/features/home/widget/app_greeting.dart';
 import 'package:insta_food/presentation/features/home/widget/bestseller_row.dart';
 import 'package:insta_food/presentation/features/home/widget/home_buttonGrid.dart';
-import 'package:insta_food/presentation/features/home/widget/recommend_tile.dart';
+import 'package:insta_food/presentation/features/home/widget/item_tile.dart';
 import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 import 'package:insta_food/presentation/features/items/presentation/cubit/item_cubit.dart';
 import 'package:insta_food/presentation/widgets/custom_appbar.dart';
@@ -59,62 +59,69 @@ class HomePage extends StatelessWidget {
                         ),
                         color: AppColors.white,
                       ),
-                      child: Padding(
+                      child: ListView(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 36.0,
                           vertical: 31,
                         ),
-
-                        child: Column(
-                          children: [
-                            ButtonGrid(),
-                            SizedBox(height: 5),
-                            Container(color: AppColors.orangeBase, height: 0.5),
-                            SizedBox(height: 5),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                    AppStrings.bestseller,
-                                    style: AppTextStyles.header,
-                                  ),
+                        children: [
+                          ButtonGrid(),
+                          SizedBox(height: 5),
+                          Container(color: AppColors.orangeBase, height: 0.5),
+                          SizedBox(height: 5),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Align(
+                                alignment: Alignment.topLeft,
+                                child: Text(
+                                  AppStrings.bestseller,
+                                  style: AppTextStyles.header,
                                 ),
-                                InkWell(
-                                  onTap: () {},
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        AppStrings.viewAll,
-                                        style: AppTextStyles.greetingDialoge,
-                                      ),
-                                      SvgPicture.asset(AppAssets.nextArrow),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            BestSellerRow(featuredItems: featuredItems),
-                            SizedBox(height: 20),
-                            AdSlider(featuredItems: featuredItems),
-                            SizedBox(height: 21),
-                            Align(
-                              alignment: Alignment.topLeft,
-                              child: Text(
-                                AppStrings.recommend,
-                                style: AppTextStyles.header,
                               ),
+                              InkWell(
+                                onTap: () {},
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      AppStrings.viewAll,
+                                      style: AppTextStyles.greetingDialoge,
+                                    ),
+                                    SvgPicture.asset(AppAssets.nextArrow),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          BestSellerRow(featuredItems: featuredItems),
+                          SizedBox(height: 20),
+                          AdSlider(featuredItems: featuredItems),
+                          SizedBox(height: 21),
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              AppStrings.recommend,
+                              style: AppTextStyles.header,
                             ),
-                            Row(
-                              spacing: 7,
-                              children: [
-                                RecommendTile(item: state.itemList[10]),
-                                RecommendTile(item: state.itemList[4]),
-                              ],
-                            ),
-                          ],
-                        ),
+                          ),
+                          Row(
+                            spacing: 7,
+                            children: [
+                              ItemTile(
+                                height: 140,
+                                width: 159,
+                                showButtons: true,
+                                item: state.itemList[10],
+                              ),
+                              ItemTile(
+                                height: 140,
+                                width: 159,
+                                showButtons: true,
+                                item: state.itemList[4],
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   ),

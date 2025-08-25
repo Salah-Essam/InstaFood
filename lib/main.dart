@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:insta_food/core/di/di.dart';
 import 'package:flutter/services.dart';
 import 'package:insta_food/core/routes/router.dart';
+import 'package:insta_food/core/theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,10 +25,7 @@ class InstaFood extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: 'InstaFood',
           routerConfig: appRouter,
-          theme: ThemeData(
-            useMaterial3: true,
-            scaffoldBackgroundColor: Colors.white,
-          ),
+          theme: AppTheme.theme,
           builder: (context, child) {
             // Set global status bar style
             SystemChrome.setSystemUIOverlayStyle(

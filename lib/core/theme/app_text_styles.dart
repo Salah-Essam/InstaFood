@@ -31,12 +31,12 @@ class AppTextStyles {
   static final TextStyle greeting = TextStyle(
     fontWeight: FontWeight.w700,
     fontSize: 30,
-    color: AppColors.font2,
+    color: AppColors.fontWhite,
   );
   static TextStyle greetingDialoge = TextStyle(
     fontWeight: FontWeight.w500,
     fontSize: 13,
-    color: AppColors.orangeBase,
+    color: AppColors.primary,
   );
   static TextStyle search = TextStyle(
     fontWeight: FontWeight.w300,
@@ -56,11 +56,11 @@ class AppTextStyles {
   static TextStyle ad = TextStyle(
     fontWeight: FontWeight.w400,
     fontSize: 16,
-    color: AppColors.font2,
+    color: AppColors.fontWhite,
   );
   static TextStyle price = TextStyle(
     fontWeight: FontWeight.w400,
     fontSize: 11,
-    color: AppColors.font2,
+    color: AppColors.fontWhite,
   );
 }

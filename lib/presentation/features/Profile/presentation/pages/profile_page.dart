@@ -7,7 +7,7 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: AppColors.yellowBase,
+      backgroundColor: AppColors.statusBar,
       body: Column(
         children: [
           SizedBox(height: size.height * 0.15, width: double.infinity),
