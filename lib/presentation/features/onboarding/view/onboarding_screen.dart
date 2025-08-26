@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:insta_food/core/routes/router.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
+import 'package:insta_food/core/storage/shared_prefrences/shared_prefs_service.dart';
 import 'package:insta_food/presentation/widgets/status_bar_bg.dart';
 import 'package:go_router/go_router.dart';
 import '../logic/cubit/onboarding_cubit.dart';
@@ -40,9 +41,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         top: 16.h + MediaQuery.of(context).padding.top,
         right: 16.w,
         child: OnbSkipButton(
-          onPressed: () {
-            final cubit = context.read<OnboardingCubit>();
-            cubit.skip();
+          onPressed: () async {
+            // Mark onboarding as completed
+            final prefsService = await SharedPrefsService.getInstance();
+            await prefsService.markOnboardingCompleted();
+            // Navigate directly to home for first-time users
+            if (context.mounted) {
+              context.go(Routes.bottomNavBar);
+            }
           },
         ),
       ),
@@ -71,9 +77,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
             // BottomSheet في مكانه الطبيعي
             bottomSheet: OnbBottomSheet(
-              onDone: () {
+              onDone: () async {
                 if (context.mounted) {
-                  context.go(Routes.bottomNavBar);
+                  // Mark onboarding as completed
+                  final prefsService = await SharedPrefsService.getInstance();
+                  await prefsService.markOnboardingCompleted();
+                  // Navigate directly to home for first-time users
+                  if (context.mounted) {
+                    context.go(Routes.bottomNavBar);
+                  }
                 }
               },
             ),

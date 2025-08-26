@@ -18,6 +18,7 @@ class SharedPrefsService {
   static const String _keySeenOnboarding = 'seen_onboarding';
   static const String _keyOnboardingStep = 'onboarding_step';
   static const String _keyFirstLaunch = 'first_launch';
+  static const String _keySeenSecondSplash = 'seen_second_splash';
 
   // Check if user has seen onboarding
   Future<bool> hasSeenOnboarding() async {
@@ -27,6 +28,16 @@ class SharedPrefsService {
   // Mark onboarding as completed
   Future<void> markOnboardingCompleted() async {
     await _prefs?.setBool(_keySeenOnboarding, true);
+  }
+
+  // Check if user has seen second splash screen
+  Future<bool> hasSeenSecondSplash() async {
+    return _prefs?.getBool(_keySeenSecondSplash) ?? false;
+  }
+
+  // Mark second splash as completed
+  Future<void> markSecondSplashCompleted() async {
+    await _prefs?.setBool(_keySeenSecondSplash, true);
   }
 
   // Get current onboarding step
@@ -53,6 +64,7 @@ class SharedPrefsService {
   Future<void> clearOnboardingData() async {
     await _prefs?.remove(_keySeenOnboarding);
     await _prefs?.remove(_keyOnboardingStep);
+    await _prefs?.remove(_keySeenSecondSplash);
   }
 
   // Generic methods for other preferences

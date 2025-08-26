@@ -3,22 +3,23 @@ import 'package:go_router/go_router.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/storage/shared_prefrences/shared_prefs_service.dart';
 import 'package:insta_food/presentation/features/BottomNavBar/presentation/pages/bottom_nav_bar.dart';
-import 'package:insta_food/presentation/features/BottomNavBar/presentation/widgets/cart_drawer.dart';
-import 'package:insta_food/presentation/features/BottomNavBar/presentation/widgets/notifications_drawer.dart';
-import 'package:insta_food/presentation/features/BottomNavBar/presentation/widgets/profile_drawer.dart';
 import 'package:insta_food/presentation/features/Profile/presentation/pages/profile_page.dart';
 import 'package:insta_food/presentation/features/home/presentation/home_page.dart';
 import 'package:insta_food/presentation/features/onboarding/onboarding.dart';
 import 'package:insta_food/presentation/features/search/presentation/search_page.dart';
+import 'package:insta_food/presentation/features/splash/view/second_splash_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Routes {
   static const String splash = '/';
+  static const String secondSplash = '/second_splash';
   static const String onboarding = '/onboarding';
   static const String home = '/home';
   static const String bottomNavBar = '/bottom_nav_bar';
   static const String profilePage = '/profile_page';
   static const String search = '/search';
+  static const String login = '/login';
+  static const String signup = '/signup';
 }
 
 final GoRouter appRouter = GoRouter(
@@ -27,6 +28,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: Routes.splash,
       builder: (context, state) => const _SplashGate(),
+    ),
+    GoRoute(
+      path: Routes.secondSplash,
+      builder: (context, state) => const SecondSplashScreen(),
     ),
     GoRoute(
       path: Routes.onboarding,
@@ -47,6 +52,18 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: Routes.search,
       builder: (context, state) => const SearchPage(),
+    ),
+    GoRoute(
+      path: Routes.login,
+      builder: (context, state) => const Scaffold(
+        body: Center(child: Text('Login Screen - Coming Soon')),
+      ),
+    ),
+    GoRoute(
+      path: Routes.signup,
+      builder: (context, state) => const Scaffold(
+        body: Center(child: Text('Signup Screen - Coming Soon')),
+      ),
     ),
   ],
 );
@@ -110,10 +127,20 @@ class _SplashGateState extends State<_SplashGate>
 
     final prefsService = await SharedPrefsService.getInstance();
     final seen = await prefsService.hasSeenOnboarding();
+    final seenSecondSplash = await prefsService.hasSeenSecondSplash();
+
     if (!mounted) return;
+
     if (seen) {
-      context.go(Routes.bottomNavBar);
+      if (seenSecondSplash) {
+        // User has completed onboarding and second splash, go directly to home
+        context.go(Routes.bottomNavBar);
+      } else {
+        // User has seen onboarding but not second splash, show second splash
+        context.go(Routes.secondSplash);
+      }
     } else {
+      // First time user, show onboarding
       context.go(Routes.onboarding);
     }
   }

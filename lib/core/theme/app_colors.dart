@@ -14,6 +14,20 @@ class AppColors {
     0xFFF5CB58,
   ); // Exact Figma yellow color
 
+  // Second splash screen (orange)
+  static const Color secondSplashBackground = Color(
+    0xFFE95322,
+  ); // Orange background
+  static const Color loginButtonBackground = Color(
+    0xFFF5CB58,
+  ); // Login button color
+  static const Color signupButtonBackground = Color(
+    0xFFF3E9B5,
+  ); // Signup button color
+  static const Color buttonTextColor = Color(
+    0xFF452521,
+  ); // Dark orange/brown text inside buttons
+
   // Text
   static const Color title = Color(0xFF101828);
   static const Color body = Color(0xFF475467);
