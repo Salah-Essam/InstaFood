@@ -65,13 +65,13 @@ class SecondSplashScreen extends StatelessWidget {
                           softWrap: false,
                           style: TextStyle(
                             color: AppColors.white,
-                            fontSize: 16.sp, // will scale down if needed
+                            fontSize: 16.sp, 
                             fontWeight: FontWeight.w400,
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(height: 6.h), // very small gap
+                    SizedBox(height: 9.h), // very small gap
                     AppButton(
                       label: 'Log In',
                       onPressed: () async {
