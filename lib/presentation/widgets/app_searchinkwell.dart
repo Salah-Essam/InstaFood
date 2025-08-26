@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:insta_food/core/routes/router_constants.dart';
-import 'package:insta_food/presentation/widgets/app_searchBar.dart';
 
 class Searchinkwell extends StatelessWidget {
   const Searchinkwell({super.key});
@@ -10,9 +9,9 @@ class Searchinkwell extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        context.push(AppRoutes.search);
+        context.push(RouterConstants.search);
       },
-      child: searchBar(enabled: false),
+      child: SizedBox(height: 25, width: 230, child: SearchBar(enabled: false)),
     );
   }
 }

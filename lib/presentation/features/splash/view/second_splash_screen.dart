@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:insta_food/core/routes/router.dart';
+import 'package:insta_food/core/routes/router_constants.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/storage/shared_prefrences/shared_prefs_service.dart';
 import 'package:insta_food/presentation/widgets/app_button_onb.dart';
@@ -16,16 +16,16 @@ class SecondSplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  // Compute a safe top for content so it starts below the image bottom
-  final media = MediaQuery.of(context);
-  final screenHeight = media.size.height;
-  final paddingTop = media.padding.top;
-  final imgHeight = 257.6021728515625.h;
-  // Image is vertically centered inside SafeArea; top = paddingTop + (available - imgHeight)/2
-  final available = screenHeight - media.padding.vertical;
-  final imageTop = paddingTop + (available - imgHeight) / 2;
-  final imageBottom = imageTop + imgHeight;
-  final contentTop = imageBottom + 6.h; // very small gap under image
+    // Compute a safe top for content so it starts below the image bottom
+    final media = MediaQuery.of(context);
+    final screenHeight = media.size.height;
+    final paddingTop = media.padding.top;
+    final imgHeight = 257.6021728515625.h;
+    // Image is vertically centered inside SafeArea; top = paddingTop + (available - imgHeight)/2
+    final available = screenHeight - media.padding.vertical;
+    final imageTop = paddingTop + (available - imgHeight) / 2;
+    final imageBottom = imageTop + imgHeight;
+    final contentTop = imageBottom + 6.h; // very small gap under image
 
     return Scaffold(
       backgroundColor: AppColors.secondSplashBackground,
@@ -65,7 +65,7 @@ class SecondSplashScreen extends StatelessWidget {
                           softWrap: false,
                           style: TextStyle(
                             color: AppColors.white,
-                            fontSize: 16.sp, 
+                            fontSize: 16.sp,
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -76,7 +76,9 @@ class SecondSplashScreen extends StatelessWidget {
                       label: 'Log In',
                       onPressed: () async {
                         await _markSeen();
-                        if (context.mounted) context.go(Routes.login);
+                        if (context.mounted) {
+                          context.push(RouterConstants.login);
+                        }
                       },
                       backgroundColor: AppColors.loginButtonBackground,
                       width: 207.w,
@@ -94,7 +96,9 @@ class SecondSplashScreen extends StatelessWidget {
                       label: 'Sign Up',
                       onPressed: () async {
                         await _markSeen();
-                        if (context.mounted) context.go(Routes.signup);
+                        if (context.mounted) {
+                          context.push(RouterConstants.signup);
+                        }
                       },
                       backgroundColor: AppColors.signupButtonBackground,
                       width: 207.w,
@@ -111,7 +115,9 @@ class SecondSplashScreen extends StatelessWidget {
                     TextButton(
                       onPressed: () async {
                         await _markSeen();
-                        if (context.mounted) context.go(Routes.home);
+                        if (context.mounted) {
+                          context.go(RouterConstants.bottomNavBar);
+                        }
                       },
                       child: Text(
                         'Explore as guest',

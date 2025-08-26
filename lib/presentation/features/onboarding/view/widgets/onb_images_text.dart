@@ -18,7 +18,7 @@ class OnbImagesText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: 1.sw,
       height: 1.sh - OnboardingConstants.bottomSheetHeight.h,
       child: Column(

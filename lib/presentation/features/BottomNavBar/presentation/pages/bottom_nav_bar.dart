@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:insta_food/core/theme/app_assets.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
-import 'package:insta_food/presentation/features/BottomNavBar/presentation/cubit/drawer_cubit.dart';
-import 'package:insta_food/presentation/features/BottomNavBar/presentation/pages/app_drawer.dart';
+import 'package:insta_food/presentation/features/drawer/presentation/cubit/drawer_cubit.dart';
+import 'package:insta_food/presentation/features/drawer/presentation/view/app_drawer.dart';
 import 'package:insta_food/presentation/features/home/presentation/home_page.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 
@@ -16,58 +17,53 @@ class BottomNavBar extends StatelessWidget {
   List<PersistentTabConfig> _tabs() {
     return [
       PersistentTabConfig(
-        screen: HomePage(
-          // scaffoldKey: _scaffoldKey,
-          // openDrawerCallback: (DrawerCubit cubit, DrawerType type) {
-          //   cubit.getDrawerData(type);
-          // },
-        ),
+        screen: HomePage(),
         item: ItemConfig(
           icon: SvgPicture.asset(
-            "assets/icons/Home.svg",
+            AppAssets.navBarHome,
             colorFilter: ColorFilter.mode(Colors.black, BlendMode.srcIn),
           ),
-          inactiveIcon: SvgPicture.asset("assets/icons/Home.svg"),
+          inactiveIcon: SvgPicture.asset(AppAssets.navBarHome),
         ),
       ),
       PersistentTabConfig(
         screen: Page(name: 'Menu', scaffoldKey: _scaffoldKey),
         item: ItemConfig(
           icon: SvgPicture.asset(
-            "assets/icons/Menu.svg",
+            AppAssets.navBarMenu,
             colorFilter: ColorFilter.mode(Colors.black, BlendMode.srcIn),
           ),
-          inactiveIcon: SvgPicture.asset("assets/icons/Menu.svg"),
+          inactiveIcon: SvgPicture.asset(AppAssets.navBarMenu),
         ),
       ),
       PersistentTabConfig(
         screen: Page(name: 'Favorites', scaffoldKey: _scaffoldKey),
         item: ItemConfig(
           icon: SvgPicture.asset(
-            "assets/icons/fav.svg",
+            AppAssets.navBarFav,
             colorFilter: ColorFilter.mode(Colors.black, BlendMode.srcIn),
           ),
-          inactiveIcon: SvgPicture.asset("assets/icons/fav.svg"),
+          inactiveIcon: SvgPicture.asset(AppAssets.navBarFav),
         ),
       ),
       PersistentTabConfig(
         screen: Page(name: 'Orders', scaffoldKey: _scaffoldKey),
         item: ItemConfig(
           icon: SvgPicture.asset(
-            "assets/icons/order.svg",
+            AppAssets.navBarOrders,
             colorFilter: ColorFilter.mode(Colors.black, BlendMode.srcIn),
           ),
-          inactiveIcon: SvgPicture.asset("assets/icons/order.svg"),
+          inactiveIcon: SvgPicture.asset(AppAssets.navBarOrders),
         ),
       ),
       PersistentTabConfig(
         screen: Page(name: 'Help', scaffoldKey: _scaffoldKey),
         item: ItemConfig(
           icon: SvgPicture.asset(
-            "assets/icons/help.svg",
+            AppAssets.navBarHelp,
             colorFilter: ColorFilter.mode(Colors.black, BlendMode.srcIn),
           ),
-          inactiveIcon: SvgPicture.asset("assets/icons/help.svg"),
+          inactiveIcon: SvgPicture.asset(AppAssets.navBarHelp),
         ),
       ),
     ];
@@ -75,45 +71,42 @@ class BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) {
-        final cubit = DrawerCubit();
-
-        return cubit;
+    return BlocListener<DrawerCubit, DrawerState>(
+      listener: (context, state) {
+        if (state is DrawerOpened) {
+          _scaffoldKey.currentState?.openEndDrawer();
+        } else if (state is DrawerInitial) {
+          _scaffoldKey.currentState?.closeEndDrawer();
+        }
       },
-      child: BlocBuilder<DrawerCubit, DrawerState>(
-        builder: (context, drawerContent) {
-          return Scaffold(
-            key: _scaffoldKey,
-            endDrawer: AppDrawer(
-              drawerContent: drawerContent is ShowProfileDrawer
-                  ? drawerContent.profileDrawer
-                  : drawerContent is ShowCartDrawer
-                  ? drawerContent.cartDrawer
-                  : drawerContent is ShowNotificationsDrawer
-                  ? drawerContent.notificationsDrawer
-                  : Center(child: Text("No Data")),
-            ),
-            body: PersistentTabView(
-              tabs: _tabs(),
-              screenTransitionAnimation: ScreenTransitionAnimation(
-                curve: Curves.ease,
-                duration: Duration(milliseconds: 300),
-              ),
-              navBarBuilder: (p0) => NeumorphicBottomNavBar(
-                navBarConfig: p0,
+      child: Scaffold(
+        key: _scaffoldKey,
+        endDrawer: BlocBuilder<DrawerCubit, DrawerState>(
+          builder: (context, state) {
+            if (state is DrawerOpened) {
+              return AppDrawer(drawerSelected: state.type);
+            }
+            return AppDrawer();
+          },
+        ),
+        body: PersistentTabView(
+          tabs: _tabs(),
+          screenTransitionAnimation: ScreenTransitionAnimation(
+            curve: Curves.ease,
+            duration: Duration(milliseconds: 300),
+          ),
+          navBarBuilder: (p0) => NeumorphicBottomNavBar(
+            navBarConfig: p0,
 
-                navBarDecoration: NavBarDecoration(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(32),
-                    topRight: Radius.circular(32),
-                  ),
-                ),
+            navBarDecoration: NavBarDecoration(
+              color: AppColors.primary,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(32),
+                topRight: Radius.circular(32),
               ),
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }

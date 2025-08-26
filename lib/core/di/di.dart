@@ -9,15 +9,14 @@ import 'package:insta_food/core/network/APIs/api_service.dart';
 import 'package:insta_food/core/network/Firebase/firebase_auth_service.dart';
 import 'package:insta_food/core/network/network_info.dart';
 import 'package:insta_food/core/storage/hive_service.dart';
+import 'package:insta_food/presentation/features/drawer/presentation/cubit/drawer_cubit.dart';
 
 final GetIt sl = GetIt.instance;
 
 Future<void> setupLocator() async {
   await HiveService.init();
   // On web, Firebase.initializeApp must receive options; using generated options for all platforms
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   //Register Firebase
   sl.registerLazySingleton<FirebaseAuthService>(() => FirebaseAuthService());
   //Register Connectivity
@@ -30,6 +29,7 @@ Future<void> setupLocator() async {
     () => NetworkInfo(connectivity: sl<Connectivity>()),
   );
   sl.registerLazySingleton<Box>(() => Hive.box(cacheItemsKey));
+  sl.registerLazySingleton<DrawerCubit>(() => DrawerCubit());
   //Features
   registerItems();
 }

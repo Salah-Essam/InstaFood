@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:insta_food/core/routes/router.dart';
+import 'package:insta_food/core/routes/router_constants.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
-import 'package:insta_food/presentation/features/BottomNavBar/data/profile_drawer_items.dart';
+import 'package:insta_food/presentation/features/drawer/data/datasources/profile_drawer_data.dart';
+import 'package:insta_food/presentation/features/drawer/presentation/widgets/drawer_item.dart';
 
 class ProfileDrawer extends StatelessWidget {
   const ProfileDrawer({super.key});
@@ -21,7 +21,7 @@ class ProfileDrawer extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 24,
-                  backgroundColor: AppColors.primary,
+                  backgroundColor: AppColors.statusBar,
                   child: Icon(Icons.person, color: Colors.black, size: 30),
                 ),
                 SizedBox(width: 16),
@@ -48,79 +48,23 @@ class ProfileDrawer extends StatelessWidget {
             const SizedBox(height: 32),
 
             Column(
-              children: List.generate(ProfileDrawerItem.items.length, (item) {
+              children: List.generate(ProfileDrawerData.items.length, (index) {
                 return Column(
                   children: [
                     DrawerItem(
                       onTap: () {
-                        // Navigator.pushNamed(context, AppRoutes.profilePage);
-                        context.go(Routes.profilePage);
+                        context.push(RouterConstants.profilePage);
                       },
-                      label: ProfileDrawerItem.items[item][0],
-                      icon: ProfileDrawerItem.items[item][1],
+                      label: ProfileDrawerData.items[index].name,
+                      icon: ProfileDrawerData.items[index].icon,
                     ),
                     Divider(color: AppColors.orange2, thickness: 1, height: 24),
                   ],
                 );
               }),
             ),
-            const SizedBox(height: 16),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: DrawerItem(
-                onTap: () {},
-                label: 'Logout',
-                icon: 'assets/icons/logout.svg',
-                iconHeight: 24,
-                iconWidth: 24,
-              ),
-            ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class DrawerItem extends StatelessWidget {
-  const DrawerItem({
-    super.key,
-    required this.label,
-    required this.icon,
-    required this.onTap,
-    this.iconWidth,
-    this.iconHeight,
-    this.fontSize,
-  });
-  final String label;
-  final String icon;
-  final VoidCallback onTap;
-  final double? iconWidth;
-  final double? iconHeight;
-  final double? fontSize;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(16),
-      onTap: onTap,
-      child: Row(
-        children: [
-          SvgPicture.asset(
-            icon,
-            width: iconWidth ?? 32,
-            height: iconHeight ?? 32,
-          ),
-          const SizedBox(width: 16),
-          Text(
-            label,
-            style: TextStyle(
-              color: AppColors.orange2,
-              fontSize: fontSize ?? 18,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
       ),
     );
   }

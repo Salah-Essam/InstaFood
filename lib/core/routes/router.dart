@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:insta_food/core/routes/router_constants.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/storage/shared_prefrences/shared_prefs_service.dart';
 import 'package:insta_food/presentation/features/BottomNavBar/presentation/pages/bottom_nav_bar.dart';
@@ -10,60 +11,51 @@ import 'package:insta_food/presentation/features/search/presentation/search_page
 import 'package:insta_food/presentation/features/splash/view/second_splash_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class Routes {
-  static const String splash = '/';
-  static const String secondSplash = '/second_splash';
-  static const String onboarding = '/onboarding';
-  static const String home = '/home';
-  static const String bottomNavBar = '/bottom_nav_bar';
-  static const String profilePage = '/profile_page';
-  static const String search = '/search';
-  static const String login = '/login';
-  static const String signup = '/signup';
-}
-
 final GoRouter appRouter = GoRouter(
-  initialLocation: Routes.splash,
+  initialLocation: RouterConstants.splash,
   routes: [
     GoRoute(
-      path: Routes.splash,
+      path: RouterConstants.splash,
       builder: (context, state) => const _SplashGate(),
     ),
     GoRoute(
-      path: Routes.secondSplash,
+      path: RouterConstants.secondSplash,
       builder: (context, state) => const SecondSplashScreen(),
     ),
     GoRoute(
-      path: Routes.onboarding,
+      path: RouterConstants.onboarding,
       builder: (context, state) => BlocProvider(
         create: (_) => OnboardingCubit(),
         child: const OnboardingScreen(),
       ),
     ),
-    GoRoute(path: Routes.home, builder: (context, state) => const HomePage()),
     GoRoute(
-      path: Routes.bottomNavBar,
+      path: RouterConstants.home,
+      builder: (context, state) => const HomePage(),
+    ),
+    GoRoute(
+      path: RouterConstants.bottomNavBar,
       builder: (context, state) => const BottomNavBar(),
     ),
     GoRoute(
-      path: Routes.profilePage,
-      builder: (context, state) => const ProfilePage(),
-    ),
-    GoRoute(
-      path: Routes.search,
+      path: RouterConstants.search,
       builder: (context, state) => const SearchPage(),
     ),
     GoRoute(
-      path: Routes.login,
+      path: RouterConstants.login,
       builder: (context, state) => const Scaffold(
         body: Center(child: Text('Login Screen - Coming Soon')),
       ),
     ),
     GoRoute(
-      path: Routes.signup,
+      path: RouterConstants.signup,
       builder: (context, state) => const Scaffold(
         body: Center(child: Text('Signup Screen - Coming Soon')),
       ),
+    ),
+    GoRoute(
+      path: RouterConstants.profilePage,
+      builder: (context, state) => ProfilePage(),
     ),
   ],
 );
@@ -132,10 +124,10 @@ class _SplashGateState extends State<_SplashGate>
 
     if (seen) {
       // User has seen onboarding before, show second splash screen
-      context.go(Routes.secondSplash);
+      context.go(RouterConstants.secondSplash);
     } else {
       // First time user, show onboarding
-      context.go(Routes.onboarding);
+      context.go(RouterConstants.onboarding);
     }
   }
 

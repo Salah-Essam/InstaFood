@@ -1,7 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
-import 'package:insta_food/presentation/features/home/widget/home_advertismentCard.dart';
+import 'package:insta_food/presentation/features/home/widget/home_advertisment_card.dart';
 import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 
 class AdSlider extends StatefulWidget {

@@ -14,7 +14,6 @@ class AppBackButton extends StatelessWidget {
         if (context.canPop()) {
           context.pop();
         }
-        ;
       },
     );
   }

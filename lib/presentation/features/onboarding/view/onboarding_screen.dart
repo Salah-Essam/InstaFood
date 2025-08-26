@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:insta_food/core/routes/router.dart';
+import 'package:insta_food/core/routes/router_constants.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/storage/shared_prefrences/shared_prefs_service.dart';
 import 'package:insta_food/presentation/widgets/status_bar_bg.dart';
@@ -47,7 +47,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             await prefsService.markOnboardingCompleted();
             // Navigate to second splash screen for first-time users
             if (context.mounted) {
-              context.go(Routes.secondSplash);
+              context.go(RouterConstants.secondSplash);
             }
           },
         ),
@@ -84,7 +84,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   await prefsService.markOnboardingCompleted();
                   // Navigate to second splash screen for first-time users
                   if (context.mounted) {
-                    context.go(Routes.secondSplash);
+                    context.go(RouterConstants.secondSplash);
                   }
                 }
               },
@@ -96,7 +96,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   Widget _buildFullBackgroundImage(String imagePath) {
-    return Container(
+    return SizedBox(
       width: 1.sw,
       height: 1.sh,
       child: Image.asset(

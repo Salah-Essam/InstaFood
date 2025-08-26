@@ -1,19 +1,17 @@
-class AppRoutes {
+class RouterConstants {
+  static const String splash = '/';
+  static const String secondSplash = '/second_splash';
+  static const String onboarding = '/onboarding';
   static const String home = '/home';
+  static const String bottomNavBar = '/bottom_nav_bar';
+  static const String profilePage = '/profile_page';
   static const String search = '/search';
-  static const String wrapper = '/wrapper';
-
-  static var orderPage;
-
-  static var profilePage;
-
-  static var addressPage;
-
-  static var paymentPage;
-
-  static var contactPage;
-
-  static var helpPage;
-
-  static var settingsPage;
+  static const String login = '/login';
+  static const String signup = '/signup';
+  static const String orderPage = '/orderPage';
+  static const String addressPage = '/addressPage';
+  static const String paymentPage = '/paymentPage';
+  static const String contactPage = '/contactPage';
+  static const String helpPage = '/helpPage';
+  static const String settingsPage = '/settingsPage';
 }
