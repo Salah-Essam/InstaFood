@@ -53,8 +53,9 @@ class ItemTile extends StatelessWidget {
               child: Align(
                 alignment: Alignment.center,
                 child: Text(
-                  "\$${item.itemPrice..toStringAsFixed(1)}",
+                  "\$${item.itemPrice.toStringAsFixed(1)}",
                   style: AppTextStyles.price,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ),

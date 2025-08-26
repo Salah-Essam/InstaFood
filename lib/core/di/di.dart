@@ -1,6 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:insta_food/core/network/Firebase/firebase_options.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
 import 'package:insta_food/core/di/register_items.dart';
@@ -13,7 +14,10 @@ final GetIt sl = GetIt.instance;
 
 Future<void> setupLocator() async {
   await HiveService.init();
-  await Firebase.initializeApp();
+  // On web, Firebase.initializeApp must receive options; using generated options for all platforms
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   //Register Firebase
   sl.registerLazySingleton<FirebaseAuthService>(() => FirebaseAuthService());
   //Register Connectivity

@@ -5,34 +5,23 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/core/utils/app_strings.dart';
-import 'package:insta_food/presentation/widgets/app_button.dart';
+import 'package:insta_food/presentation/widgets/app_button_onb.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../../logic/cubit/onboarding_cubit.dart';
+import '../../logic/constants/onboarding_constants.dart';
 
 class OnbBottomSheet extends StatelessWidget {
   final VoidCallback? onDone;
   const OnbBottomSheet({super.key, this.onDone});
-
-  String _icon(int i) => i == 0
-      ? 'assets/svgs/Transfer Document icon.svg'
-      : i == 1
-      ? 'assets/svgs/Card icon.svg'
-      : 'assets/svgs/Deliver Boy Icon.svg';
-
-  String _title(int i) => i == 0
-      ? AppStrings.onb1Title
-      : i == 1
-      ? AppStrings.onb2Title
-      : AppStrings.onb3Title;
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<OnboardingCubit>();
     return Container(
       width: 1.sw,
-      height: 338.h,
+      height: OnboardingConstants.bottomSheetHeight.h,
       decoration: BoxDecoration(
-        color: AppColors.sheetBg,
+        color: AppColors.sheetBg.withOpacity(0.95), // Slightly transparent
         boxShadow: [
           BoxShadow(
             color: AppColors.sheetShadow,
@@ -53,9 +42,9 @@ class OnbBottomSheet extends StatelessWidget {
             mainAxisSize: MainAxisSize.max,
             children: [
               SvgPicture.asset(
-                _icon(state.index),
-                width: 48.w,
-                height: 48.w,
+                _getIconForIndex(state.index),
+                width: OnboardingConstants.iconSize.w,
+                height: OnboardingConstants.iconSize.w,
                 colorFilter: const ColorFilter.mode(
                   AppColors.primary,
                   BlendMode.srcIn,
@@ -63,7 +52,7 @@ class OnbBottomSheet extends StatelessWidget {
               ),
               SizedBox(height: 16.h),
               Text(
-                _title(state.index),
+                _getTitleForIndex(state.index),
                 style: AppTextStyles.title,
                 textAlign: TextAlign.center,
               ),
@@ -76,19 +65,19 @@ class OnbBottomSheet extends StatelessWidget {
               SizedBox(height: 24.h),
               SmoothPageIndicator(
                 controller: cubit.pageController,
-                count: 3,
-                effect: const WormEffect(
-                  dotHeight: 6,
-                  dotWidth: 16,
-                  spacing: 8,
+                count: OnboardingConstants.totalPages,
+                effect: WormEffect(
+                  dotHeight: OnboardingConstants.pageIndicatorDotHeight,
+                  dotWidth: OnboardingConstants.pageIndicatorDotWidth,
+                  spacing: OnboardingConstants.pageIndicatorSpacing,
                   activeDotColor: AppColors.primary,
-                  dotColor: Color(0xFFE8E8E8),
+                  dotColor: const Color(0xFFE8E8E8),
                 ),
                 onDotClicked: (i) => cubit.goTo(i),
               ),
               SizedBox(height: 24.h),
               AppButton(
-                label: state.index == 2
+                label: state.index == OnboardingConstants.lastPageIndex
                     ? AppStrings.getStarted
                     : AppStrings.next,
                 onPressed: () async {
@@ -96,14 +85,40 @@ class OnbBottomSheet extends StatelessWidget {
                   if (done && context.mounted) onDone?.call();
                 },
                 textStyle: AppTextStyles.button,
-                width: 133.w,
-                height: 36.h,
-                borderRadius: 24,
+                width: OnboardingConstants.buttonWidth.w,
+                height: OnboardingConstants.buttonHeight.h,
+                borderRadius: OnboardingConstants.buttonBorderRadius,
               ),
             ],
           );
         },
       ),
     );
+  }
+
+  String _getIconForIndex(int index) {
+    switch (index) {
+      case OnboardingConstants.firstPageIndex:
+        return OnboardingConstants.transferDocumentIcon;
+      case OnboardingConstants.secondPageIndex:
+        return OnboardingConstants.cardIcon;
+      case OnboardingConstants.lastPageIndex:
+        return OnboardingConstants.deliverBoyIcon;
+      default:
+        return OnboardingConstants.transferDocumentIcon;
+    }
+  }
+
+  String _getTitleForIndex(int index) {
+    switch (index) {
+      case OnboardingConstants.firstPageIndex:
+        return OnboardingConstants.firstPageTitle;
+      case OnboardingConstants.secondPageIndex:
+        return OnboardingConstants.secondPageTitle;
+      case OnboardingConstants.lastPageIndex:
+        return OnboardingConstants.thirdPageTitle;
+      default:
+        return OnboardingConstants.firstPageTitle;
+    }
   }
 }
