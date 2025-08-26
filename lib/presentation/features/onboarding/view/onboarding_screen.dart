@@ -45,9 +45,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             // Mark onboarding as completed
             final prefsService = await SharedPrefsService.getInstance();
             await prefsService.markOnboardingCompleted();
-            // Navigate directly to home for first-time users
+            // Navigate to second splash screen for first-time users
             if (context.mounted) {
-              context.go(Routes.bottomNavBar);
+              context.go(Routes.secondSplash);
             }
           },
         ),
@@ -82,9 +82,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   // Mark onboarding as completed
                   final prefsService = await SharedPrefsService.getInstance();
                   await prefsService.markOnboardingCompleted();
-                  // Navigate directly to home for first-time users
+                  // Navigate to second splash screen for first-time users
                   if (context.mounted) {
-                    context.go(Routes.bottomNavBar);
+                    context.go(Routes.secondSplash);
                   }
                 }
               },

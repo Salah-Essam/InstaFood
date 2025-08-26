@@ -127,18 +127,12 @@ class _SplashGateState extends State<_SplashGate>
 
     final prefsService = await SharedPrefsService.getInstance();
     final seen = await prefsService.hasSeenOnboarding();
-    final seenSecondSplash = await prefsService.hasSeenSecondSplash();
 
     if (!mounted) return;
 
     if (seen) {
-      if (seenSecondSplash) {
-        // User has completed onboarding and second splash, go directly to home
-        context.go(Routes.bottomNavBar);
-      } else {
-        // User has seen onboarding but not second splash, show second splash
-        context.go(Routes.secondSplash);
-      }
+      // User has seen onboarding before, show second splash screen
+      context.go(Routes.secondSplash);
     } else {
       // First time user, show onboarding
       context.go(Routes.onboarding);
