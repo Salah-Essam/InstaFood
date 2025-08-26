@@ -46,9 +46,8 @@ class AppColors {
 
   static var darktext = Color(0xFF452521);
 
-  static var yellowBase;
-
-  static var yellow2;
-
-  static var orange2;
+  // Legacy aliases used across the app (kept for compatibility)
+  static const Color orange2 = Color(0xFFFFD699); // light orange for text/dividers
+  static const Color yellowBase = Color(0xFFF5CB58);
+  static const Color yellow2 = Color(0xFFF3E9B5);
 }

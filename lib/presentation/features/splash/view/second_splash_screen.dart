@@ -6,193 +6,119 @@ import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/storage/shared_prefrences/shared_prefs_service.dart';
 import 'package:insta_food/presentation/widgets/app_button_onb.dart';
 
-class SecondSplashScreen extends StatefulWidget {
+class SecondSplashScreen extends StatelessWidget {
   const SecondSplashScreen({super.key});
 
-  @override
-  State<SecondSplashScreen> createState() => _SecondSplashScreenState();
-}
-
-class _SecondSplashScreenState extends State<SecondSplashScreen>
-    with TickerProviderStateMixin {
-  late AnimationController _fadeController;
-  late AnimationController _scaleController;
-  late Animation<double> _fadeAnimation;
-  late Animation<double> _scaleAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _fadeController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
-      vsync: this,
-    );
-    _scaleController = AnimationController(
-      duration: const Duration(milliseconds: 1000),
-      vsync: this,
-    );
-
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
-    );
-
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(parent: _scaleController, curve: Curves.elasticOut),
-    );
-
-    _startAnimations();
-  }
-
-  void _startAnimations() async {
-    await Future.delayed(const Duration(milliseconds: 300));
-    if (mounted) {
-      _fadeController.forward();
-      _scaleController.forward();
-    }
-  }
-
-  @override
-  void dispose() {
-    _fadeController.dispose();
-    _scaleController.dispose();
-    super.dispose();
+  Future<void> _markSeen() async {
+    final prefs = await SharedPrefsService.getInstance();
+    await prefs.markSecondSplashCompleted();
   }
 
   @override
   Widget build(BuildContext context) {
+  // Compute a safe top for content so it starts below the image bottom
+  final media = MediaQuery.of(context);
+  final screenHeight = media.size.height;
+  final paddingTop = media.padding.top;
+  final imgHeight = 257.6021728515625.h;
+  // Image is vertically centered inside SafeArea; top = paddingTop + (available - imgHeight)/2
+  final available = screenHeight - media.padding.vertical;
+  final imageTop = paddingTop + (available - imgHeight) / 2;
+  final imageBottom = imageTop + imgHeight;
+  final contentTop = imageBottom + 6.h; // very small gap under image
+
     return Scaffold(
       backgroundColor: AppColors.secondSplashBackground,
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            // Top section with image and text
-            Expanded(
-              flex: 3,
-              child: Center(
-                child: AnimatedBuilder(
-                  animation: Listenable.merge([
-                    _fadeController,
-                    _scaleController,
-                  ]),
-                  builder: (context, child) {
-                    return FadeTransition(
-                      opacity: _fadeAnimation,
-                      child: ScaleTransition(
-                        scale: _scaleAnimation,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            // Image with specified dimensions
-                            SizedBox(
-                              width: 202.31.w,
-                              height: 257.6.h,
-                              child: Image.asset(
-                                'assets/images/splashscreen2.png',
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                            SizedBox(height: 20.h),
-                            // Description text
-                            Container(
-                              width: 295.w,
-                              child: Text(
-                                'Discover tasty meals nearby and get them fast',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: AppColors.white,
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
+            // Centered image to match Splash 1
+            Center(
+              child: Image.asset(
+                'assets/images/splashscreen2.png',
+                width: 202.30677795410156.w,
+                height: 257.6021728515625.h,
+                fit: BoxFit.contain,
               ),
             ),
 
-            // Bottom section with buttons
-            Expanded(
-              flex: 2,
+            // Content positioned to start below image bottom to avoid overlap (no scroll)
+            Positioned(
+              top: contentTop,
+              left: 0,
+              right: 0,
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                padding: EdgeInsets.only(bottom: 32.h),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Login button
+                    SizedBox(
+                      width: 295.w,
+                      // Scale text down to ensure it fits on one line fully
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Discover tasty meals nearby and get them fast.',
+                          textAlign: TextAlign.center,
+                          maxLines: 1,
+                          softWrap: false,
+                          style: TextStyle(
+                            color: AppColors.white,
+                            fontSize: 16.sp, // will scale down if needed
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 6.h), // very small gap
                     AppButton(
                       label: 'Log In',
                       onPressed: () async {
-                        // Mark second splash as completed
-                        final prefsService =
-                            await SharedPrefsService.getInstance();
-                        await prefsService.markSecondSplashCompleted();
-                        // Navigate to login screen
-                        if (mounted) {
-                          context.go(Routes.login);
-                        }
+                        await _markSeen();
+                        if (context.mounted) context.go(Routes.login);
                       },
                       backgroundColor: AppColors.loginButtonBackground,
                       width: 207.w,
                       height: 45.h,
                       borderRadius: 30,
                       textStyle: TextStyle(
-                        color: AppColors.buttonTextColor,
+                        color: AppColors.primary,
                         fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w700,
+                        height: 22.h / 16.sp,
                       ),
                     ),
-
-                    SizedBox(height: 16.h),
-
-                    // Sign Up button
+                    SizedBox(height: 12.h),
                     AppButton(
                       label: 'Sign Up',
                       onPressed: () async {
-                        // Mark second splash as completed
-                        final prefsService =
-                            await SharedPrefsService.getInstance();
-                        await prefsService.markSecondSplashCompleted();
-                        // Navigate to signup screen
-                        if (mounted) {
-                          context.go(Routes.signup);
-                        }
+                        await _markSeen();
+                        if (context.mounted) context.go(Routes.signup);
                       },
                       backgroundColor: AppColors.signupButtonBackground,
                       width: 207.w,
                       height: 45.h,
                       borderRadius: 30,
                       textStyle: TextStyle(
-                        color: AppColors.buttonTextColor,
+                        color: AppColors.primary,
                         fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w700,
+                        height: 22.h / 16.sp,
                       ),
                     ),
-
-                    SizedBox(height: 20.h),
-
-                    // Explore as guest button
-                    GestureDetector(
-                      onTap: () async {
-                        // Mark second splash as completed
-                        final prefsService =
-                            await SharedPrefsService.getInstance();
-                        await prefsService.markSecondSplashCompleted();
-                        // Navigate to home screen
-                        if (mounted) {
-                          context.go(Routes.bottomNavBar);
-                        }
+                    SizedBox(height: 12.h),
+                    TextButton(
+                      onPressed: () async {
+                        await _markSeen();
+                        if (context.mounted) context.go(Routes.home);
                       },
                       child: Text(
                         'Explore as guest',
                         style: TextStyle(
                           color: AppColors.white,
                           fontSize: 16.sp,
-                          fontWeight: FontWeight.w500,
-                          decoration: TextDecoration.underline,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
