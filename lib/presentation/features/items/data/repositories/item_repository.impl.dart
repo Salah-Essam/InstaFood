@@ -5,6 +5,7 @@ import 'package:insta_food/core/errors/failures.dart';
 import 'package:insta_food/core/network/network_info.dart';
 import 'package:insta_food/presentation/features/items/data/data%20sources/local_data_source.dart';
 import 'package:insta_food/presentation/features/items/data/data%20sources/remote_data_source.dart';
+import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 import 'package:insta_food/presentation/features/items/data/repositories/item_repository.dart';
 
 class ItemRepoImpl implements ItemRepository {
@@ -18,7 +19,7 @@ class ItemRepoImpl implements ItemRepository {
     required this.networkInfo,
   });
   @override
-  Future<Either<Failure, List<dynamic>>> fetchItems() async {
+  Future<Either<Failure, List<ItemModel>>> fetchItems() async {
     if (await networkInfo.isConnected) {
       try {
         final remoteData = await remoteDataSource.fetchItems();
@@ -38,7 +39,7 @@ class ItemRepoImpl implements ItemRepository {
   }
 
   @override
-  Future<Either<Failure, List<dynamic>>> fetchItem(String name) async {
+  Future<Either<Failure, List<ItemModel>>> fetchItem(String name) async {
     try {
       final remoteData = await remoteDataSource.itemSearch(name);
       return Right(remoteData);

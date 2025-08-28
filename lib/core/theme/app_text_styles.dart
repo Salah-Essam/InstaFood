@@ -41,7 +41,7 @@ class AppTextStyles {
   static TextStyle search = TextStyle(
     fontWeight: FontWeight.w300,
     fontSize: 12,
-    color: AppColors.grey,
+    color: AppColors.body,
   );
   static TextStyle small = TextStyle(
     fontWeight: FontWeight.w400,

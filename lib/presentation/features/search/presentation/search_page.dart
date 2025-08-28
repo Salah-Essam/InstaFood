@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:insta_food/core/di/di.dart';
+import 'package:insta_food/presentation/features/home/widget/item_tile.dart';
+import 'package:insta_food/presentation/features/items/presentation/cubit/item_cubit.dart';
 import 'package:insta_food/presentation/widgets/custom_appbar.dart';
 
 class SearchPage extends StatelessWidget {
@@ -6,9 +10,36 @@ class SearchPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(inableSearch: true, leading: true),
-      body: ListView(),
+    return BlocProvider(
+      create: (context) => sl<ItemCubit>(),
+      child: Scaffold(
+        appBar: CustomAppBar(inableSearch: true, leading: true),
+        body: BlocBuilder<ItemCubit, ItemState>(
+          builder: (context, state) {
+            if (state is ItemLoading) {
+              return Center(child: CircularProgressIndicator());
+            } else if (state is ItemFailure) {
+              return Center(child: Text('Error: ${state.message}'));
+            } else if (state is ItemLoaded) {
+              print(state.searchedItems);
+              return Container(
+                child: ListView.builder(
+                  itemCount: state.searchedItems!.length,
+                  itemBuilder: (context, index) {
+                    final item = state.searchedItems![index];
+                    return ItemTile(
+                      item: item,
+                      height: 108,
+                      width: 71.68141174316406,
+                    );
+                  },
+                ),
+              );
+            }
+            return SizedBox();
+          },
+        ),
+      ),
     );
   }
 }

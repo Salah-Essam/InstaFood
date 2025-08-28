@@ -1,5 +1,6 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:insta_food/core/network/APIs/api_keys.dart';
+
 part '../../../../../core/storage/hive_adapters/item_model.g.dart';
 
 @HiveType(typeId: 0)

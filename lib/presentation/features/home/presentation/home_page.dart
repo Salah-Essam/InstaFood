@@ -18,11 +18,6 @@ import 'package:insta_food/presentation/widgets/custom_appbar.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
-  List<ItemModel> getRandomItems(List<ItemModel> allItems, {int count = 5}) {
-    if (allItems.isEmpty) return [];
-    final shuffled = List<ItemModel>.from(allItems)..shuffle();
-    return shuffled.take(count).toList();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,9 +33,6 @@ class HomePage extends StatelessWidget {
             } else if (state is ItemFailure) {
               return Center(child: Text('Error: ${state.message}'));
             } else if (state is ItemLoaded) {
-              //Selects 5 random items for advertisment
-              final featuredItems = getRandomItems(state.itemList, count: 5);
-
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -67,7 +59,7 @@ class HomePage extends StatelessWidget {
                           36,
                           31,
                           36,
-                          20 + MediaQuery.of(context).padding.bottom + 16,
+                          MediaQuery.of(context).padding.bottom,
                         ),
                         children: [
                           ButtonGrid(),
@@ -98,9 +90,9 @@ class HomePage extends StatelessWidget {
                               ),
                             ],
                           ),
-                          BestSellerRow(featuredItems: featuredItems),
+                          BestSellerRow(featuredItems: state.featuredItems!),
                           SizedBox(height: 20),
-                          AdSlider(featuredItems: featuredItems),
+                          AdSlider(featuredItems: state.featuredItems!),
                           SizedBox(height: 21),
                           Align(
                             alignment: Alignment.topLeft,
@@ -112,8 +104,11 @@ class HomePage extends StatelessWidget {
                           LayoutBuilder(
                             builder: (context, constraints) {
                               const gap = 7.0;
-                              final double tileWidth = (constraints.maxWidth - gap) / 2;
+                              final double tileWidth =
+                                  (constraints.maxWidth - gap) / 2;
                               return Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   ItemTile(
                                     height: 140,
@@ -140,12 +135,7 @@ class HomePage extends StatelessWidget {
                 ],
               );
             }
-            return Center(
-              child: ElevatedButton(
-                onPressed: () => context.read<ItemCubit>().getallItems(),
-                child: Text('Load Items'),
-              ),
-            );
+            return SizedBox();
           },
         ),
       ),

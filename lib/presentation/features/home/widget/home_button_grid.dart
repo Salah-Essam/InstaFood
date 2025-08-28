@@ -24,13 +24,14 @@ class ButtonGrid extends StatelessWidget {
         shrinkWrap: true,
         physics: const BouncingScrollPhysics(),
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.only(right: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+
         itemBuilder: (context, index) {
           // Get the category key and asset path by index
           final categoryName = categories.keys.elementAt(index);
           final asset = categories[categoryName]!;
           return Padding(
-            padding: const EdgeInsets.only(right: 19, left: 1),
+            padding: const EdgeInsets.only(right: 19, left: 10),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
