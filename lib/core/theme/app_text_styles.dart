@@ -63,4 +63,9 @@ class AppTextStyles {
     fontSize: 11,
     color: AppColors.fontWhite,
   );
+  static TextStyle pageTitle = TextStyle(
+    fontWeight: FontWeight.w700,
+    fontSize: 28,
+    color: AppColors.fontWhite,
+  );
 }

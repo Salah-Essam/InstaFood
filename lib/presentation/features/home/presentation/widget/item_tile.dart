@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:insta_food/core/theme/app_assets.dart';
@@ -5,6 +6,7 @@ import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/core/utils/image_error.dart';
 import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
+import 'package:insta_food/presentation/widgets/cachedImage.dart';
 
 class ItemTile extends StatelessWidget {
   final ItemModel item;
@@ -30,11 +32,7 @@ class ItemTile extends StatelessWidget {
           Positioned.fill(
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
-              child: Image.network(
-                item.imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: ImageError.imageErrorLoader(),
-              ),
+              child: CachedImage(item: item),
             ),
           ),
           Positioned(

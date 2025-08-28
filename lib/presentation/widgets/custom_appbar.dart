@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:insta_food/core/routes/router_constants.dart';
 import 'package:insta_food/core/theme/app_assets.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
+import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/presentation/features/drawer/presentation/cubit/drawer_cubit.dart';
 import 'package:insta_food/presentation/features/search/presentation/search_page.dart';
 import 'package:insta_food/presentation/widgets/app_search_bar.dart';
@@ -42,7 +43,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   child: InkWell(
                     child: SvgPicture.asset(
                       AppAssets.backArrow,
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fill,
                     ),
                     onTap: () {
                       Navigator.pop(context);
@@ -51,7 +52,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
               )
             : SizedBox(),
-        leadingWidth: 36,
+        leadingWidth: 40,
         title: title == null
             ? (inableSearch
                   ? AppSearchBar(isEnabled: true)
@@ -65,7 +66,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       },
                       child: AppSearchBar(isEnabled: false),
                     ))
-            : Text(title!),
+            : Text(title!, style: AppTextStyles.pageTitle),
         centerTitle: true,
         actions: [
           Padding(
@@ -73,53 +74,44 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             child: Builder(
               builder: (context) {
                 return Row(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Flexible(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          GestureDetector(
+                    GestureDetector(
+                      onTap: () {
+                        context.read<DrawerCubit>().openDrawer(DrawerType.cart);
+                      },
+                      child: SvgPicture.asset(
+                        AppAssets.cart,
+                        width: 26,
+                        height: 26,
+                      ),
+                    ),
+                    SizedBox(width: 7),
+                    ?hideNotification
+                        ? null
+                        : GestureDetector(
                             onTap: () {
                               context.read<DrawerCubit>().openDrawer(
-                                DrawerType.cart,
+                                DrawerType.notifications,
                               );
                             },
                             child: SvgPicture.asset(
-                              AppAssets.cart,
+                              AppAssets.notification,
                               width: 26,
                               height: 26,
                             ),
                           ),
-                          SizedBox(width: 7),
-                          ?hideNotification
-                              ? null
-                              : GestureDetector(
-                                  onTap: () {
-                                    context.read<DrawerCubit>().openDrawer(
-                                      DrawerType.notifications,
-                                    );
-                                  },
-                                  child: SvgPicture.asset(
-                                    AppAssets.notification,
-                                    width: 26,
-                                    height: 26,
-                                  ),
-                                ),
-                          SizedBox(width: 7),
-                          GestureDetector(
-                            onTap: () {
-                              context.read<DrawerCubit>().openDrawer(
-                                DrawerType.profile,
-                              );
-                            },
-                            child: SvgPicture.asset(
-                              AppAssets.profile,
-                              width: 26,
-                              height: 26,
-                            ),
-                          ),
-                        ],
+                    ?hideNotification ? null : SizedBox(width: 7),
+                    GestureDetector(
+                      onTap: () {
+                        context.read<DrawerCubit>().openDrawer(
+                          DrawerType.profile,
+                        );
+                      },
+                      child: SvgPicture.asset(
+                        AppAssets.profile,
+                        width: 26,
+                        height: 26,
                       ),
                     ),
                   ],
