@@ -29,4 +29,13 @@ class AppStrings {
   static const String bestseller = "Best Seller";
   static const String recommend = "Recommend";
   static const String viewAll = "View All";
+
+  static const String notifications = "Notifications";
+  static const String myOrders = "My Orders";
+  static const String myProfile = "My Profile";
+  static const String deliveryAddress = "Delivery Address";
+  static const String paymentMethods = "Payment Methods";
+  static const String contactUs = "Contact Us";
+  static const String helpFAQs = "Help & FAQs";
+  static const String settings = "Settings";
 }

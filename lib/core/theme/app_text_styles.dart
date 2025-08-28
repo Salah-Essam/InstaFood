@@ -8,6 +8,11 @@ class AppTextStyles {
     fontWeight: FontWeight.w700,
     color: AppColors.title,
   );
+  static TextStyle get dialogTitle => TextStyle(
+    fontSize: 20.sp,
+    fontWeight: FontWeight.w700,
+    color: AppColors.title,
+  );
 
   static TextStyle get body => TextStyle(
     fontSize: 13.sp,
@@ -37,6 +42,16 @@ class AppTextStyles {
     fontWeight: FontWeight.w500,
     fontSize: 13,
     color: AppColors.primary,
+  );
+  static TextStyle dialogGreetingDialogeOrange = TextStyle(
+    fontWeight: FontWeight.w500,
+    fontSize: 24,
+    color: AppColors.primary,
+  );
+  static TextStyle dialogGreetingDialogeWhite = TextStyle(
+    fontWeight: FontWeight.w500,
+    fontSize: 24,
+    color: AppColors.white,
   );
   static TextStyle search = TextStyle(
     fontWeight: FontWeight.w300,

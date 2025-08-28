@@ -28,4 +28,12 @@ class AppAssets {
   static const String nextArrow = "assets/icons/NextArrow.svg";
   static const String fav = "assets/icons/Favorites.svg";
   static const String rating = "assets/icons/rating.svg";
+  static const String camera = "assets/icons/camera.svg";
+  static const String deliveryNotification =
+      "assets/icons/delivery_notification.svg";
+  static const String favNotification = "assets/icons/fav_notification.svg";
+  static const String notificationIcon = "assets/icons/notification_icon.svg";
+  static const String orderNotification = "assets/icons/order_notification.svg";
+  static const String productNotification =
+      "assets/icons/product_notification.svg";
 }
