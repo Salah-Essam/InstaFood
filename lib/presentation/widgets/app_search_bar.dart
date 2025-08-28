@@ -19,7 +19,7 @@ class _AppSearchBarState extends State<AppSearchBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 230,
+      width: double.infinity,
       height: 26,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(30)),

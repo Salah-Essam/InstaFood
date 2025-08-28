@@ -7,7 +7,6 @@ import 'package:insta_food/core/theme/app_assets.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/presentation/features/drawer/presentation/cubit/drawer_cubit.dart';
 import 'package:insta_food/presentation/features/search/presentation/search_page.dart';
-import 'package:insta_food/presentation/widgets/app_backbutton.dart';
 import 'package:insta_food/presentation/widgets/app_search_bar.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 
@@ -15,6 +14,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool inableSearch;
   final bool leading;
   final String? title;
+  final bool hideNotification;
   @override
   final Size preferredSize;
 
@@ -23,96 +23,112 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.inableSearch = false,
     this.leading = false,
     this.title,
-  }) : preferredSize = Size.fromHeight(58);
+    this.hideNotification = false,
+  }) : preferredSize = Size.fromHeight(69);
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      backgroundColor: AppColors.statusBar,
-      leading: leading
-          ? Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: AppBackButton(),
-              ),
-            )
-          : SizedBox(),
-      title: title == null
-          ? (inableSearch
-                ? AppSearchBar(isEnabled: true)
-                : InkWell(
-                    onTap: () {
-                      pushScreen(
-                        context,
-                        screen: SearchPage(),
-                        withNavBar: true,
-                      );
-                    },
-                    child: AppSearchBar(isEnabled: false),
-                  ))
-          : Text(title!),
-      centerTitle: true,
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 34.0),
-          child: Builder(
-            builder: (context) {
-              return Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(width: 29),
-                  Flexible(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            context.read<DrawerCubit>().openDrawer(
-                              DrawerType.cart,
-                            );
-                          },
-                          child: SvgPicture.asset(
-                            AppAssets.cart,
-                            width: 26,
-                            height: 26,
-                          ),
-                        ),
-                        SizedBox(width: 7),
-                        GestureDetector(
-                          onTap: () {
-                            context.read<DrawerCubit>().openDrawer(
-                              DrawerType.notifications,
-                            );
-                          },
-                          child: SvgPicture.asset(
-                            AppAssets.notification,
-                            width: 26,
-                            height: 26,
-                          ),
-                        ),
-                        SizedBox(width: 7),
-                        GestureDetector(
-                          onTap: () {
-                            context.read<DrawerCubit>().openDrawer(
-                              DrawerType.profile,
-                            );
-                          },
-                          child: SvgPicture.asset(
-                            AppAssets.profile,
-                            width: 26,
-                            height: 26,
-                          ),
-                        ),
-                      ],
+    return Padding(
+      padding: const EdgeInsets.only(top: 32, bottom: 8),
+      child: AppBar(
+        backgroundColor: AppColors.statusBar,
+        scrolledUnderElevation: 0.0,
+        toolbarHeight: 58,
+        leading: leading
+            ? Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: InkWell(
+                    child: SvgPicture.asset(
+                      AppAssets.backArrow,
+                      fit: BoxFit.cover,
                     ),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
                   ),
-                ],
-              );
-            },
+                ),
+              )
+            : SizedBox(),
+        leadingWidth: 36,
+        title: title == null
+            ? (inableSearch
+                  ? AppSearchBar(isEnabled: true)
+                  : InkWell(
+                      onTap: () {
+                        pushScreen(
+                          context,
+                          screen: SearchPage(),
+                          withNavBar: true,
+                        );
+                      },
+                      child: AppSearchBar(isEnabled: false),
+                    ))
+            : Text(title!),
+        centerTitle: true,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 34.0),
+            child: Builder(
+              builder: (context) {
+                return Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              context.read<DrawerCubit>().openDrawer(
+                                DrawerType.cart,
+                              );
+                            },
+                            child: SvgPicture.asset(
+                              AppAssets.cart,
+                              width: 26,
+                              height: 26,
+                            ),
+                          ),
+                          SizedBox(width: 7),
+                          ?hideNotification
+                              ? null
+                              : GestureDetector(
+                                  onTap: () {
+                                    context.read<DrawerCubit>().openDrawer(
+                                      DrawerType.notifications,
+                                    );
+                                  },
+                                  child: SvgPicture.asset(
+                                    AppAssets.notification,
+                                    width: 26,
+                                    height: 26,
+                                  ),
+                                ),
+                          SizedBox(width: 7),
+                          GestureDetector(
+                            onTap: () {
+                              context.read<DrawerCubit>().openDrawer(
+                                DrawerType.profile,
+                              );
+                            },
+                            child: SvgPicture.asset(
+                              AppAssets.profile,
+                              width: 26,
+                              height: 26,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

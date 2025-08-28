@@ -5,7 +5,7 @@ import 'package:insta_food/core/theme/app_assets.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/presentation/features/drawer/presentation/cubit/drawer_cubit.dart';
 import 'package:insta_food/presentation/features/drawer/presentation/view/app_drawer.dart';
-import 'package:insta_food/presentation/features/home/presentation/home_page.dart';
+import 'package:insta_food/presentation/features/home/presentation/view/home_page.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 
 class BottomNavBar extends StatelessWidget {

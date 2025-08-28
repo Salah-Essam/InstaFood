@@ -31,7 +31,7 @@ class ButtonGrid extends StatelessWidget {
           final categoryName = categories.keys.elementAt(index);
           final asset = categories[categoryName]!;
           return Padding(
-            padding: const EdgeInsets.only(right: 19, left: 10),
+            padding: const EdgeInsets.only(right: 19, left: 1),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
