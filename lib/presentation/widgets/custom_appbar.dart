@@ -6,8 +6,10 @@ import 'package:insta_food/core/routes/router_constants.dart';
 import 'package:insta_food/core/theme/app_assets.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/presentation/features/drawer/presentation/cubit/drawer_cubit.dart';
+import 'package:insta_food/presentation/features/search/presentation/search_page.dart';
 import 'package:insta_food/presentation/widgets/app_backbutton.dart';
 import 'package:insta_food/presentation/widgets/app_search_bar.dart';
+import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool inableSearch;
@@ -41,7 +43,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ? AppSearchBar(isEnabled: true)
                 : InkWell(
                     onTap: () {
-                      context.push(RouterConstants.search);
+                      pushScreen(
+                        context,
+                        screen: SearchPage(),
+                        withNavBar: true,
+                      );
                     },
                     child: AppSearchBar(isEnabled: false),
                   ))

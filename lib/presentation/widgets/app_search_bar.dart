@@ -26,7 +26,7 @@ class _AppSearchBarState extends State<AppSearchBar> {
         color: AppColors.sheetBg,
       ),
       child: Padding(
-        padding: const EdgeInsets.all(2.0),
+        padding: const EdgeInsets.all(3.0),
         child: Row(
           children: [
             Expanded(
@@ -42,7 +42,7 @@ class _AppSearchBarState extends State<AppSearchBar> {
                   hintText: AppStrings.search,
                   hintStyle: AppTextStyles.search,
                   contentPadding: EdgeInsets.symmetric(
-                    vertical: 6,
+                    vertical: 5,
                     horizontal: 16,
                   ),
 

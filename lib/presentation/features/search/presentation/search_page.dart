@@ -11,7 +11,7 @@ class SearchPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => sl<ItemCubit>(),
+      create: (context) => sl<ItemCubit>()..searchItem(""),
       child: Scaffold(
         appBar: CustomAppBar(inableSearch: true, leading: true),
         body: BlocBuilder<ItemCubit, ItemState>(
@@ -21,17 +21,18 @@ class SearchPage extends StatelessWidget {
             } else if (state is ItemFailure) {
               return Center(child: Text('Error: ${state.message}'));
             } else if (state is ItemLoaded) {
-              print(state.searchedItems);
               return Container(
-                child: ListView.builder(
-                  itemCount: state.searchedItems!.length,
+                child: GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    mainAxisSpacing: 8,
+                    crossAxisSpacing: 8,
+                    childAspectRatio: 88 / 108,
+                  ),
+                  itemCount: state.searchedItems.length,
                   itemBuilder: (context, index) {
-                    final item = state.searchedItems![index];
-                    return ItemTile(
-                      item: item,
-                      height: 108,
-                      width: 71.68141174316406,
-                    );
+                    final item = state.searchedItems[index];
+                    return ItemTile(item: item, height: 108, width: 88);
                   },
                 ),
               );

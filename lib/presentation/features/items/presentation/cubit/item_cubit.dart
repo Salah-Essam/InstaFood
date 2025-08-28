@@ -20,15 +20,35 @@ class ItemCubit extends Cubit<ItemState> {
       (items) {
         final itemList = items.cast<ItemModel>();
         final featuredItems = _getFeaturedItems(itemList, count: 5);
-        emit(ItemLoaded(itemList: itemList, featuredItems: featuredItems));
+        emit(
+          ItemLoaded(
+            itemList: itemList,
+            featuredItems: featuredItems,
+            searchedItems: itemList,
+          ),
+        );
       },
     );
   }
 
   Future<void> searchItem(String name) async {
+    if (name.isEmpty) {
+      // If search is empty, show all items
+      if (state is ItemLoaded) {
+        final currentState = state as ItemLoaded;
+        emit(
+          ItemLoaded(
+            itemList: currentState.itemList,
+            searchedItems: currentState.itemList,
+          ),
+        );
+      } else {
+        await getallItems();
+      }
+      return;
+    }
     emit(ItemLoading());
     final result = await itemRepository.fetchItem(name);
-    //final currentState = state as ItemLoaded;
     result.fold(
       // Failure case (left side)
       (failure) => emit(ItemFailure(message: failure.message)),
