@@ -39,7 +39,6 @@ class AppColors {
 
   static var white = Colors.white;
   static var lightYellow = Color(0xFFF3E9B5);
-
   static var fontWhite = Color(0xFFF8F8F8);
 
   static var grey = Color(0xFF4E5457);
@@ -52,4 +51,9 @@ class AppColors {
   ); // light orange for text/dividers
   static const Color yellowBase = Color(0xFFF5CB58);
   static const Color yellow2 = Color(0xFFF3E9B5);
+  static const Color brown = Color(0xFF391713);
+  static const Color darkBrown = Color(0xFF252525);
+  //===========================================================================
+  static const Color error = Color(0xFFFF0000);
+  
 }

@@ -27,40 +27,58 @@ class AppTextStyles {
     fontWeight: FontWeight.w600,
     color: AppColors.primary,
   );
+  
   // ===========================
-  static final TextStyle greeting = TextStyle(
+  static TextStyle get greeting => TextStyle(
     fontWeight: FontWeight.w700,
-    fontSize: 30,
+    fontSize: 30.sp,
     color: AppColors.fontWhite,
   );
-  static TextStyle greetingDialoge = TextStyle(
+  
+  static TextStyle get greetingDialog => TextStyle(
     fontWeight: FontWeight.w500,
-    fontSize: 13,
+    fontSize: 13.sp,
     color: AppColors.primary,
   );
-  static TextStyle search = TextStyle(
+  
+  static TextStyle get search => TextStyle(
     fontWeight: FontWeight.w300,
-    fontSize: 12,
+    fontSize: 12.sp,
     color: AppColors.grey,
   );
-  static TextStyle small = TextStyle(
+  
+  static TextStyle get small => TextStyle(
     fontWeight: FontWeight.w400,
-    fontSize: 12,
+    fontSize: 12.sp,
     color: AppColors.darktext,
   );
-  static TextStyle header = TextStyle(
+  
+  static TextStyle get header => TextStyle(
     fontWeight: FontWeight.w500,
-    fontSize: 20,
+    fontSize: 20.sp,
     color: AppColors.darktext,
   );
-  static TextStyle ad = TextStyle(
+  
+  static TextStyle get ad => TextStyle(
     fontWeight: FontWeight.w400,
-    fontSize: 16,
+    fontSize: 16.sp,
     color: AppColors.fontWhite,
   );
-  static TextStyle price = TextStyle(
+  
+  static TextStyle get price => TextStyle(
     fontWeight: FontWeight.w400,
-    fontSize: 11,
+    fontSize: 11.sp,
     color: AppColors.fontWhite,
+  );
+  
+  static TextStyle get login => TextStyle(
+    color: AppColors.white,
+    fontSize: 18.sp,
+    fontWeight: FontWeight.w700,
+  );
+  static TextStyle get forgetPassword => TextStyle(
+    color: AppColors.primary,
+    fontSize: 14.sp,
+    fontWeight: FontWeight.w500,
   );
 }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:insta_food/core/routes/router_constants.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/presentation/features/drawer/data/datasources/profile_drawer_data.dart';
 import 'package:insta_food/presentation/features/drawer/presentation/widgets/drawer_item.dart';
+import 'package:insta_food/presentation/features/auth/presentation/widgets/logout_confirmation_dialog.dart';
 
 class ProfileDrawer extends StatelessWidget {
   const ProfileDrawer({super.key});
@@ -49,14 +49,24 @@ class ProfileDrawer extends StatelessWidget {
 
             Column(
               children: List.generate(ProfileDrawerData.items.length, (index) {
+                final item = ProfileDrawerData.items[index];
                 return Column(
                   children: [
                     DrawerItem(
                       onTap: () {
-                        context.push(RouterConstants.profilePage);
+                        if (item.name == "Log Out") {
+                          // Show logout confirmation dialog
+                          showDialog(
+                            context: context,
+                            builder: (context) => const LogoutConfirmationDialog(),
+                          );
+                        } else if (item.pagePath != null) {
+                          // Navigate to the specified page
+                          context.push(item.pagePath!);
+                        }
                       },
-                      label: ProfileDrawerData.items[index].name,
-                      icon: ProfileDrawerData.items[index].icon,
+                      label: item.name,
+                      icon: item.icon,
                     ),
                     Divider(color: AppColors.orange2, thickness: 1, height: 24),
                   ],

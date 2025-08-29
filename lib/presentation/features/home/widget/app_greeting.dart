@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:insta_food/core/theme/app_strings.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
-import 'package:insta_food/core/utils/app_strings.dart';
 
 class Greetings extends StatefulWidget {
   const Greetings({super.key});
@@ -40,7 +40,7 @@ class _GreetingsState extends State<Greetings> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(greeting, style: AppTextStyles.greeting),
-        Text(dialoge, style: AppTextStyles.greetingDialoge),
+        Text(dialoge, style: AppTextStyles.greetingDialog),
       ],
     );
   }

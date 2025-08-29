@@ -5,8 +5,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:insta_food/core/di/di.dart';
 import 'package:insta_food/core/theme/app_assets.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
+import 'package:insta_food/core/theme/app_strings.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
-import 'package:insta_food/core/utils/app_strings.dart';
 import 'package:insta_food/presentation/features/home/widget/ad_slider.dart';
 import 'package:insta_food/presentation/features/home/widget/app_greeting.dart';
 import 'package:insta_food/presentation/features/home/widget/bestseller_row.dart';
@@ -15,6 +15,8 @@ import 'package:insta_food/presentation/features/home/widget/item_tile.dart';
 import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 import 'package:insta_food/presentation/features/items/presentation/cubit/item_cubit.dart';
 import 'package:insta_food/presentation/widgets/custom_appbar.dart';
+import 'package:insta_food/presentation/features/drawer/presentation/cubit/drawer_cubit.dart';
+import 'package:insta_food/presentation/features/drawer/presentation/view/app_drawer.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -28,10 +30,26 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => sl<ItemCubit>()..getallItems(),
-      child: Scaffold(
-        backgroundColor: AppColors.statusBar,
-        appBar: CustomAppBar(),
-        body: BlocBuilder<ItemCubit, ItemState>(
+      child: BlocListener<DrawerCubit, DrawerState>(
+        listener: (context, state) {
+          if (state is DrawerOpened) {
+            Scaffold.of(context).openEndDrawer();
+          }
+        },
+        child: BlocBuilder<DrawerCubit, DrawerState>(
+          builder: (context, drawerState) {
+            return Scaffold(
+              backgroundColor: AppColors.statusBar,
+              appBar: CustomAppBar(),
+              endDrawer: drawerState is DrawerOpened 
+                  ? AppDrawer(drawerSelected: drawerState.type) 
+                  : null,
+              onEndDrawerChanged: (isOpen) {
+                if (!isOpen) {
+                  context.read<DrawerCubit>().closeDrawer();
+                }
+              },
+              body: BlocBuilder<ItemCubit, ItemState>(
           builder: (context, state) {
             if (state is ItemLoading) {
               return Center(child: CircularProgressIndicator());
@@ -90,7 +108,7 @@ class HomePage extends StatelessWidget {
                                   children: [
                                     Text(
                                       AppStrings.viewAll,
-                                      style: AppTextStyles.greetingDialoge,
+                                      style: AppTextStyles.greetingDialog,
                                     ),
                                     SvgPicture.asset(AppAssets.nextArrow),
                                   ],
@@ -148,6 +166,9 @@ class HomePage extends StatelessWidget {
             );
           },
         ),
+        );
+      },
+      ),
       ),
     );
   }
