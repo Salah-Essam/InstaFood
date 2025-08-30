@@ -8,6 +8,7 @@ import 'package:insta_food/core/utils/app_alerts.dart';
 import 'package:insta_food/presentation/features/Profile/presentation/cubit/ProfileImageCubit/profile_image_cubit.dart';
 import 'package:insta_food/presentation/features/drawer/data/datasources/profile_drawer_data.dart';
 import 'package:insta_food/presentation/features/drawer/presentation/widgets/drawer_item.dart';
+import 'package:insta_food/presentation/features/auth/presentation/widgets/logout_confirmation_dialog.dart';
 
 class ProfileDrawer extends StatelessWidget {
   const ProfileDrawer({super.key});
@@ -66,7 +67,6 @@ class ProfileDrawer extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 32),
-
             ListView.separated(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),

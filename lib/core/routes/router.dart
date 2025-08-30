@@ -1,18 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:insta_food/core/routes/router_constants.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/storage/shared_prefrences/shared_prefs_service.dart';
 import 'package:insta_food/presentation/features/BottomNavBar/presentation/pages/bottom_nav_bar.dart';
 import 'package:insta_food/presentation/features/Profile/presentation/pages/profile_page.dart';
+
 import 'package:insta_food/presentation/features/filter/presentation/filter_page.dart';
 import 'package:insta_food/presentation/features/home/presentation/view/home_page.dart';
 import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 import 'package:insta_food/presentation/features/items/presentation/view/item_page.dart';
+
+import 'package:insta_food/presentation/features/auth/presentation/pages/login.dart';
+import 'package:insta_food/presentation/features/auth/presentation/pages/set_password.dart';
+import 'package:insta_food/presentation/features/auth/presentation/pages/signup.dart';
+import 'package:insta_food/presentation/features/home/presentation/home_page.dart';
+
 import 'package:insta_food/presentation/features/onboarding/onboarding.dart';
 import 'package:insta_food/presentation/features/search/presentation/search_page.dart';
 import 'package:insta_food/presentation/features/splash/view/second_splash_screen.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_cubit.dart';
+import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_state.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: RouterConstants.splash,
@@ -46,15 +55,18 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: RouterConstants.login,
-      builder: (context, state) => const Scaffold(
-        body: Center(child: Text('Login Screen - Coming Soon')),
-      ),
+      builder: (context, state) => const LoginScreen(),
     ),
     GoRoute(
       path: RouterConstants.signup,
-      builder: (context, state) => const Scaffold(
-        body: Center(child: Text('Signup Screen - Coming Soon')),
-      ),
+      builder: (context, state) => const SignupPage(),
+    ),
+    GoRoute(
+      path: RouterConstants.forgotPassword,
+      builder: (context, state) {
+        final email = state.extra as String?;
+        return SetPasswordPage(email: email);
+      },
     ),
     GoRoute(
       path: RouterConstants.profilePage,
@@ -130,6 +142,16 @@ class _SplashGateState extends State<_SplashGate>
     // Add a minimum delay to show the splash screen
     await Future.delayed(const Duration(milliseconds: 2500));
     if (!mounted) return;
+
+    // Check authentication status first
+    final authCubit = context.read<AuthCubit>();
+    final currentAuthState = authCubit.state;
+
+    if (currentAuthState is Authenticated) {
+      // User is already authenticated, go directly to bottom nav bar
+      context.go(RouterConstants.bottomNavBar);
+      return;
+    }
 
     final prefsService = await SharedPrefsService.getInstance();
     final seen = await prefsService.hasSeenOnboarding();

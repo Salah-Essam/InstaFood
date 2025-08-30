@@ -16,4 +16,5 @@ class RouterConstants {
   static const String settingsPage = '/settingsPage';
   static const String filterPage = '/filterPage';
   static const String itemPage = '/itemPage';
+  static const String forgotPassword = '/set_password';
 }

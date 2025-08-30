@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:insta_food/core/di/di.dart';
 import 'package:flutter/services.dart';
 import 'package:insta_food/core/routes/router.dart';
+import 'package:insta_food/core/routes/router_constants.dart';
 import 'package:insta_food/core/theme/app_theme.dart';
+import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_cubit.dart';
+import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_state.dart';
 import 'package:insta_food/presentation/features/drawer/presentation/cubit/drawer_cubit.dart';
 
 void main() async {
@@ -12,7 +16,12 @@ void main() async {
   await setupLocator();
   runApp(
     MultiBlocProvider(
-      providers: [BlocProvider(create: (_) => sl<DrawerCubit>())],
+      providers: [
+        BlocProvider(create: (_) => sl<DrawerCubit>()),
+        BlocProvider<AuthCubit>(
+          create: (_) => sl<AuthCubit>()..checkAuthStatus(),
+        ),
+      ],
       child: const InstaFood(),
     ),
   );
@@ -42,7 +51,29 @@ class InstaFood extends StatelessWidget {
                 statusBarBrightness: Brightness.light,
               ),
             );
-            return child!;
+            
+            return BlocListener<AuthCubit, AuthState>(
+              listener: (context, state) {
+                if (state is Authenticated) {
+                  // User authenticated, go to home if not already there
+                  final currentLocation = GoRouter.of(context).routerDelegate.currentConfiguration.fullPath;
+                  if (currentLocation != RouterConstants.home) {
+                    context.go(RouterConstants.home);
+                  }
+                } else if (state is Unauthenticated) {
+                  // User not authenticated, go to second splash (login/signup screen)
+                  final currentLocation = GoRouter.of(context).routerDelegate.currentConfiguration.fullPath;
+                  if (currentLocation != RouterConstants.secondSplash && 
+                      currentLocation != RouterConstants.login && 
+                      currentLocation != RouterConstants.signup &&
+                      currentLocation != RouterConstants.splash &&
+                      currentLocation != RouterConstants.onboarding) {
+                    context.go(RouterConstants.secondSplash);
+                  }
+                }
+              },
+              child: child!,
+            );
           },
         );
       },

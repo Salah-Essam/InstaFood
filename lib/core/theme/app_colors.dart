@@ -51,5 +51,13 @@ class AppColors {
     0xFFFFDECF,
   ); // light orange for text/dividers
   static const Color yellowBase = Color(0xFFF5CB58);
+
   static const Color border = Color(0xFFF1CCBC);
+
+  static const Color yellow2 = Color(0xFFF3E9B5);
+  static const Color brown = Color(0xFF391713);
+  static const Color darkBrown = Color(0xFF252525);
+  //===========================================================================
+  static const Color error = Color(0xFFFF0000);
+  static const Color success = Color(0xFF00AA00);
 }
