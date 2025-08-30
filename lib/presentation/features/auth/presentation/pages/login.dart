@@ -70,7 +70,7 @@ class LoginScreenState extends State<LoginScreen> {
       },
       child: Scaffold(
         body: Container(
-          color: AppColors.statusBar,
+          color: AppColors.primaryYellow,
           child: SafeArea(
             child: Form(
               key: _formKey,
@@ -128,7 +128,7 @@ class LoginScreenState extends State<LoginScreen> {
                                   obscurePassword
                                       ? Icons.visibility_off
                                       : Icons.visibility,
-                                  color: AppColors.primary,
+                                  color: AppColors.primaryOrange,
                                   size: 20,
                                 ),
                                 onPressed: () {
@@ -193,7 +193,7 @@ class LoginScreenState extends State<LoginScreen> {
                                     borderRadius: 28,
                                     width:
                                         MediaQuery.of(context).size.width * 0.5,
-                                    backgroundColor: AppColors.primary,
+                                    backgroundColor: AppColors.primaryOrange,
                                     textStyle: AppTextStyles.login,
                                   );
                                 },

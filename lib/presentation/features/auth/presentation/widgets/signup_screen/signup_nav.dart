@@ -22,7 +22,7 @@ class SignupNav {
               TextSpan(
                 text: 'Sign Up',
                 style: AppTextStyles.small.copyWith(
-                  color: AppColors.primary,
+                  color: AppColors.primaryOrange,
                   decoration: TextDecoration.underline,
                 ),
               ),

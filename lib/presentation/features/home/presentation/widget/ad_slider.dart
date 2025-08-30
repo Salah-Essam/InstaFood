@@ -54,7 +54,7 @@ class _AdSliderState extends State<AdSlider> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(2),
                   color: _currentIndex == entry.key
-                      ? AppColors.primary
+                      ? AppColors.primaryOrange
                       : AppColors.lightYellow,
                 ),
               ),

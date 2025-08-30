@@ -54,14 +54,14 @@ class SignupPageState extends State<SignupPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.statusBar,
+      backgroundColor: AppColors.primaryYellow,
       resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: Column(
           children: [
             // Yellow section with Hello and back button
             Container(
-              color: AppColors.statusBar,
+              color: AppColors.primaryYellow,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: Column(
@@ -128,7 +128,7 @@ class SignupPageState extends State<SignupPage> {
                               obscurePassword
                                   ? Icons.visibility_off
                                   : Icons.visibility,
-                              color: AppColors.primary,
+                              color: AppColors.primaryOrange,
                               size: 20,
                             ),
                             onPressed: () {
@@ -280,7 +280,7 @@ class SignupPageState extends State<SignupPage> {
                                   borderRadius: 28,
                                   width:
                                       MediaQuery.of(context).size.width * 0.5,
-                                  backgroundColor: AppColors.primary,
+                                  backgroundColor: AppColors.primaryOrange,
                                   textStyle: AppTextStyles.login,
                                 );
                               },

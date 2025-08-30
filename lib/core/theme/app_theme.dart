@@ -5,10 +5,10 @@ import 'package:insta_food/core/theme/app_text_styles.dart';
 class AppTheme {
   static final ThemeData theme = ThemeData(
     useMaterial3: true,
-    colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
+    colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primaryOrange),
     fontFamily: "LeagueSpartan",
     progressIndicatorTheme: ProgressIndicatorThemeData(
-      color: AppColors.primary,
+      color: AppColors.primaryOrange,
     ),
     inputDecorationTheme: InputDecorationTheme(
       fillColor: AppColors.lightYellow,

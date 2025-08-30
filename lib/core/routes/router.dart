@@ -169,7 +169,7 @@ class _SplashGateState extends State<_SplashGate>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.splashBackground,
+      backgroundColor: AppColors.splashYellow,
       body: Center(
         child: AnimatedBuilder(
           animation: Listenable.merge([_fadeController, _scaleController]),

@@ -39,7 +39,7 @@ class HomePage extends StatelessWidget {
         child: BlocBuilder<DrawerCubit, DrawerState>(
           builder: (context, drawerState) {
             return Scaffold(
-              backgroundColor: AppColors.statusBar,
+              backgroundColor: AppColors.primaryYellow,
               appBar: CustomAppBar(),
               endDrawer: drawerState is DrawerOpened
                   ? AppDrawer(drawerSelected: drawerState.type)
@@ -94,7 +94,7 @@ class HomePage extends StatelessWidget {
                                 ButtonGrid(),
                                 SizedBox(height: 5),
                                 Container(
-                                  color: AppColors.orangeBase,
+                                  color: AppColors.primaryOrange,
                                   height: 0.5,
                                 ),
                                 SizedBox(height: 5),

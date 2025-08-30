@@ -59,12 +59,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return StatusBarBackground(
-      backgroundColor: AppColors.statusBar,
+      backgroundColor: AppColors.splashYellow,
       child: BlocBuilder<OnboardingCubit, OnboardingState>(
         builder: (context, state) {
           final cubit = context.read<OnboardingCubit>();
           return Scaffold(
-            backgroundColor: AppColors.statusBar,
+            backgroundColor: AppColors.splashYellow,
             // الصورة في body
             body: PageView(
               controller: cubit.pageController,

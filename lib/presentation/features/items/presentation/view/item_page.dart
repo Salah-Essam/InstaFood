@@ -18,7 +18,7 @@ class ItemPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.yellowBase,
+      backgroundColor: AppColors.primaryYellow,
       body: Column(
         children: [
           Padding(
@@ -54,7 +54,7 @@ class ItemPage extends StatelessWidget {
                 width: 34,
                 height: 14,
                 decoration: BoxDecoration(
-                  color: AppColors.primary,
+                  color: AppColors.primaryOrange,
                   borderRadius: BorderRadius.circular(30),
                 ),
                 child: Row(

@@ -13,9 +13,7 @@ class LogoutConfirmationDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       contentPadding: const EdgeInsets.all(24),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -26,24 +24,24 @@ class LogoutConfirmationDialog extends StatelessWidget {
             style: AppTextStyles.login.copyWith(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: AppColors.darkBrown,
+              color: AppColors.blackish,
             ),
           ),
-          
+
           const SizedBox(height: 12),
-          
+
           // Message
           Text(
             'Are you sure you want to log out?',
             textAlign: TextAlign.center,
             style: AppTextStyles.forgetPassword.copyWith(
               fontSize: 14,
-              color: AppColors.darkBrown.withOpacity(0.7),
+              color: AppColors.blackish.withAlpha(179),
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Buttons
           Row(
             children: [
@@ -55,17 +53,17 @@ class LogoutConfirmationDialog extends StatelessWidget {
                     Navigator.of(context).pop();
                   },
                   backgroundColor: Colors.transparent,
-                  border: BorderSide(color: AppColors.primary),
+                  border: BorderSide(color: AppColors.primaryOrange),
                   borderRadius: 8,
                   textStyle: AppTextStyles.login.copyWith(
-                    color: AppColors.primary,
+                    color: AppColors.primaryOrange,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
-              
+
               const SizedBox(width: 12),
-              
+
               // Logout button
               Expanded(
                 child: AppButton(

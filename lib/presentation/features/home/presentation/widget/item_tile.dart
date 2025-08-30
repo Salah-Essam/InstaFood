@@ -50,7 +50,7 @@ class ItemTile extends StatelessWidget {
                     topLeft: Radius.circular(30),
                     bottomLeft: Radius.circular(30),
                   ),
-                  color: AppColors.primary,
+                  color: AppColors.primaryOrange,
                 ),
                 child: Align(
                   alignment: Alignment.center,

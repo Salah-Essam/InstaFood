@@ -18,7 +18,7 @@ class AdvertismentCard extends StatelessWidget {
       height: 128,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        color: AppColors.primary,
+        color: AppColors.primaryOrange,
       ),
       child: Stack(
         children: [

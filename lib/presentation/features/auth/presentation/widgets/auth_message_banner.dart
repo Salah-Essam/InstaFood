@@ -8,7 +8,9 @@ class AuthMessageBanner extends StatelessWidget {
   const AuthMessageBanner({super.key});
 
   Color _color(AuthState state) {
-    if (state is AuthError || state is PasswordResetEmailFailed) return AppColors.error;
+    if (state is AuthError || state is PasswordResetEmailFailed) {
+      return AppColors.error;
+    }
     if (state is PasswordResetEmailSent) return Colors.green;
     if (state is AuthShouldShowPasswordReset) return Colors.orange;
     return Colors.transparent;
@@ -16,14 +18,20 @@ class AuthMessageBanner extends StatelessWidget {
 
   String? _text(AuthState state) {
     if (state is AuthError) return state.message;
-    if (state is PasswordResetEmailSent) return 'Password reset email sent to ${state.email}';
+    if (state is PasswordResetEmailSent) {
+      return 'Password reset email sent to ${state.email}';
+    }
     if (state is PasswordResetEmailFailed) return state.message;
-    if (state is AuthShouldShowPasswordReset) return 'Too many failed attempts. Reset your password?';
+    if (state is AuthShouldShowPasswordReset) {
+      return 'Too many failed attempts. Reset your password?';
+    }
     return null;
   }
 
   IconData? _icon(AuthState state) {
-    if (state is AuthError || state is PasswordResetEmailFailed) return Icons.error_outline;
+    if (state is AuthError || state is PasswordResetEmailFailed) {
+      return Icons.error_outline;
+    }
     if (state is PasswordResetEmailSent) return Icons.check_circle_outline;
     if (state is AuthShouldShowPasswordReset) return Icons.info_outline;
     return null;
@@ -42,7 +50,7 @@ class AuthMessageBanner extends StatelessWidget {
           duration: const Duration(milliseconds: 250),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.12),
+            color: color.withAlpha(31),
             border: Border.all(color: color, width: 1),
             borderRadius: BorderRadius.circular(12),
           ),
@@ -66,7 +74,9 @@ class AuthMessageBanner extends StatelessWidget {
               if (state is AuthShouldShowPasswordReset)
                 TextButton(
                   onPressed: () {
-                    context.read<AuthCubit>().changePasswordByEmail(state.email);
+                    context.read<AuthCubit>().changePasswordByEmail(
+                      state.email,
+                    );
                   },
                   child: const Text('RESET'),
                 ),

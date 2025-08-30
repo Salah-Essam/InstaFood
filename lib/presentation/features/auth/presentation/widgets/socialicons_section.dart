@@ -12,19 +12,19 @@ class SocialIconsSection extends StatelessWidget {
     return Column(
       children: [
         const SizedBox(height: 10),
-        
+
         Center(
           child: Text(
             'or sign up with',
             style: AppTextStyles.small.copyWith(
-              color: AppColors.brown,
+              color: AppColors.textDarkBrown,
               fontSize: 14,
             ),
           ),
         ),
-        
+
         const SizedBox(height: 10),
-        
+
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -32,7 +32,9 @@ class SocialIconsSection extends StatelessWidget {
               assetPath: AppAssets.google,
               onPressed: () {
                 // TODO: Implement Google authentication when service is ready
-                debugPrint('Google login pressed - authentication not implemented yet');
+                debugPrint(
+                  'Google login pressed - authentication not implemented yet',
+                );
               },
               size: 56,
               iconSize: 28,
@@ -43,7 +45,9 @@ class SocialIconsSection extends StatelessWidget {
               assetPath: AppAssets.facebook,
               onPressed: () {
                 // TODO: Implement Facebook authentication when service is ready
-                debugPrint('Facebook login pressed - authentication not implemented yet');
+                debugPrint(
+                  'Facebook login pressed - authentication not implemented yet',
+                );
               },
               size: 56,
               iconSize: 28,
@@ -54,7 +58,9 @@ class SocialIconsSection extends StatelessWidget {
               assetPath: AppAssets.fingerprint,
               onPressed: () {
                 // TODO: Implement biometric authentication when service is ready
-                debugPrint('Biometric authentication pressed - service not implemented yet');
+                debugPrint(
+                  'Biometric authentication pressed - service not implemented yet',
+                );
               },
               size: 56,
               iconSize: 28,

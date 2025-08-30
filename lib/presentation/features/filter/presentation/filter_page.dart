@@ -9,7 +9,7 @@ class FilterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.yellowBase,
+      backgroundColor: AppColors.primaryYellow,
       appBar: CustomAppBar(
         title: AppStrings.filter,
         leading: true,

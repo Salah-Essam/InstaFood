@@ -58,14 +58,14 @@ class SetPasswordPageState extends State<SetPasswordPage> {
         }
       },
       child: Scaffold(
-        backgroundColor: AppColors.statusBar,
+        backgroundColor: AppColors.primaryYellow,
         resizeToAvoidBottomInset: true,
         body: SafeArea(
           child: Column(
             children: [
               // Yellow section with Hello and back button
               Container(
-                color: AppColors.statusBar,
+                color: AppColors.primaryYellow,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Column(
@@ -102,7 +102,7 @@ class SetPasswordPageState extends State<SetPasswordPage> {
                           Text(
                             'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
                             style: TextStyle(
-                              color: AppColors.darkBrown,
+                              color: AppColors.blackish,
                               fontSize: 14,
                               height: 1.4,
                             ),
@@ -129,7 +129,7 @@ class SetPasswordPageState extends State<SetPasswordPage> {
                                 obscurePassword
                                     ? Icons.visibility_off
                                     : Icons.visibility,
-                                color: AppColors.primary,
+                                color: AppColors.primaryOrange,
                                 size: 20,
                               ),
                               onPressed: () {
@@ -160,7 +160,7 @@ class SetPasswordPageState extends State<SetPasswordPage> {
                                 obscureConfirmPassword
                                     ? Icons.visibility_off
                                     : Icons.visibility,
-                                color: AppColors.primary,
+                                color: AppColors.primaryOrange,
                                 size: 20,
                               ),
                               onPressed: () {
@@ -210,7 +210,7 @@ class SetPasswordPageState extends State<SetPasswordPage> {
                                   borderRadius: 28,
                                   width:
                                       MediaQuery.of(context).size.width * 0.6,
-                                  backgroundColor: AppColors.primary,
+                                  backgroundColor: AppColors.primaryOrange,
                                   textStyle: AppTextStyles.login,
                                 );
                               },
@@ -251,7 +251,7 @@ class SetPasswordPageState extends State<SetPasswordPage> {
                               height: 48.0,
                               borderRadius: 28,
                               width: MediaQuery.of(context).size.width * 0.6,
-                              backgroundColor: AppColors.primary,
+                              backgroundColor: AppColors.primaryOrange,
                               textStyle: AppTextStyles.login,
                             ),
                           ),
