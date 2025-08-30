@@ -56,7 +56,7 @@ class AppTextStyles {
   static TextStyle search = TextStyle(
     fontWeight: FontWeight.w300,
     fontSize: 12,
-    color: AppColors.grey,
+    color: AppColors.body,
   );
   static TextStyle small = TextStyle(
     fontWeight: FontWeight.w400,
@@ -77,5 +77,20 @@ class AppTextStyles {
     fontWeight: FontWeight.w400,
     fontSize: 11,
     color: AppColors.fontWhite,
+  );
+  static TextStyle pageTitle = TextStyle(
+    fontWeight: FontWeight.w700,
+    fontSize: 28,
+    color: AppColors.fontWhite,
+  );
+  static TextStyle itemPagePrice = TextStyle(
+    fontWeight: FontWeight.w700,
+    fontSize: 24,
+    color: AppColors.primary,
+  );
+  static TextStyle mediumText = TextStyle(
+    fontWeight: FontWeight.w400,
+    fontSize: 16,
+    color: AppColors.darktext,
   );
 }

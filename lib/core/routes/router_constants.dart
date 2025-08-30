@@ -14,4 +14,6 @@ class RouterConstants {
   static const String contactPage = '/contactPage';
   static const String helpPage = '/helpPage';
   static const String settingsPage = '/settingsPage';
+  static const String filterPage = '/filterPage';
+  static const String itemPage = '/itemPage';
 }

@@ -45,8 +45,6 @@ app.*.map.json
 /android/app/release
 /android/app/google-services.json
 
-/lib/core/firebase/import/
-/lib/core/data
 
 # FVM Version Cache
 .fvm/

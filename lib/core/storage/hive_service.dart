@@ -6,7 +6,6 @@ const String cacheItemsKey = "cacheItems";
 class HiveService {
   static Future<void> init() async {
     await Hive.initFlutter();
-    //await Hive.openBox(cacheItemsKey);
     Hive.registerAdapter(ItemModelAdapter());
     await Hive.openBox(cacheItemsKey);
   }
