@@ -9,15 +9,9 @@ import 'package:insta_food/presentation/features/filter/presentation/filter_page
 import 'package:insta_food/presentation/features/items/presentation/cubit/item_cubit.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 
-class AppSearchBar extends StatefulWidget {
-  const AppSearchBar({super.key, required this.isEnabled, this.onPressed});
+class AppSearchBar extends StatelessWidget {
+  const AppSearchBar({super.key, required this.isEnabled});
   final bool isEnabled;
-  final VoidCallback? onPressed;
-  @override
-  State<AppSearchBar> createState() => _AppSearchBarState();
-}
-
-class _AppSearchBarState extends State<AppSearchBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -33,7 +27,7 @@ class _AppSearchBarState extends State<AppSearchBar> {
           children: [
             Expanded(
               child: TextFormField(
-                enabled: widget.isEnabled,
+                enabled: isEnabled,
                 onChanged: (v) {
                   context.read<ItemCubit>().searchItem(v);
                 },
@@ -53,19 +47,28 @@ class _AppSearchBarState extends State<AppSearchBar> {
                 ),
               ),
             ),
-            InkWell(
-              onTap:
-                  widget.onPressed ??
-                  () {
-                    pushScreen(context, screen: FilterPage(), withNavBar: true);
-                  },
-              child: SvgPicture.asset(
-                AppAssets.filter,
-                height: 20,
-                width: 20,
-                fit: BoxFit.cover,
-              ),
-            ),
+            isEnabled
+                ? InkWell(
+                    onTap: () {
+                      pushScreen(
+                        context,
+                        screen: FilterPage(),
+                        withNavBar: true,
+                      );
+                    },
+                    child: SvgPicture.asset(
+                      AppAssets.filter,
+                      height: 20,
+                      width: 20,
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                : SvgPicture.asset(
+                    AppAssets.filter,
+                    height: 20,
+                    width: 20,
+                    fit: BoxFit.cover,
+                  ),
           ],
         ),
       ),

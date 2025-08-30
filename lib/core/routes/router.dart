@@ -5,7 +5,10 @@ import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/storage/shared_prefrences/shared_prefs_service.dart';
 import 'package:insta_food/presentation/features/BottomNavBar/presentation/pages/bottom_nav_bar.dart';
 import 'package:insta_food/presentation/features/Profile/presentation/pages/profile_page.dart';
+import 'package:insta_food/presentation/features/filter/presentation/filter_page.dart';
 import 'package:insta_food/presentation/features/home/presentation/view/home_page.dart';
+import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
+import 'package:insta_food/presentation/features/items/presentation/view/item_page.dart';
 import 'package:insta_food/presentation/features/onboarding/onboarding.dart';
 import 'package:insta_food/presentation/features/search/presentation/search_page.dart';
 import 'package:insta_food/presentation/features/splash/view/second_splash_screen.dart';
@@ -56,6 +59,17 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: RouterConstants.profilePage,
       builder: (context, state) => ProfilePage(),
+    ),
+    GoRoute(
+      path: RouterConstants.filterPage,
+      builder: (context, state) => FilterPage(),
+    ),
+    GoRoute(
+      path: RouterConstants.itemPage,
+      builder: (context, state) {
+        final ItemModel item = state.extra as ItemModel;
+        return ItemPage(item: item);
+      },
     ),
   ],
 );

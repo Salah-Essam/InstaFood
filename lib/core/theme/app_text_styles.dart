@@ -68,4 +68,14 @@ class AppTextStyles {
     fontSize: 28,
     color: AppColors.fontWhite,
   );
+  static TextStyle itemPagePrice = TextStyle(
+    fontWeight: FontWeight.w700,
+    fontSize: 24,
+    color: AppColors.primary,
+  );
+  static TextStyle mediumText = TextStyle(
+    fontWeight: FontWeight.w400,
+    fontSize: 16,
+    color: AppColors.darktext,
+  );
 }

@@ -24,8 +24,13 @@ class AppAssets {
   static const String drinks = "assets/icons/Drinks.svg";
   static const String line = "assets/icons/Line.svg";
   static const String ellipse = "assets/icons/Ellipse.svg";
-  static const String ellipse2 = "assets/icons/Ellipse2.svg";
+  static const String ellipseRotated = "assets/icons/Ellipse2.svg";
   static const String nextArrow = "assets/icons/NextArrow.svg";
   static const String fav = "assets/icons/Favorites.svg";
   static const String rating = "assets/icons/rating.svg";
+  static const String plus = "assets/icons/plus.svg";
+  static const String minus = "assets/icons/minus.svg";
+  static const String orderBag = "assets/icons/orderBag.svg";
+  static const String favOrange = "assets/icons/Favorites-Orange.svg";
+  static const String star = "assets/icons/star.svg";
 }

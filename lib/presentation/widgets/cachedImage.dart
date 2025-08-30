@@ -5,7 +5,14 @@ import 'package:insta_food/presentation/features/items/data/model/item_model.dar
 class CachedImage extends StatelessWidget {
   final double? height;
   final double? width;
-  const CachedImage({super.key, required this.item, this.height, this.width});
+  final BoxFit? fit;
+  const CachedImage({
+    super.key,
+    required this.item,
+    this.height,
+    this.width,
+    this.fit,
+  });
 
   final ItemModel item;
 
@@ -18,7 +25,7 @@ class CachedImage extends StatelessWidget {
           Center(child: const CircularProgressIndicator()),
       width: width,
       height: height,
-      fit: BoxFit.cover,
+      fit: fit ?? BoxFit.cover,
       errorWidget: (context, url, error) => SizedBox.expand(
         child: Container(
           color: Colors.grey[300],
