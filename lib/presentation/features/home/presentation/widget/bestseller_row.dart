@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:insta_food/presentation/features/home/widget/item_tile.dart';
+import 'package:insta_food/presentation/features/home/presentation/widget/item_tile.dart';
 import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 
 class BestSellerRow extends StatelessWidget {
@@ -20,11 +20,7 @@ class BestSellerRow extends StatelessWidget {
         itemBuilder: (context, index) {
           return Padding(
             padding: const EdgeInsets.only(right: 10),
-            child: ItemTile(
-              height: 108,
-              width: 88,
-              item: featuredItems[index],
-            ),
+            child: ItemTile(height: 108, width: 88, item: featuredItems[index]),
           );
         },
       ),

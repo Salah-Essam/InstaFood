@@ -8,10 +8,16 @@ class ItemInit extends ItemState {}
 class ItemLoading extends ItemState {}
 
 class ItemLoaded extends ItemState {
-  final dynamic itemList;
+  final List<ItemModel> itemList;
   final String? sortOrder;
-  final String? searchQuery;
-  ItemLoaded({required this.itemList, this.sortOrder, this.searchQuery});
+  final List<ItemModel>? featuredItems;
+  final List<ItemModel> searchedItems;
+  ItemLoaded({
+    required this.itemList,
+    this.sortOrder,
+    this.featuredItems,
+    required this.searchedItems,
+  });
 }
 
 final class ItemFailure extends ItemState {

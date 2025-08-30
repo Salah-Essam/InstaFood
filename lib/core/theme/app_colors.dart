@@ -35,21 +35,21 @@ class AppColors {
   // Status bar text and icons
   static const Color statusBarContent = Color(0xFF000000);
 
-  static var orangeBase = Colors.orange;
+  static const orangeBase = Colors.orange;
 
-  static var white = Colors.white;
-  static var lightYellow = Color(0xFFF3E9B5);
+  static const white = Colors.white;
+  static const lightYellow = Color(0xFFF3E9B5);
 
-  static var fontWhite = Color(0xFFF8F8F8);
+  static const fontWhite = Color(0xFFF8F8F8);
 
-  static var grey = Color(0xFF4E5457);
+  static const grey = Color(0xFF4E5457);
 
-  static var darktext = Color(0xFF452521);
+  static const darktext = Color(0xFF452521);
 
   // Legacy aliases used across the app (kept for compatibility)
   static const Color orange2 = Color(
     0xFFFFD699,
   ); // light orange for text/dividers
   static const Color yellowBase = Color(0xFFF5CB58);
-  static const Color yellow2 = Color(0xFFF3E9B5);
+  static const Color border = Color(0xFFF1CCBC);
 }

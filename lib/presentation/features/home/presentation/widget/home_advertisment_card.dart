@@ -1,11 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:insta_food/core/theme/app_assets.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
-import 'package:insta_food/core/utils/image_error.dart';
 import 'package:insta_food/core/utils/app_strings.dart';
 import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
+import 'package:insta_food/presentation/widgets/cachedImage.dart';
 
 class AdvertismentCard extends StatelessWidget {
   final ItemModel item;
@@ -43,12 +44,10 @@ class AdvertismentCard extends StatelessWidget {
                     topRight: Radius.circular(15),
                     bottomRight: Radius.circular(15),
                   ),
-                  child: Image.network(
-                    item.imageUrl,
+                  child: CachedImage(
+                    item: item,
                     width: 161.5,
                     height: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: ImageError.imageErrorLoader(),
                   ),
                 ),
               ),
@@ -61,7 +60,10 @@ class AdvertismentCard extends StatelessWidget {
           ),
           Align(
             alignment: Alignment.bottomLeft,
-            child: SvgPicture.asset(AppAssets.ellipse2, fit: BoxFit.contain),
+            child: SvgPicture.asset(
+              AppAssets.ellipseRotated,
+              fit: BoxFit.contain,
+            ),
           ),
         ],
       ),
