@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:insta_food/core/routes/router_constants.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
+import 'package:insta_food/core/utils/app_alerts.dart';
+import 'package:insta_food/presentation/features/Profile/presentation/cubit/ProfileImageCubit/profile_image_cubit.dart';
 import 'package:insta_food/presentation/features/drawer/data/datasources/profile_drawer_data.dart';
 import 'package:insta_food/presentation/features/drawer/presentation/widgets/drawer_item.dart';
 
@@ -19,10 +23,26 @@ class ProfileDrawer extends StatelessWidget {
           children: [
             Row(
               children: [
-                CircleAvatar(
-                  radius: 24,
-                  backgroundColor: AppColors.statusBar,
-                  child: Icon(Icons.person, color: Colors.black, size: 30),
+                BlocProvider(
+                  create: (context) => ProfileImageCubit()..loadImage(),
+                  child: BlocBuilder<ProfileImageCubit, ProfileImageState>(
+                    builder: (context, state) {
+                      String? imagePath;
+                      if (state is ProfileImageLoaded) {
+                        imagePath = state.imagePath;
+                      }
+                      return CircleAvatar(
+                        radius: 24,
+                        backgroundColor: AppColors.statusBar,
+                        backgroundImage: imagePath != null
+                            ? FileImage(File(imagePath))
+                            : null,
+                        child: imagePath == null
+                            ? Icon(Icons.person, color: Colors.black, size: 30)
+                            : null,
+                      );
+                    },
+                  ),
                 ),
                 SizedBox(width: 16),
                 Column(
@@ -47,21 +67,26 @@ class ProfileDrawer extends StatelessWidget {
             ),
             const SizedBox(height: 32),
 
-            Column(
-              children: List.generate(ProfileDrawerData.items.length, (index) {
-                return Column(
-                  children: [
-                    DrawerItem(
-                      onTap: () {
-                        context.push(RouterConstants.profilePage);
-                      },
-                      label: ProfileDrawerData.items[index].name,
-                      icon: ProfileDrawerData.items[index].icon,
-                    ),
-                    Divider(color: AppColors.orange2, thickness: 1, height: 24),
-                  ],
-                );
-              }),
+            ListView.separated(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) => DrawerItem(
+                onTap: () {
+                  if (ProfileDrawerData.items[index].pagePath != null) {
+                    context.push("${ProfileDrawerData.items[index].pagePath}");
+                  } else {
+                    AppAlerts.showLogoutAppDialog(
+                      context,
+                      title: "Are you sure you want to log out?",
+                    );
+                  }
+                },
+                label: ProfileDrawerData.items[index].name,
+                icon: ProfileDrawerData.items[index].icon,
+              ),
+              separatorBuilder: (context, index) =>
+                  Divider(color: AppColors.orange2, thickness: 1, height: 24),
+              itemCount: ProfileDrawerData.items.length,
             ),
           ],
         ),

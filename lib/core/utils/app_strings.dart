@@ -2,10 +2,8 @@ class AppStrings {
   static const String onb1Title = 'Order For Food';
   static const String onb2Title = 'Easy Payment';
   static const String onb3Title = 'Fast Delivery';
-
   static const String onbBody =
       'Lorem ipsum dolor sit amet, conse ctetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna.';
-
   static const String next = 'Next';
   static const String skip = 'Skip';
   static const String getStarted = 'Get Started';
@@ -29,7 +27,18 @@ class AppStrings {
   static const String bestseller = "Best Seller";
   static const String recommend = "Recommend";
   static const String viewAll = "View All";
+  // ==========================================
+  static const String notifications = "Notifications";
+  static const String myOrders = "My Orders";
+  static const String myProfile = "My Profile";
+  static const String deliveryAddress = "Delivery Address";
+  static const String paymentMethods = "Payment Methods";
+  static const String contactUs = "Contact Us";
+  static const String helpFAQs = "Help & FAQs";
+  static const String settings = "Settings";
+  // ==========================================
   static const String filter = "Filter";
   static const String portions = "Portion Size";
   static const String addToCart = "Add to Cart";
+
 }

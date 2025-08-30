@@ -48,7 +48,7 @@ class AppColors {
 
   // Legacy aliases used across the app (kept for compatibility)
   static const Color orange2 = Color(
-    0xFFFFD699,
+    0xFFFFDECF,
   ); // light orange for text/dividers
   static const Color yellowBase = Color(0xFFF5CB58);
   static const Color border = Color(0xFFF1CCBC);

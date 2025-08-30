@@ -19,7 +19,7 @@ final GoRouter appRouter = GoRouter(
   routes: [
     GoRoute(
       path: RouterConstants.splash,
-      builder: (context, state) => const _SplashGate(),
+      builder: (context, state) => _SplashGate(),
     ),
     GoRoute(
       path: RouterConstants.secondSplash,

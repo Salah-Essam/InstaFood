@@ -1,41 +1,42 @@
 import 'package:insta_food/core/routes/router_constants.dart';
 import 'package:insta_food/core/theme/app_assets.dart';
+import 'package:insta_food/core/utils/app_strings.dart';
 import 'package:insta_food/presentation/features/drawer/data/model/profile_dawer_item_model.dart';
 
 class ProfileDrawerData {
   static final List<ProfileDawerItemModel> items = [
     ProfileDawerItemModel(
-      name: "My Orders",
+      name: AppStrings.myOrders,
       icon: AppAssets.myOrders,
       pagePath: RouterConstants.orderPage,
     ),
     ProfileDawerItemModel(
-      name: "My Profile",
+      name: AppStrings.myProfile,
       icon: AppAssets.profile,
       pagePath: RouterConstants.profilePage,
     ),
     ProfileDawerItemModel(
-      name: "DeliveryAddress",
+      name: AppStrings.deliveryAddress,
       icon: AppAssets.deliveryAddress,
       pagePath: RouterConstants.addressPage,
     ),
     ProfileDawerItemModel(
-      name: "Payment Methods",
+      name: AppStrings.paymentMethods,
       icon: AppAssets.payment,
       pagePath: RouterConstants.paymentPage,
     ),
     ProfileDawerItemModel(
-      name: "Contact Us",
+      name: AppStrings.contactUs,
       icon: AppAssets.contactUs,
       pagePath: RouterConstants.contactPage,
     ),
     ProfileDawerItemModel(
-      name: "Help & FAQs",
+      name: AppStrings.helpFAQs,
       icon: AppAssets.helpFAQs,
       pagePath: RouterConstants.helpPage,
     ),
     ProfileDawerItemModel(
-      name: "Settings",
+      name: AppStrings.settings,
       icon: AppAssets.settings,
       pagePath: RouterConstants.settingsPage,
     ),

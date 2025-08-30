@@ -1,8 +1,7 @@
 class AppAssets {
   static const String cart = "assets/icons/drawer_cart.svg";
   static const String contactUs = "assets/icons/drawer_contact_us.svg";
-  static const String deliveryAddress =
-      "assets/icons/drawer_delivery_address.svg";
+  static const String deliveryAddress = "assets/icons/drawer_delivery_address.svg";
   static const String helpFAQs = "assets/icons/drawer_help_faqs.svg";
   static const String logout = "assets/icons/drawer_logout.svg";
   static const String myOrders = "assets/icons/drawer_my_orders.svg";
@@ -28,6 +27,12 @@ class AppAssets {
   static const String nextArrow = "assets/icons/NextArrow.svg";
   static const String fav = "assets/icons/Favorites.svg";
   static const String rating = "assets/icons/rating.svg";
+  static const String camera = "assets/icons/camera.svg";
+  static const String deliveryNotification = "assets/icons/delivery_notification.svg";
+  static const String favNotification = "assets/icons/fav_notification.svg";
+  static const String notificationIcon = "assets/icons/notification_icon.svg";
+  static const String orderNotification = "assets/icons/order_notification.svg";
+  static const String productNotification = "assets/icons/product_notification.svg";
   static const String plus = "assets/icons/plus.svg";
   static const String minus = "assets/icons/minus.svg";
   static const String orderBag = "assets/icons/orderBag.svg";
