@@ -34,6 +34,7 @@ class AppSearchBar extends StatelessWidget {
                 cursorHeight: 14,
                 cursorColor: AppColors.primary,
                 decoration: InputDecoration(
+                  fillColor: AppColors.sheetBg,
                   border: InputBorder.none,
                   hintText: AppStrings.search,
                   hintStyle: AppTextStyles.search,
