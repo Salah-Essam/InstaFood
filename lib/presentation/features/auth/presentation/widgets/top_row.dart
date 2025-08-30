@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:insta_food/core/theme/app_strings.dart';
+import 'package:insta_food/core/utils/app_strings.dart';
 import 'package:insta_food/presentation/widgets/app_backbutton.dart';
 
 class TopRow extends StatelessWidget {
@@ -32,4 +32,3 @@ class TopRow extends StatelessWidget {
     );
   }
 }
-             

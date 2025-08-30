@@ -86,7 +86,7 @@ class HomePage extends StatelessWidget {
                                       children: [
                                         Text(
                                           AppStrings.viewAll,
-                                          style: AppTextStyles.greetingDialoge,
+                                          style: AppTextStyles.greetingDialog,
                                         ),
                                         SvgPicture.asset(AppAssets.nextArrow),
                                       ],

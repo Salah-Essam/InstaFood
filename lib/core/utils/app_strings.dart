@@ -39,7 +39,7 @@ class AppStrings {
   static const String fullName = "Full Name";
   static const String newAccount = "new Account";
   static const String emailAddress = "Email Address";
-  static const String passwordHint =  '••••••••••••';
+  static const String passwordHint = '••••••••••••';
   static const String mobileNumber = "Mobile Number";
   static const String mobileNumberHint = "Enter your mobile number";
   static const String dateOfBirth = "Date of Birth";
@@ -51,11 +51,16 @@ class AppStrings {
   static const String emailIsValid = "Email is Required";
   static const String emailNotValid = "Email is Not Valid";
   static const String passwordDontMatch = "Password doesnt match";
-  static const String passwordMin = "Password must be at least 8 characters long";
-  static const String mustHaveCapital = "Password must contain at least one capital letter";
-  static const String mustHaveSmall = "Password must contain at least one small letter";
-  static const String mustHaveNumber = "Password must contain at least one number";
-  static const String mustHaveSpecialCharacters = "Password must contain at least one special character";
+  static const String passwordMin =
+      "Password must be at least 8 characters long";
+  static const String mustHaveCapital =
+      "Password must contain at least one capital letter";
+  static const String mustHaveSmall =
+      "Password must contain at least one small letter";
+  static const String mustHaveNumber =
+      "Password must contain at least one number";
+  static const String mustHaveSpecialCharacters =
+      "Password must contain at least one special character";
   static const String passwordHasNoSpaces = "Password has no spaces";
   static const String requiredField = "Required Field";
   static const String invalidPhone = "Invalid Phone";
@@ -67,4 +72,17 @@ class AppStrings {
   static const String phone = "Phone Number";
 
   static const String phoneHint = "Enter your phone number";
+  // ==========================================
+  static const String notifications = "Notifications";
+  static const String myOrders = "My Orders";
+  static const String myProfile = "My Profile";
+  static const String deliveryAddress = "Delivery Address";
+  static const String paymentMethods = "Payment Methods";
+  static const String contactUs = "Contact Us";
+  static const String helpFAQs = "Help & FAQs";
+  static const String settings = "Settings";
+  // ==========================================
+  static const String filter = "Filter";
+  static const String portions = "Portion Size";
+  static const String addToCart = "Add to Cart";
 }

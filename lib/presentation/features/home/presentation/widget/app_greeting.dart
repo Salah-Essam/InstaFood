@@ -21,7 +21,7 @@ class _GreetingsState extends State<Greetings> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(state.greeting, style: AppTextStyles.greeting),
-              Text(state.dialogue, style: AppTextStyles.greetingDialoge),
+              Text(state.dialogue, style: AppTextStyles.greetingDialog),
             ],
           );
         },

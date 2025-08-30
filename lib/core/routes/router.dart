@@ -15,7 +15,6 @@ import 'package:insta_food/presentation/features/items/presentation/view/item_pa
 import 'package:insta_food/presentation/features/auth/presentation/pages/login.dart';
 import 'package:insta_food/presentation/features/auth/presentation/pages/set_password.dart';
 import 'package:insta_food/presentation/features/auth/presentation/pages/signup.dart';
-import 'package:insta_food/presentation/features/home/presentation/home_page.dart';
 
 import 'package:insta_food/presentation/features/onboarding/onboarding.dart';
 import 'package:insta_food/presentation/features/search/presentation/search_page.dart';

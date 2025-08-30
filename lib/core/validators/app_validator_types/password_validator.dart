@@ -1,4 +1,4 @@
-import 'package:insta_food/core/theme/app_strings.dart';
+import 'package:insta_food/core/utils/app_strings.dart';
 import 'package:insta_food/core/utils/app_reg_ex.dart';
 import 'package:insta_food/core/utils/app_validators.dart';
 
