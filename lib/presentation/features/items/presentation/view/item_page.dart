@@ -5,12 +5,11 @@ import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/core/utils/app_strings.dart';
 import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
-import 'package:insta_food/presentation/features/items/data/model/item_size.dart';
 import 'package:insta_food/presentation/features/items/presentation/widgets/app_counter.dart';
 import 'package:insta_food/presentation/features/items/presentation/widgets/fav_button.dart';
 import 'package:insta_food/presentation/features/items/presentation/widgets/radio_button_collection.dart';
 import 'package:insta_food/presentation/widgets/app_button_onb.dart';
-import 'package:insta_food/presentation/widgets/cachedImage.dart';
+import 'package:insta_food/presentation/widgets/cached_image.dart';
 
 class ItemPage extends StatelessWidget {
   final ItemModel item;

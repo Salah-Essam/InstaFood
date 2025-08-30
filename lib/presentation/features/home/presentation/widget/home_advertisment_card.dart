@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:insta_food/core/theme/app_assets.dart';
@@ -6,7 +5,7 @@ import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/core/utils/app_strings.dart';
 import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
-import 'package:insta_food/presentation/widgets/cachedImage.dart';
+import 'package:insta_food/presentation/widgets/cached_image.dart';
 
 class AdvertismentCard extends StatelessWidget {
   final ItemModel item;

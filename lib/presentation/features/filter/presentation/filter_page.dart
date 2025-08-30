@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/utils/app_strings.dart';
-import 'package:insta_food/presentation/features/items/presentation/cubit/item_cubit.dart';
 import 'package:insta_food/presentation/widgets/custom_appbar.dart';
 
 class FilterPage extends StatelessWidget {

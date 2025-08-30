@@ -16,10 +16,10 @@ class Counter extends StatefulWidget {
     this.initNumber,
   });
   @override
-  _CounterState createState() => _CounterState();
+  CounterState createState() => CounterState();
 }
 
-class _CounterState extends State<Counter> {
+class CounterState extends State<Counter> {
   late int _currentCount;
   late Function _counterCallback;
   late Function _increaseCallback;

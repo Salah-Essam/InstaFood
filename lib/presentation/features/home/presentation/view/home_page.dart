@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-
 import 'package:insta_food/core/di/di.dart';
 import 'package:insta_food/core/theme/app_assets.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
@@ -12,7 +11,6 @@ import 'package:insta_food/presentation/features/home/presentation/widget/app_gr
 import 'package:insta_food/presentation/features/home/presentation/widget/bestseller_row.dart';
 import 'package:insta_food/presentation/features/home/presentation/widget/home_button_grid.dart';
 import 'package:insta_food/presentation/features/home/presentation/widget/item_tile.dart';
-import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 import 'package:insta_food/presentation/features/items/presentation/cubit/item_cubit.dart';
 import 'package:insta_food/presentation/widgets/custom_appbar.dart';
 
