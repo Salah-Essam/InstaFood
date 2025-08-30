@@ -39,6 +39,7 @@ class SignupPageState extends State<SignupPage> {
   DateOfBirthAppValidator dateValidator = DateOfBirthAppValidator();
   MobileAppValidator phonenumberValidator = MobileAppValidator();
   bool obscurePassword = true;
+  bool _showRequired = false;
 
     @override
   void dispose() {
@@ -101,6 +102,8 @@ class SignupPageState extends State<SignupPage> {
                             label: AppStrings.fullName,
                             hint: AppStrings.fullNameHint,
                             keyboardType: TextInputType.name,
+                            requiredField: true,
+                            showRequiredError: _showRequired && fullnameController.text.isEmpty,
                           ),
                           const SizedBox(height: 16),
 
@@ -111,6 +114,8 @@ class SignupPageState extends State<SignupPage> {
                             hint: AppStrings.passwordHint,
                             obscureText: obscurePassword,
                             validator: passwordValidator,
+                            requiredField: true,
+                            showRequiredError: _showRequired && passwordController.text.isEmpty,
                             onChange: (value) {
                               setState(() {
                                 passwordValidator.setValue(value);
@@ -140,6 +145,8 @@ class SignupPageState extends State<SignupPage> {
                               hint: AppStrings.emailHint,
                               keyboardType: TextInputType.emailAddress,
                               validator: emailValidator,
+                              requiredField: true,
+                              showRequiredError: _showRequired && emailController.text.isEmpty,
                               onChange: (value) {
                                 setState(() {
                                   emailValidator.setValue(value);
@@ -156,6 +163,8 @@ class SignupPageState extends State<SignupPage> {
                               hint: AppStrings.phoneHint,
                               keyboardType: TextInputType.phone,
                               validator: phonenumberValidator,
+                              requiredField: true,
+                              showRequiredError: _showRequired && phonenumberController.text.isEmpty,
                               onChange: (value) {
                                 setState(() {
                                   phonenumberValidator.setValue(value);
@@ -171,6 +180,8 @@ class SignupPageState extends State<SignupPage> {
                          hint: AppStrings.dateOfBirthHint,
                          keyboardType: TextInputType.datetime,
                          validator: dateValidator,
+                         requiredField: true,
+                         showRequiredError: _showRequired && birthdateController.text.isEmpty,
                          onChange: (value) {
                            setState(() {
                              dateValidator.setValue(value);
@@ -200,46 +211,54 @@ class SignupPageState extends State<SignupPage> {
                         
                         // Sign Up button (changed from Log In)
                           Center(
-                            child: BlocConsumer<AuthCubit, AuthState>(
+                            child: BlocListener<AuthCubit, AuthState>(
                               listener: (context, state) {
-                                if (state is Authenticated) {
-                                  context.go(RouterConstants.bottomNavBar);
-                                } else if (state is AuthError) {
+                                if (state is AuthFormValidationFailed) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(state.message)),
+                                    SnackBar(
+                                      content: Text(state.message),
+                                      backgroundColor: AppColors.error,
+                                    ),
                                   );
+                                } else if (state is Authenticated) {
+                                  context.go(RouterConstants.bottomNavBar);
                                 }
                               },
-                              builder: (context, state) {
+                              child: BlocBuilder<AuthCubit, AuthState>(
+                                builder: (context, state) {
                                 return AppButton(
                                   label: state is AuthLoading ? "Loading..." : "Sign Up",
                                   onPressed: state is AuthLoading ? null : () {
+                                    setState(() { _showRequired = true; });
+                                    context.read<AuthCubit>().validateSignupFields(
+                                      fullName: fullnameController.text,
+                                      email: emailController.text,
+                                      password: passwordController.text,
+                                      phone: phonenumberController.text,
+                                      dob: birthdateController.text,
+                                    );
                                     if (fullnameController.text.isNotEmpty &&
                                         emailController.text.isNotEmpty &&
                                         passwordController.text.isNotEmpty &&
-                                        mobileController.text.isNotEmpty &&
+                                        phonenumberController.text.isNotEmpty &&
                                         birthdateController.text.isNotEmpty) {
-                                      
                                       context.read<AuthCubit>().signUp(
                                         fullName: fullnameController.text,
                                         email: emailController.text,
                                         password: passwordController.text,
                                         dob: birthdateController.text,
-                                        phone: mobileController.text,
-                                      );
-                                    } else {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(content: Text('Please fill all fields')),
+                                        phone: phonenumberController.text,
                                       );
                                     }
                                   },
-                                  height: 48.0,
-                                  borderRadius: 28,
-                                  width: MediaQuery.of(context).size.width * 0.5,
-                                  backgroundColor: AppColors.primary,
-                                  textStyle: AppTextStyles.login,
-                                );
-                              },
+                                    height: 48.0,
+                                    borderRadius: 28,
+                                    width: MediaQuery.of(context).size.width * 0.5,
+                                    backgroundColor: AppColors.primary,
+                                    textStyle: AppTextStyles.login,
+                                  );
+                                },
+                              ),
                             ),
                           ),
 

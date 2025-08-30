@@ -33,6 +33,7 @@ class LoginScreenState extends State<LoginScreen> {
   EmailAppValidator emailValidator = EmailAppValidator();
   PasswordAppValidator passwordValidator = PasswordAppValidator();
   bool obscurePassword = true;
+  bool _showRequired = false;
 
   @override
   void dispose() {
@@ -46,10 +47,15 @@ class LoginScreenState extends State<LoginScreen> {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is Authenticated) {
-          // Navigate to bottom nav bar on successful login
           context.go(RouterConstants.bottomNavBar);
-        } else if (state is AuthError) {
-          // Show error message
+        } else if (state is AuthInvalidCredentials) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        } else if (state is AuthFormValidationFailed) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.message),
@@ -57,7 +63,6 @@ class LoginScreenState extends State<LoginScreen> {
             ),
           );
         } else if (state is AuthShouldShowPasswordReset) {
-          // Show password reset dialog
           showDialog(
             context: context,
             builder: (context) => PasswordResetDialog(email: state.email),
@@ -82,7 +87,8 @@ class LoginScreenState extends State<LoginScreen> {
                           TopRow(title: AppStrings.login),
                           const SizedBox(height: 40),
                           const WelcomeSection(),
-                          const SizedBox(height: 40),
+                          const SizedBox(height: 24),
+                          const SizedBox(height: 16),
 
                           // Email
                           AppTextField(
@@ -91,6 +97,8 @@ class LoginScreenState extends State<LoginScreen> {
                             hint: AppStrings.emailExample,
                             keyboardType: TextInputType.emailAddress,
                             validator: emailValidator,
+                            requiredField: true,
+                            showRequiredError: _showRequired && emailController.text.isEmpty,
                             onChange: (value) {
                               setState(() {
                                 emailValidator.setValue(value);
@@ -106,6 +114,8 @@ class LoginScreenState extends State<LoginScreen> {
                             hint: AppStrings.passwordHint,
                             obscureText: obscurePassword,
                             validator: passwordValidator,
+                            requiredField: true,
+                            showRequiredError: _showRequired && passwordController.text.isEmpty,
                             onChange: (value) {
                               setState(() {
                                 passwordValidator.setValue(value);
@@ -141,25 +151,23 @@ class LoginScreenState extends State<LoginScreen> {
                           ),
 
                           Center(
-                            child: BlocConsumer<AuthCubit, AuthState>(
-                              listener: (context, state) {
-                                if (state is Authenticated) {
-                                  context.go(RouterConstants.bottomNavBar);
-                                } else if (state is AuthError) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(state.message)),
-                                  );
-                                }
-                              },
+                            child: BlocBuilder<AuthCubit, AuthState>(
                               builder: (context, state) {
                                 return AppButton(
                                   label: state is AuthLoading ? "Loading..." : "Log In",
                                   onPressed: state is AuthLoading ? null : () {
-                                    if (_formKey.currentState!.validate()) {
-                                      context.read<AuthCubit>().signIn(
-                                        emailController.text,
-                                        passwordController.text,
-                                      );
+                                    setState(() { _showRequired = true; });
+                                    context.read<AuthCubit>().validateLoginFields(
+                                      email: emailController.text,
+                                      password: passwordController.text,
+                                    );
+                                    if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
+                                      if (_formKey.currentState!.validate()) {
+                                        context.read<AuthCubit>().signIn(
+                                          emailController.text,
+                                          passwordController.text,
+                                        );
+                                      }
                                     }
                                   },
                                   height: 48.0,

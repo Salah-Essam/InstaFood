@@ -22,6 +22,8 @@ class AppTextField extends StatefulWidget {
     this.validator,
     this.inputFormatters,
     this.showPasswordToggle = false,
+  this.requiredField = false,
+  this.showRequiredError = false,
   });
   final TextEditingController controller;
   final Function(String)? onChange;
@@ -38,6 +40,8 @@ class AppTextField extends StatefulWidget {
   final AppValidator? validator;
   final List<TextInputFormatter>? inputFormatters;
   final bool showPasswordToggle;
+  final bool requiredField;
+  final bool showRequiredError;
 
   @override
   State<AppTextField> createState() => _AppTextFieldState();
@@ -77,10 +81,17 @@ class _AppTextFieldState extends State<AppTextField> {
           decoration: BoxDecoration(
             color: AppColors.yellow2,
             borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: _requiredError ? AppColors.error : Colors.transparent,
+              width: 1.2,
+            ),
           ),
           child: TextFormField(
             controller: widget.controller,
-            onChanged: widget.onChange,
+            onChanged: (value) {
+              widget.onChange?.call(value);
+              setState(() {});
+            },
             inputFormatters: widget.inputFormatters,
             style: widget.style ?? AppTextStyles.body.copyWith(
               color: AppColors.darkBrown,
@@ -121,9 +132,23 @@ class _AppTextFieldState extends State<AppTextField> {
         
         // Validation Messages
         if (widget.validator != null) getValidationHints(),
+        if (_requiredError)
+          Padding(
+            padding: const EdgeInsets.only(top: 5),
+            child: Text(
+              'This field is required',
+              style: AppTextStyles.small.copyWith(
+                color: AppColors.error,
+                fontSize: 12,
+              ),
+            ),
+          ),
       ],
     );
   }
+
+  bool get _requiredError =>
+      widget.requiredField && widget.showRequiredError && widget.controller.text.isEmpty;
 
   Widget getValidationHints() {
     return Column(

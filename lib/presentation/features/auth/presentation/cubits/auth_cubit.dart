@@ -42,37 +42,18 @@ class AuthCubit extends Cubit<AuthState> {
       } else {
         _failedLoginAttempts++;
         _lastAttemptedEmail = email;
-        
         if (_failedLoginAttempts >= 3) {
           emit(AuthShouldShowPasswordReset(email));
-        } else {
-          emit(AuthError('Invalid email or password'));
         }
+        emit(AuthInvalidCredentials());
       }
     } catch (e) {
       _failedLoginAttempts++;
       _lastAttemptedEmail = email;
-      
       if (_failedLoginAttempts >= 3) {
         emit(AuthShouldShowPasswordReset(email));
-      } else {
-        emit(AuthError(e.toString()));
       }
-    }
-  }
-
-  Future<void> setPassword(String newPassword) async {
-    try {
-      emit(AuthLoading());
-      await _authRepository.setPassword(newPassword);
-      final user = _authRepository.getCurrentUser();
-      if (user != null) {
-        emit(Authenticated(user));
-      } else {
-        emit(Unauthenticated());
-      }
-    } catch (e) {
-      emit(AuthError(e.toString()));
+      emit(AuthInvalidCredentials());
     }
   }
 
@@ -96,19 +77,17 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   // Method to change password by email (for forgot password)
-  Future<void> changePasswordByEmail(String email, String newPassword) async {
+  Future<void> changePasswordByEmail(String email) async {
     try {
       emit(AuthLoading());
-      final success = await _authRepository.changePasswordByEmail(email, newPassword);
+      final success = await _authRepository.changePasswordByEmail(email);
       if (success) {
-        _failedLoginAttempts = 0; // Reset failed attempts
-        _lastAttemptedEmail = null;
-        emit(AuthError('Password updated successfully. Please login with your new password.'));
+        emit(PasswordResetEmailSent(email));
       } else {
-        emit(AuthError('Failed to update password. User not found.'));
+        emit(PasswordResetEmailFailed('Failed to send password reset email.'));
       }
     } catch (e) {
-      emit(AuthError(e.toString()));
+      emit(PasswordResetEmailFailed(e.toString()));
     }
   }
 
@@ -125,4 +104,29 @@ class AuthCubit extends Cubit<AuthState> {
 
   // Get the last attempted email
   String? get lastAttemptedEmail => _lastAttemptedEmail;
+
+  // UI calls to validate before attempting actions
+  void validateLoginFields({required String email, required String password}) {
+    if (email.isEmpty || password.isEmpty) {
+      emit(AuthFormValidationFailed('Please fill in all required fields'));
+    }
+  }
+
+  void validateSignupFields({
+    required String fullName,
+    required String email,
+    required String password,
+    required String phone,
+    required String dob,
+  }) {
+    if (fullName.isEmpty || email.isEmpty || password.isEmpty || phone.isEmpty || dob.isEmpty) {
+      emit(AuthFormValidationFailed('Please fill in all required fields'));
+    }
+  }
+
+  void validatePasswordChange(String pass, String confirm) {
+    if (pass.isEmpty || confirm.isEmpty) {
+      emit(AuthFormValidationFailed('Please fill in all required fields'));
+    }
+  }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_strings.dart';
 import 'package:insta_food/core/theme/app_text_fields.dart';
@@ -12,9 +11,10 @@ import 'package:insta_food/presentation/widgets/app_button_onb.dart';
 import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_state.dart';
 
+
 class SetPasswordPage extends StatefulWidget {
-  final String? email; // Email for password reset by email
-  
+  final String? email; // Target email for password reset
+
   const SetPasswordPage({super.key, this.email});
 
   @override
@@ -28,6 +28,7 @@ class SetPasswordPageState extends State<SetPasswordPage> {
   ConfirmPasswordAppValidator confirmPasswordValidator = ConfirmPasswordAppValidator();
   bool obscurePassword = true;
   bool obscureConfirmPassword = true;
+  bool _showRequired = false; 
 
   @override
   void dispose() {
@@ -40,17 +41,20 @@ class SetPasswordPageState extends State<SetPasswordPage> {
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
-        if (state is AuthError) {
+        if (state is PasswordResetEmailSent) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Password reset email sent to ${state.email}'),
+              backgroundColor: AppColors.success,
+            ),
+          );
+        } else if (state is PasswordResetEmailFailed) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.message),
-              backgroundColor: state.message.contains('successfully') ? Colors.green : Colors.red,
+              backgroundColor: AppColors.error,
             ),
           );
-          // If password was updated successfully, navigate to login
-          if (state.message.contains('successfully')) {
-            context.go('/login');
-          }
         }
       },
       child: Scaffold(
@@ -103,44 +107,38 @@ class SetPasswordPageState extends State<SetPasswordPage> {
                             height: 1.4,
                           ),
                         ),
-                        
-                        // Password
                         AppTextField(
                           controller: passwordController,
                           label: AppStrings.password,
                           hint: AppStrings.passwordHint,
                           obscureText: obscurePassword,
                           validator: passwordValidator,
+                          requiredField: true,
+                          showRequiredError: _showRequired && passwordController.text.isEmpty,
                           onChange: (value) {
                             setState(() {
                               passwordValidator.setValue(value);
+                              confirmPasswordValidator.comparedWithPassword = value;
                             });
                           },
                           suffixIcon: IconButton(
                             icon: Icon(
-                              obscurePassword
-                                  ? Icons.visibility_off
-                                  : Icons.visibility,
+                              obscurePassword ? Icons.visibility_off : Icons.visibility,
                               color: AppColors.primary,
                               size: 20,
                             ),
-                            onPressed: () {
-                              setState(() {
-                                obscurePassword = !obscurePassword;
-                              });
-                            },
+                            onPressed: () { setState(() { obscurePassword = !obscurePassword; }); },
                           ),
                         ),
-
                         const SizedBox(height: 16),
-
-                        // Confirm Password
                         AppTextField(
                           controller: confirmPasswordController,
                           label: AppStrings.confirmPassword,
                           hint: AppStrings.confirmPasswordHint,
                           obscureText: obscureConfirmPassword,
                           validator: confirmPasswordValidator,
+                          requiredField: true,
+                          showRequiredError: _showRequired && confirmPasswordController.text.isEmpty,
                           onChange: (value) {
                             setState(() {
                               confirmPasswordController.text = value;
@@ -148,67 +146,68 @@ class SetPasswordPageState extends State<SetPasswordPage> {
                           },
                           suffixIcon: IconButton(
                             icon: Icon(
-                              obscureConfirmPassword
-                                  ? Icons.visibility_off
-                                  : Icons.visibility,
+                              obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
                               color: AppColors.primary,
                               size: 20,
                             ),
-                            onPressed: () {
-                              setState(() {
-                                obscureConfirmPassword = !obscureConfirmPassword;
-                              });
-                            },
+                            onPressed: () { setState(() { obscureConfirmPassword = !obscureConfirmPassword; }); },
                           ),
                         ),
-
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 24),
 
                         // Submit Button
                            Center(
-                            child: BlocConsumer<AuthCubit, AuthState>(
-                              listener: (context, state) {
-                                if (state is Authenticated) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('Password updated successfully')),
-                                  );
-                                  Navigator.of(context).pop();
-                                } else if (state is AuthError) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(state.message)),
-                                  );
-                                }
-                              },
+                            child: BlocBuilder<AuthCubit, AuthState>(
                               builder: (context, state) {
                                 return AppButton(
-                                  label: state is AuthLoading ? "Loading..." : "Create New Password",
+                                  label: state is AuthLoading ? 'Sending...' : 'Send Reset Email',
                                   onPressed: state is AuthLoading ? null : () {
-                                    if (passwordController.text.isNotEmpty &&
-                                        passwordController.text == confirmPasswordController.text) {
-                                      // Check if this is a password reset by email or regular password change
-                                      if (widget.email != null) {
-                                        // Password reset by email
-                                        context.read<AuthCubit>().changePasswordByEmail(
-                                          widget.email!,
-                                          passwordController.text,
-                                        );
-                                      } else {
-                                        // Regular password change (user is logged in)
-                                        context.read<AuthCubit>().setPassword(passwordController.text);
-                                      }
-                                    } else {
+                                    final targetEmail = widget.email;
+                                    if (targetEmail == null || targetEmail.isEmpty) {
                                       ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(content: Text('Passwords do not match or are empty')),
+                                        SnackBar(
+                                          content: const Text('No email provided for reset'),
+                                          backgroundColor: AppColors.error,
+                                        ),
                                       );
+                                      return;
                                     }
+                                    context.read<AuthCubit>().changePasswordByEmail(targetEmail);
                                   },
                                   height: 48.0,
                                   borderRadius: 28,
-                                  width: MediaQuery.of(context).size.width * 0.5,
+                                  width: MediaQuery.of(context).size.width * 0.6,
                                   backgroundColor: AppColors.primary,
                                   textStyle: AppTextStyles.login,
                                 );
                               },
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          // Create New Password validation-only button
+                          Center(
+                            child: AppButton(
+                              label: 'Create New Password',
+                              onPressed: () {
+                                setState(() { _showRequired = true; });
+                                passwordValidator.setValue(passwordController.text);
+                                confirmPasswordValidator.setValue(confirmPasswordController.text);
+                                confirmPasswordValidator.comparedWithPassword = passwordController.text;
+                                final passErrors = passwordValidator.check();
+                                final confirmErrors = confirmPasswordValidator.check();
+                                if (passwordController.text.isNotEmpty &&
+                                    confirmPasswordController.text.isNotEmpty &&
+                                    passErrors.isEmpty && confirmErrors.isEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Password fields valid'), backgroundColor: AppColors.success),
+                                  );
+                                }
+                              },
+                              height: 48.0,
+                              borderRadius: 28,
+                              width: MediaQuery.of(context).size.width * 0.6,
+                              backgroundColor: AppColors.primary,
+                              textStyle: AppTextStyles.login,
                             ),
                           ),
                       ],

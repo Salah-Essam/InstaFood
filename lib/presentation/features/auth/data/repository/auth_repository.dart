@@ -1,14 +1,18 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hive/hive.dart';
 import 'package:insta_food/presentation/features/auth/data/model/user_model.dart';
+import 'package:insta_food/core/network/Firebase/firebase_firestore_service.dart';
 
 class AuthRepository {
   final FirebaseAuth _firebaseAuth;
-  final FirebaseFirestore _firestore;
+  final FirebaseFirestoreService _firestoreService;
   final Box _userBox;
 
-  AuthRepository(this._firebaseAuth, this._firestore, this._userBox);
+  AuthRepository(
+    this._firebaseAuth,
+    this._firestoreService,
+    this._userBox,
+  );
 
   Future<UserModel> signUp({
     required String fullName,
@@ -22,7 +26,7 @@ class AuthRepository {
       password: password,
     );
 
-    final user = UserModel(
+    final profile = UserModel(
       id: userCredential.user!.uid,
       fullName: fullName,
       email: email,
@@ -31,44 +35,35 @@ class AuthRepository {
       phone: phone,
     );
 
-    // Save to Firestore (with password)
-    await _firestore.collection("users").doc(user.id).set(user.toFirestoreMap());
+    // Store ONLY public profile in Firestore (no password)
+    await _firestoreService.addUser(profile);
 
-    // Save locally with password for offline access
-    await _userBox.put("currentUser", user.toMap());
+    // Cache locally including password (legacy requirement)
+    await _userBox.put('currentUser', profile.toMap());
 
-    return user;
+    return profile;
   }
 
   Future<UserModel?> signIn(String email, String password) async {
     try {
-      // Try to find user by email in Firestore and check password
-      final querySnapshot = await _firestore
-          .collection("users")
-          .where("email", isEqualTo: email)
-          .limit(1)
-          .get();
-      
-      if (querySnapshot.docs.isNotEmpty) {
-        final userData = querySnapshot.docs.first.data();
-        final user = UserModel.fromFirestore(userData);
-        
-        // Check if password matches
-        if (user.password == password) {
-          // Try Firebase Auth login (might fail if password was changed via Firestore)
-          try {
-            await _firebaseAuth.signInWithEmailAndPassword(
-              email: email,
-              password: password,
-            );
-          } catch (_) {
-            // Firebase Auth failed but Firestore password matched, continue
-          }
-          
-          await _userBox.put("currentUser", user.toMap());
-          return user;
-        }
-      }
+      // Sign in with FirebaseAuth first (source of truth)
+      final cred = await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
+      final uid = cred.user?.uid;
+      if (uid == null) return null;
+      // Fetch profile from Firestore
+      final profile = await _firestoreService.getUserById(uid) ?? await _firestoreService.getUserByEmail(email);
+      if (profile == null) return null;
+      // Merge local password (we only have the input password)
+      final merged = UserModel(
+        id: profile.id,
+        fullName: profile.fullName,
+        email: profile.email,
+        password: password,
+        dateOfBirth: profile.dateOfBirth,
+        phone: profile.phone,
+      );
+      await _userBox.put('currentUser', merged.toMap());
+      return merged;
     } catch (_) {
       // If no internet → check Hive
       final cachedUser = _userBox.get("currentUser");
@@ -82,93 +77,22 @@ class AuthRepository {
     return null;
   }
 
-  Future<void> setPassword(String newPassword) async {
-    final cachedUser = _userBox.get("currentUser");
-    if (cachedUser != null) {
-      final user = UserModel.fromMap(Map<String, dynamic>.from(cachedUser));
-      
-      // Try to update Firebase Auth password if user is logged in
-      final firebaseUser = _firebaseAuth.currentUser;
-      try {
-        if (firebaseUser != null && firebaseUser.uid == user.id) {
-          await firebaseUser.updatePassword(newPassword);
-        }
-      } catch (_) {
-        // Firebase Auth update failed, but continue with Firestore update
-      }
-
-      final updatedUser = UserModel(
-        id: user.id,
-        fullName: user.fullName,
-        email: user.email,
-        password: newPassword,
-        dateOfBirth: user.dateOfBirth,
-        phone: user.phone,
-      );
-
-      await _userBox.put("currentUser", updatedUser.toMap());
-      // Update Firestore (with password)
-      await _firestore.collection("users").doc(user.id).update(updatedUser.toFirestoreMap());
-    }
-  }
-
-  // New method to change password by email (for forgot password functionality)
-  Future<bool> changePasswordByEmail(String email, String newPassword) async {
+  // Trigger Firebase to send a password reset email to the user.
+  Future<bool> changePasswordByEmail(String email) async {
     try {
-      final querySnapshot = await _firestore
-          .collection("users")
-          .where("email", isEqualTo: email)
-          .limit(1)
-          .get();
-      
-      if (querySnapshot.docs.isNotEmpty) {
-        final doc = querySnapshot.docs.first;
-        final userData = doc.data();
-        final user = UserModel.fromFirestore(userData);
-        
-        final updatedUser = UserModel(
-          id: user.id,
-          fullName: user.fullName,
-          email: user.email,
-          password: newPassword,
-          dateOfBirth: user.dateOfBirth,
-          phone: user.phone,
-        );
-
-        // Update Firestore
-        await _firestore.collection("users").doc(doc.id).update(updatedUser.toFirestoreMap());
-        
-        // Try to update Firebase Auth password if user exists
-        try {
-          final firebaseUser = _firebaseAuth.currentUser;
-          if (firebaseUser != null && firebaseUser.uid == user.id) {
-            await firebaseUser.updatePassword(newPassword);
-          }
-        } catch (_) {
-          // Firebase Auth update failed, but Firestore was updated
-        }
-        
-        return true;
-      }
+      await _firebaseAuth.sendPasswordResetEmail(email: email);
+      return true;
     } catch (_) {
       return false;
     }
-    return false;
   }
 
   // Check if user exists by email
   Future<bool> userExistsByEmail(String email) async {
     try {
-      final querySnapshot = await _firestore
-          .collection("users")
-          .where("email", isEqualTo: email)
-          .limit(1)
-          .get();
-      
-      return querySnapshot.docs.isNotEmpty;
-    } catch (_) {
-      return false;
-    }
+      final profile = await _firestoreService.getUserByEmail(email);
+      return profile != null;
+    } catch (_) { return false; }
   }
 
   Future<void> signOut() async {

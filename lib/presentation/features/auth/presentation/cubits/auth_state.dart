@@ -35,3 +35,42 @@ class AuthShouldShowPasswordReset extends AuthState {
   @override
   List<Object?> get props => [email];
 }
+
+// Emitted when a password reset email has been successfully sent.
+class PasswordResetEmailSent extends AuthState {
+  final String email;
+  PasswordResetEmailSent(this.email);
+
+  @override
+  List<Object?> get props => [email];
+}
+
+// Emitted when sending a password reset email failed.
+class PasswordResetEmailFailed extends AuthState {
+  final String message;
+  PasswordResetEmailFailed(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class AuthInvalidCredentials extends AuthState {
+  final String message;
+  AuthInvalidCredentials([this.message = 'Invalid email or password']);
+  @override
+  List<Object?> get props => [message];
+}
+
+class PasswordChangeSuccess extends AuthState {
+  final String message;
+  PasswordChangeSuccess([this.message = 'Password changed successfully']);
+  @override
+  List<Object?> get props => [message];
+}
+
+class AuthFormValidationFailed extends AuthState {
+  final String message;
+  AuthFormValidationFailed(this.message);
+  @override
+  List<Object?> get props => [message];
+}

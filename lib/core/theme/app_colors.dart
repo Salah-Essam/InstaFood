@@ -55,5 +55,6 @@ class AppColors {
   static const Color darkBrown = Color(0xFF252525);
   //===========================================================================
   static const Color error = Color(0xFFFF0000);
+  static const Color success = Color(0xFF00AA00);
   
 }

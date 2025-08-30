@@ -2,41 +2,33 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
 class FirebaseAuthService {
-final FirebaseAuth _auth = FirebaseAuth.instance;
+	final FirebaseAuth _auth;
+	FirebaseAuthService({FirebaseAuth? firebaseAuth}) : _auth = firebaseAuth ?? FirebaseAuth.instance;
 
+	Stream<User?> authStateChanges() => _auth.authStateChanges();
 
-Stream<User?> authStateChanges() => _auth.authStateChanges();
+	User? get currentUser => _auth.currentUser;
 
+	Future<UserCredential> signUp({required String email, required String password}) {
+		return _auth.createUserWithEmailAndPassword(email: email, password: password);
+	}
 
-User? get currentUser => _auth.currentUser;
+	Future<UserCredential> signIn({required String email, required String password}) {
+		return _auth.signInWithEmailAndPassword(email: email, password: password);
+	}
 
+	Future<void> signOut() => _auth.signOut();
 
-Future<UserCredential> signUpWithEmail(String email, String password) {
-return _auth.createUserWithEmailAndPassword(email: email, password: password);
-}
+	Future<void> sendPasswordResetEmail(String email) => _auth.sendPasswordResetEmail(email: email);
 
+	Future<void> updatePassword(String newPassword) async {
+		final user = _auth.currentUser;
+		if (user != null) await user.updatePassword(newPassword);
+	}
 
-Future<UserCredential> loginWithEmail(String email, String password) {
-return _auth.signInWithEmailAndPassword(email: email, password: password);
-}
-
-
-Future<void> sendEmailVerification() async {
-final user = _auth.currentUser;
-if (user != null && !user.emailVerified) await user.sendEmailVerification();
-}
-
-
-Future<void> sendPasswordReset(String email) {
-return _auth.sendPasswordResetEmail(email: email);
-}
-
-
-Future<void> logout() => _auth.signOut();
-
-
-Future<void> updatePassword(String newPassword) async {
-final user = _auth.currentUser;
-if (user != null) await user.updatePassword(newPassword);
-}
+	Future<String?> getIdToken() async {
+		final user = _auth.currentUser;
+		if (user == null) return null;
+		return user.getIdToken();
+	}
 }

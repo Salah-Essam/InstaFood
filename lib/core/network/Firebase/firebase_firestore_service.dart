@@ -1,17 +1,35 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:insta_food/presentation/features/auth/data/model/user_model.dart';
 
 class FirebaseFirestoreService {
-final FirebaseFirestore _db = FirebaseFirestore.instance;
-CollectionReference<Map<String, dynamic>> get users => _db.collection('users');
+	final FirebaseFirestore _db;
+	FirebaseFirestoreService({FirebaseFirestore? firestore}) : _db = firestore ?? FirebaseFirestore.instance;
 
+	CollectionReference<Map<String, dynamic>> get _users => _db.collection('users');
 
-Future<void> setUser(String uid, Map<String, dynamic> data) async {
-await users.doc(uid).set(data, SetOptions(merge: true));
-}
+	Future<void> addUser(UserModel user) async {
+		if (user.id == null) throw ArgumentError('User id is required to add user');
+		await _users.doc(user.id).set(user.toPublicMap());
+	}
 
+	Future<UserModel?> getUserByEmail(String email) async {
+		final snap = await _users.where('email', isEqualTo: email).limit(1).get();
+		if (snap.docs.isEmpty) return null;
+		final doc = snap.docs.first;
+		return UserModel.fromFirestoreDoc(doc.id, doc.data());
+	}
 
-Future<DocumentSnapshot<Map<String, dynamic>>> getUser(String uid) {
-return users.doc(uid).get();
-}
+	Future<UserModel?> getUserById(String uid) async {
+		final doc = await _users.doc(uid).get();
+		if (!doc.exists) return null;
+		return UserModel.fromFirestoreDoc(doc.id, doc.data()!);
+	}
+
+	Future<void> updateUser(String uid, Map<String, dynamic> data) async {
+		await _users.doc(uid).update(data);
+	}
+
+	Future<void> deleteUser(String uid) async {
+		await _users.doc(uid).delete();
+	}
 }
