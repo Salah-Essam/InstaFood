@@ -10,9 +10,10 @@ class RouterConstants {
   static const String signup = '/signup';
   static const String orderPage = '/orderPage';
   static const String addressPage = '/addressPage';
+  static const String addNewAddressPage = '/addNewAddressPage';
   static const String paymentPage = '/paymentPage';
   static const String contactPage = '/contactPage';
-  static const String helpPage = '/helpPage';
+  static const String helpFAQsPage = '/helpPage';
   static const String settingsPage = '/settingsPage';
   static const String filterPage = '/filterPage';
   static const String itemPage = '/itemPage';

@@ -32,6 +32,16 @@ class AppTextStyles {
     fontWeight: FontWeight.w600,
     color: AppColors.primaryOrange,
   );
+  static TextStyle get buttonOrangeText => TextStyle(
+    fontSize: 15.sp,
+    fontWeight: FontWeight.w600,
+    color: AppColors.primaryOrange,
+  );
+  static TextStyle get buttonWhiteText => TextStyle(
+    fontSize: 15.sp,
+    fontWeight: FontWeight.w600,
+    color: AppColors.white,
+  );
 
   // ===========================
   static TextStyle get greeting => TextStyle(
@@ -76,7 +86,7 @@ class AppTextStyles {
 
   static TextStyle get ad => TextStyle(
     fontWeight: FontWeight.w400,
-    fontSize: 16.sp,
+    fontSize: 14.sp,
     color: AppColors.textLight,
   );
 
