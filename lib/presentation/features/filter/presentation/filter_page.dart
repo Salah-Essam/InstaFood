@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
+import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/core/utils/app_strings.dart';
+import 'package:insta_food/presentation/features/home/presentation/widget/home_button_grid.dart';
 import 'package:insta_food/presentation/widgets/custom_appbar.dart';
 
 class FilterPage extends StatelessWidget {
@@ -29,7 +31,26 @@ class FilterPage extends StatelessWidget {
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-              child: Column(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(AppStrings.categories, style: AppTextStyles.header),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 26),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: AppColors.border,
+                            width: 0.5,
+                          ),
+                        ),
+                      ),
+                      child: ButtonGrid(),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

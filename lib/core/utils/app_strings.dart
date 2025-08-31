@@ -29,6 +29,7 @@ class AppStrings {
   static const String bestseller = "Best Seller";
   static const String recommend = "Recommend";
   static const String viewAll = "View All";
+  static const String categories = "Categories";
   //=====================================================================================
   static const String signup = "Sign Up";
   static const String login = "Login";
