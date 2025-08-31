@@ -60,6 +60,11 @@ class InstaFood extends StatelessWidget {
                   if (currentLocation != RouterConstants.home) {
                     context.go(RouterConstants.home);
                   }
+                } else if (state is SignedUp) {
+                  final currentLocation = GoRouter.of(context).routerDelegate.currentConfiguration.fullPath;
+                  if (currentLocation != RouterConstants.login) {
+                    context.go(RouterConstants.login);
+                  }
                 } else if (state is Unauthenticated) {
                   // User not authenticated, go to second splash (login/signup screen)
                   final currentLocation = GoRouter.of(context).routerDelegate.currentConfiguration.fullPath;

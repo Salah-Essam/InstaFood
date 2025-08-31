@@ -17,6 +17,8 @@ import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_c
 import 'package:insta_food/presentation/features/drawer/presentation/cubit/drawer_cubit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:insta_food/presentation/features/cart/firestore/cart_firestore_services.dart';
+import 'package:insta_food/presentation/features/order/firestore/order_firestore_services.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -41,6 +43,9 @@ Future<void> setupLocator() async {
     () => FirebaseAuthService(firebaseAuth: sl()),);
   sl.registerLazySingleton<FirebaseFirestoreService>(
     () => FirebaseFirestoreService(firestore: sl()));
+  // Feature Firestore services
+  sl.registerLazySingleton<CartFirestoreService>(() => CartFirestoreService(firestore: sl()));
+  sl.registerLazySingleton<OrderFirestoreService>(() => OrderFirestoreService(firestore: sl()));
 
   // Session manager (SharedPreferences)
   final sharedPrefs = await SharedPreferences.getInstance();

@@ -9,7 +9,12 @@ class FirebaseFirestoreService {
 
 	Future<void> addUser(UserModel user) async {
 		if (user.id == null) throw ArgumentError('User id is required to add user');
-		await _users.doc(user.id).set(user.toPublicMap());
+		await _users.doc(user.id).set({
+			...user.toPublicMap(),
+			'createdAt': FieldValue.serverTimestamp(),
+			'lastLoginAt': FieldValue.serverTimestamp(),
+			'deviceTokens': FieldValue.arrayUnion([]),
+		}, SetOptions(merge: true));
 	}
 
 	Future<UserModel?> getUserByEmail(String email) async {
@@ -27,6 +32,22 @@ class FirebaseFirestoreService {
 
 	Future<void> updateUser(String uid, Map<String, dynamic> data) async {
 		await _users.doc(uid).update(data);
+	}
+
+	Future<void> touchLastLogin(String uid) async {
+		await _users.doc(uid).update({'lastLoginAt': FieldValue.serverTimestamp()});
+	}
+
+	Future<void> addDeviceToken(String uid, String token) async {
+		await _users.doc(uid).update({'deviceTokens': FieldValue.arrayUnion([token])});
+	}
+
+	Future<void> removeDeviceToken(String uid, String token) async {
+		await _users.doc(uid).update({'deviceTokens': FieldValue.arrayRemove([token])});
+	}
+
+	Future<void> updateDefaultAddress(String uid, Map<String, dynamic> address) async {
+		await _users.doc(uid).update({'defaultAddress': address});
 	}
 
 	Future<void> deleteUser(String uid) async {

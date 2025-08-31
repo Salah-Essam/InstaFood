@@ -11,6 +11,8 @@ import 'package:insta_food/presentation/widgets/app_button_onb.dart';
 import 'package:insta_food/presentation/widgets/app_text_field.dart';
 import 'package:insta_food/presentation/widgets/shared_scaffold.dart';
 import 'package:intl/intl.dart';
+import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_cubit.dart';
+import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_state.dart';
 
 class ProfilePage extends StatelessWidget {
   ProfilePage({super.key});
@@ -21,12 +23,15 @@ class ProfilePage extends StatelessWidget {
   final TextEditingController phoneController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    nameController.text = "John Smith";
-    dateController.text = DateFormat(
-      "dd/MM/yyyy",
-    ).format(DateTime(2005, 12, 2));
-    emailController.text = "Johnsmith@example.com";
-    phoneController.text = "+123 567 89000";
+    final state = context.watch<AuthCubit>().state;
+    if (state is Authenticated) {
+      nameController.text = state.user.fullName;
+      emailController.text = state.user.email;
+      phoneController.text = state.user.phone;
+      dateController.text = state.user.dateOfBirth.isNotEmpty
+          ? state.user.dateOfBirth
+          : DateFormat("dd/MM/yyyy").format(DateTime.now());
+    }
     return SharedScaffold(
       appBarTitle: "MyProfile",
       pageDetails: SingleChildScrollView(
