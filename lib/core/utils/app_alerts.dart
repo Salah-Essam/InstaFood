@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
+import 'package:go_router/go_router.dart';
+import 'package:insta_food/core/routes/router_constants.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:insta_food/presentation/widgets/app_button_onb.dart';
 
 class AppAlerts {
@@ -47,7 +51,9 @@ class AppAlerts {
                             backgroundColor: AppColors.lightOrange,
                             width: 125,
                             height: 35,
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
                             child: Text(
                               "Cancel",
                               style: AppTextStyles.dialogGreetingDialogeOrange,
@@ -57,7 +63,14 @@ class AppAlerts {
                             backgroundColor: AppColors.primaryOrange,
                             width: 125,
                             height: 35,
-                            onPressed: () {},
+                            onPressed: () async {
+                              // Close dialog
+                              Navigator.of(context).pop();
+                              // Perform sign out via AuthCubit
+                              context.read<AuthCubit>().signOut();
+                              // Navigate to second splash
+                              context.go(RouterConstants.secondSplash);
+                            },
                             child: Text(
                               "Yes, logout",
                               style: AppTextStyles.dialogGreetingDialogeWhite,

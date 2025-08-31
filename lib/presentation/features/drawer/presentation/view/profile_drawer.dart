@@ -9,6 +9,8 @@ import 'package:insta_food/core/utils/app_strings.dart';
 import 'package:insta_food/presentation/features/Profile/presentation/cubit/ProfileImageCubit/profile_image_cubit.dart';
 import 'package:insta_food/presentation/features/drawer/data/datasources/profile_drawer_data.dart';
 import 'package:insta_food/presentation/features/drawer/presentation/widgets/drawer_item.dart';
+import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_cubit.dart';
+import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_state.dart';
 
 class ProfileDrawer extends StatelessWidget {
   const ProfileDrawer({super.key});
@@ -46,26 +48,36 @@ class ProfileDrawer extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: 16),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Username',
-                      style: TextStyle(
-                        color: AppColors.textLight,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    // SizedBox(height: 4),
-                    Text(
-                      'user@example.com',
-                      style: TextStyle(
-                        color: AppColors.lightOrange,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
+                BlocBuilder<AuthCubit, AuthState>(
+                  builder: (context, state) {
+                    String name = 'Guest';
+                    String email = '';
+                    if (state is Authenticated) {
+                      name = state.user.fullName.isNotEmpty ? state.user.fullName : 'User';
+                      email = state.user.email;
+                    }
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          name,
+                          style: TextStyle(
+                            color: AppColors.textLight,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        if (email.isNotEmpty)
+                          Text(
+                            email,
+                            style: TextStyle(
+                              color: AppColors.lightOrange,
+                              fontSize: 12,
+                            ),
+                          ),
+                      ],
+                    );
+                  },
                 ),
               ],
             ),

@@ -38,10 +38,11 @@ class AuthRepository {
     // Store ONLY public profile in Firestore (no password)
     await _firestoreService.addUser(profile);
 
-    // Cache locally including password (legacy requirement)
-    await _userBox.put('currentUser', profile.toMap());
+  // Do NOT keep user signed in after sign up; end session and ensure no local cached session
+  await _firebaseAuth.signOut();
+  await _userBox.delete('currentUser');
 
-    return profile;
+  return profile;
   }
 
   Future<UserModel?> signIn(String email, String password) async {
