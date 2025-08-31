@@ -5,6 +5,8 @@ import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 import 'package:insta_food/presentation/features/items/presentation/view/item_page.dart';
+import 'package:insta_food/presentation/features/items/presentation/widgets/fav_button.dart';
+import 'package:insta_food/presentation/features/items/presentation/widgets/rating_container.dart';
 import 'package:insta_food/presentation/widgets/cached_image.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 
@@ -63,11 +65,14 @@ class ItemTile extends StatelessWidget {
               ),
             ),
             Positioned(
-              left: 13,
-              top: 10,
+              right: 60,
+              top: 3,
               child: Visibility(
                 visible: showButtons,
-                child: SvgPicture.asset(AppAssets.rating),
+                child: RatingContainer(
+                  color: AppColors.white,
+                  style: AppTextStyles.small,
+                ),
               ),
             ),
             Positioned(
@@ -75,7 +80,7 @@ class ItemTile extends StatelessWidget {
               top: 10,
               child: Visibility(
                 visible: showButtons,
-                child: SvgPicture.asset(AppAssets.fav),
+                child: FavButton(width: 14, height: 14),
               ),
             ),
           ],

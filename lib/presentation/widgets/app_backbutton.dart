@@ -8,13 +8,19 @@ class AppBackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      child: SvgPicture.asset(AppAssets.backArrow),
-      onTap: () {
-        if (context.canPop()) {
-          context.pop();
-        }
-      },
+    return Padding(
+      padding: const EdgeInsets.only(left: 7.0),
+      child: InkWell(
+        child: SvgPicture.asset(
+          AppAssets.backArrow,
+          fit: BoxFit.fitWidth,
+          width: 25,
+          height: 25,
+        ),
+        onTap: () {
+          Navigator.pop(context);
+        },
+      ),
     );
   }
 }
