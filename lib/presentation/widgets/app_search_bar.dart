@@ -42,9 +42,10 @@ class AppSearchBar extends StatelessWidget {
                     vertical: 5,
                     horizontal: 16,
                   ),
-
                   isDense: true,
                   disabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  enabledBorder: InputBorder.none,
                 ),
               ),
             ),

@@ -38,10 +38,11 @@ class AuthRepository {
     // Store ONLY public profile in Firestore (no password)
     await _firestoreService.addUser(profile);
 
-    // Cache locally including password (legacy requirement)
-    await _userBox.put('currentUser', profile.toMap());
+  // Do NOT keep user signed in after sign up; end session and ensure no local cached session
+  await _firebaseAuth.signOut();
+  await _userBox.delete('currentUser');
 
-    return profile;
+  return profile;
   }
 
   Future<UserModel?> signIn(String email, String password) async {
@@ -51,8 +52,22 @@ class AuthRepository {
       final uid = cred.user?.uid;
       if (uid == null) return null;
       // Fetch profile from Firestore
-      final profile = await _firestoreService.getUserById(uid) ?? await _firestoreService.getUserByEmail(email);
-      if (profile == null) return null;
+      var profile = await _firestoreService.getUserById(uid) ?? await _firestoreService.getUserByEmail(email);
+      // If Firestore profile is missing (legacy accounts), create a minimal one
+      if (profile == null) {
+        final minimal = UserModel(
+          id: uid,
+          fullName: _firebaseAuth.currentUser?.displayName ?? '',
+          email: _firebaseAuth.currentUser?.email ?? email,
+          password: password,
+          dateOfBirth: '',
+          phone: _firebaseAuth.currentUser?.phoneNumber ?? '',
+        );
+        await _firestoreService.addUser(minimal);
+        profile = minimal;
+      }
+  // touch last login timestamp
+  await _firestoreService.touchLastLogin(uid);
       // Merge local password (we only have the input password)
       final merged = UserModel(
         id: profile.id,

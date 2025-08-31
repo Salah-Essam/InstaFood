@@ -226,8 +226,9 @@ class SignupPageState extends State<SignupPage> {
                                     backgroundColor: AppColors.error,
                                   ),
                                 );
-                              } else if (state is Authenticated) {
-                                context.go(RouterConstants.bottomNavBar);
+                              } else if (state is SignedUp) {
+                                // After sign up, go to login screen
+                                context.go(RouterConstants.login);
                               }
                             },
                             child: BlocBuilder<AuthCubit, AuthState>(
@@ -268,11 +269,11 @@ class SignupPageState extends State<SignupPage> {
                                                   .text
                                                   .isNotEmpty) {
                                             context.read<AuthCubit>().signUp(
-                                              fullName: fullnameController.text,
-                                              email: emailController.text,
-                                              password: passwordController.text,
-                                              dob: birthdateController.text,
-                                              phone: phonenumberController.text,
+                                              fullName: fullnameController.text.trim(),
+                                              email: emailController.text.trim(),
+                                              password: passwordController.text.trim(),
+                                              dob: birthdateController.text.trim(),
+                                              phone: phonenumberController.text.trim(),
                                             );
                                           }
                                         },

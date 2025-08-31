@@ -20,6 +20,15 @@ class Authenticated extends AuthState {
 
 class Unauthenticated extends AuthState {}
 
+// Emitted after successful sign up, without authenticating the session.
+class SignedUp extends AuthState {
+  final UserModel user;
+  SignedUp(this.user);
+
+  @override
+  List<Object?> get props => [user];
+}
+
 class AuthError extends AuthState {
   final String message;
   AuthError(this.message);

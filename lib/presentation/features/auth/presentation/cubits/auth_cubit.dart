@@ -19,13 +19,14 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       emit(AuthLoading());
       final user = await _authRepository.signUp(
-        fullName: fullName,
-        email: email,
-        password: password,
-        dateOfBirth: dob,
-        phone: phone,
+        fullName: fullName.trim(),
+        email: email.trim(),
+        password: password.trim(),
+        dateOfBirth: dob.trim(),
+        phone: phone.trim(),
       );
-      emit(Authenticated(user));
+      // Do NOT keep the user logged in; navigate to login instead
+      emit(SignedUp(user));
     } catch (e) {
       emit(AuthError(e.toString()));
     }
@@ -34,7 +35,7 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> signIn(String email, String password) async {
     try {
       emit(AuthLoading());
-      final user = await _authRepository.signIn(email, password);
+      final user = await _authRepository.signIn(email.trim(), password.trim());
       if (user != null) {
         _failedLoginAttempts = 0; // Reset on successful login
         _lastAttemptedEmail = null;

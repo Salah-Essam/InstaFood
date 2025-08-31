@@ -47,6 +47,8 @@ class LoginScreenState extends State<LoginScreen> {
       listener: (context, state) {
         if (state is Authenticated) {
           context.go(RouterConstants.bottomNavBar);
+        } else if (state is SignedUp) {
+          // If user just signed up elsewhere and landed here, nothing to do
         } else if (state is AuthInvalidCredentials) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -183,8 +185,8 @@ class LoginScreenState extends State<LoginScreen> {
                                                 context
                                                     .read<AuthCubit>()
                                                     .signIn(
-                                                      emailController.text,
-                                                      passwordController.text,
+                                                      emailController.text.trim(),
+                                                      passwordController.text.trim(),
                                                     );
                                               }
                                             }
