@@ -17,6 +17,11 @@ class CartCubit extends Cubit<CartState> {
 	CartCubit({required this.repo, required this.authCubit, required this.session})
 			: super(CartInitial()) {
 		_bindAuth();
+			// Start watching immediately if already authenticated
+			final s = authCubit.state;
+			if (s is Authenticated && (s.user.id ?? '').isNotEmpty) {
+				watch(s.user.id!);
+			}
 	}
 
 	void _bindAuth() {

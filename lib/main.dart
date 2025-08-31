@@ -22,7 +22,11 @@ void main() async {
         BlocProvider<AuthCubit>(
           create: (_) => sl<AuthCubit>()..checkAuthStatus(),
         ),
-  BlocProvider(create: (_) => sl<CartCubit>()),
+        BlocProvider(create: (ctx) => CartCubit(
+              repo: sl(),
+              authCubit: ctx.read<AuthCubit>(),
+              session: sl(),
+            )),
       ],
       child: const InstaFood(),
     ),

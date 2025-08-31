@@ -21,7 +21,7 @@ class AppAlerts {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('You need to login to add items to cart', style: AppTextStyles.dialogTitle, textAlign: TextAlign.center),
+                  Text('You can\'t add to cart. Please login or create an account.', style: AppTextStyles.dialogTitle, textAlign: TextAlign.center),
                   const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -33,16 +33,29 @@ class AppAlerts {
                         onPressed: () => Navigator.of(context).pop(),
                         child: Text('Cancel', style: AppTextStyles.dialogGreetingDialogeOrange),
                       ),
-                      AppButton(
-                        backgroundColor: AppColors.primaryOrange,
-                        width: 120,
-                        height: 35,
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          context.go(RouterConstants.login);
-                        },
-                        child: Text('Login', style: AppTextStyles.dialogGreetingDialogeWhite),
-                      ),
+                      Row(children: [
+                        AppButton(
+                          backgroundColor: AppColors.primaryOrange,
+                          width: 110,
+                          height: 35,
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            context.go(RouterConstants.login);
+                          },
+                          child: Text('Login', style: AppTextStyles.dialogGreetingDialogeWhite),
+                        ),
+                        const SizedBox(width: 8),
+                        AppButton(
+                          backgroundColor: AppColors.primaryYellow,
+                          width: 110,
+                          height: 35,
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            context.go(RouterConstants.signup);
+                          },
+                          child: Text('Create', style: AppTextStyles.dialogGreetingDialogeOrange),
+                        ),
+                      ]),
                     ],
                   ),
                 ],
