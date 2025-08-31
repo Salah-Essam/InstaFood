@@ -85,4 +85,15 @@ class AppStrings {
   static const String filter = "Filter";
   static const String portions = "Portion Size";
   static const String addToCart = "Add to Cart";
+  //===========================================
+  static const String areYouSureYouWantYoLogout =
+      "Are you sure you want you logout ?";
+  static const String weHaveAddedAProductYouMightLike =
+      "We have added a product you might like";
+  static const String oneOfYourFavoriteIsOnPromotion =
+      "One of your favorite is on promotion";
+  static const String yourOrderHasBeenDelivered =
+      "Your order has been delivered";
+  static const String theDeliveryIsOnHisWay = "The delivery is on his way";
+  static const String noData = "noData";
 }

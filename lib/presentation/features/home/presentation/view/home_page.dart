@@ -22,7 +22,7 @@ class HomePage extends StatelessWidget {
     return BlocProvider(
       create: (context) => sl<ItemCubit>()..getallItems(),
       child: Scaffold(
-        backgroundColor: AppColors.statusBar,
+        backgroundColor: AppColors.primaryYellow,
         appBar: CustomAppBar(),
         body: BlocBuilder<ItemCubit, ItemState>(
           builder: (context, state) {
@@ -65,7 +65,7 @@ class HomePage extends StatelessWidget {
                               ButtonGrid(),
                               SizedBox(height: 5),
                               Container(
-                                color: AppColors.orangeBase,
+                                color: AppColors.primaryOrange,
                                 height: 0.5,
                               ),
                               SizedBox(height: 5),

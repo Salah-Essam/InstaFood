@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
+import 'package:insta_food/core/utils/app_strings.dart';
 import 'package:insta_food/presentation/features/drawer/presentation/cubit/drawer_cubit.dart';
 import 'package:insta_food/presentation/features/drawer/presentation/view/cart_drawer.dart';
 import 'package:insta_food/presentation/features/drawer/presentation/view/notifications_drawer.dart';
@@ -14,7 +15,7 @@ class AppDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       width: MediaQuery.of(context).size.width * 0.8,
-      backgroundColor: AppColors.primary,
+      backgroundColor: AppColors.primaryOrange,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(64),
@@ -27,7 +28,7 @@ class AppDrawer extends StatelessWidget {
           ? CartDrawer()
           : drawerSelected == DrawerType.notifications
           ? NotificationsDrawer()
-          : Center(child: Text("No Data")),
+          : Center(child: Text(AppStrings.noData)),
     );
   }
 }

@@ -22,8 +22,8 @@ class AppTextField extends StatefulWidget {
     this.validator,
     this.inputFormatters,
     this.showPasswordToggle = false,
-  this.requiredField = false,
-  this.showRequiredError = false,
+    this.requiredField = false,
+    this.showRequiredError = false,
   });
   final TextEditingController controller;
   final Function(String)? onChange;
@@ -66,20 +66,20 @@ class _AppTextFieldState extends State<AppTextField> {
           Text(
             widget.label!,
             style: AppTextStyles.small.copyWith(
-              color: AppColors.brown,
+              color: AppColors.deepBrown,
               fontSize: 16,
               fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(height: 8),
         ],
-        
+
         // Text Field Container
         Container(
           height: widget.height ?? 56,
           width: widget.width ?? double.infinity,
           decoration: BoxDecoration(
-            color: AppColors.yellow2,
+            color: AppColors.lightYellow,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: _requiredError ? AppColors.error : Colors.transparent,
@@ -93,17 +93,21 @@ class _AppTextFieldState extends State<AppTextField> {
               setState(() {});
             },
             inputFormatters: widget.inputFormatters,
-            style: widget.style ?? AppTextStyles.body.copyWith(
-              color: AppColors.darkBrown,
-              fontSize: 16,
-            ),
+            style:
+                widget.style ??
+                AppTextStyles.body.copyWith(
+                  color: AppColors.blackish,
+                  fontSize: 16,
+                ),
             keyboardType: widget.keyboardType ?? TextInputType.text,
             readOnly: widget.isReadOnly ?? false,
-            obscureText: widget.showPasswordToggle ? _obscureText : (widget.obscureText ?? false),
+            obscureText: widget.showPasswordToggle
+                ? _obscureText
+                : (widget.obscureText ?? false),
             decoration: InputDecoration(
               hintText: widget.hint,
               hintStyle: AppTextStyles.body.copyWith(
-                color: AppColors.darkBrown,
+                color: AppColors.blackish,
                 fontSize: 16,
               ),
               border: InputBorder.none,
@@ -112,24 +116,24 @@ class _AppTextFieldState extends State<AppTextField> {
                 vertical: 16,
               ),
               prefixIcon: widget.prefixIcon,
-              suffixIcon: widget.showPasswordToggle 
-                ? IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _obscureText = !_obscureText;
-                      });
-                    },
-                    icon: Icon(
-                      _obscureText ? Icons.visibility_off : Icons.visibility,
-                      color: AppColors.primary,
-                      size: 20,
-                    ),
-                  )
-                : widget.suffixIcon,
+              suffixIcon: widget.showPasswordToggle
+                  ? IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _obscureText = !_obscureText;
+                        });
+                      },
+                      icon: Icon(
+                        _obscureText ? Icons.visibility_off : Icons.visibility,
+                        color: AppColors.primaryOrange,
+                        size: 20,
+                      ),
+                    )
+                  : widget.suffixIcon,
             ),
           ),
         ),
-        
+
         // Validation Messages
         if (widget.validator != null) getValidationHints(),
         if (_requiredError)
@@ -148,7 +152,9 @@ class _AppTextFieldState extends State<AppTextField> {
   }
 
   bool get _requiredError =>
-      widget.requiredField && widget.showRequiredError && widget.controller.text.isEmpty;
+      widget.requiredField &&
+      widget.showRequiredError &&
+      widget.controller.text.isEmpty;
 
   Widget getValidationHints() {
     return Column(
@@ -160,9 +166,9 @@ class _AppTextFieldState extends State<AppTextField> {
             children: [
               const SizedBox(height: 5),
               Text(
-                e, 
+                e,
                 style: AppTextStyles.small.copyWith(
-                  color: AppColors.error, 
+                  color: AppColors.error,
                   fontSize: 12,
                 ),
               ),

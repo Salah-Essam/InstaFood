@@ -12,7 +12,7 @@ class WelcomeSection extends StatelessWidget {
         Text(
           'Welcome',
           style: TextStyle(
-            color: AppColors.brown,
+            color: AppColors.textDarkBrown,
             fontSize: 28,
             fontWeight: FontWeight.bold,
           ),
@@ -21,7 +21,7 @@ class WelcomeSection extends StatelessWidget {
         Text(
           'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
           style: TextStyle(
-            color: AppColors.darkBrown,
+            color: AppColors.blackish,
             fontSize: 14,
             height: 1.4,
           ),

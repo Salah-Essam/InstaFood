@@ -53,7 +53,7 @@ class ProfilePage extends StatelessWidget {
                               width: 125,
                               child: DecoratedBox(
                                 decoration: BoxDecoration(
-                                  color: AppColors.orange2,
+                                  color: AppColors.lightOrange,
                                   borderRadius: BorderRadius.circular(24),
                                 ),
 

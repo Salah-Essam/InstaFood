@@ -25,9 +25,9 @@ class _RadioButtonCollectionState extends State<RadioButtonCollection> {
           data: RadioThemeData(
             fillColor: WidgetStateColor.resolveWith((states) {
               if (states.contains(WidgetState.selected)) {
-                return AppColors.primary; // Active color
+                return AppColors.primaryOrange; // Active color
               }
-              return AppColors.primary; // Inactive color
+              return AppColors.primaryOrange; // Inactive color
             }),
           ),
           child: RadioListTile<ItemSize>(
@@ -54,7 +54,7 @@ class _RadioButtonCollectionState extends State<RadioButtonCollection> {
                       direction: Axis.horizontal,
                       lineThickness: 1.0,
                       dashLength: 2.0,
-                      dashColor: AppColors.primary,
+                      dashColor: AppColors.primaryOrange,
                       dashGapLength: 4.0,
                       dashGapColor: Colors.transparent,
                     ),

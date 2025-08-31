@@ -19,7 +19,7 @@ class AppSearchBar extends StatelessWidget {
       height: 26,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(30)),
-        color: AppColors.sheetBg,
+        color: AppColors.white,
       ),
       child: Padding(
         padding: const EdgeInsets.all(3.0),
@@ -32,9 +32,9 @@ class AppSearchBar extends StatelessWidget {
                   context.read<ItemCubit>().searchItem(v);
                 },
                 cursorHeight: 14,
-                cursorColor: AppColors.primary,
+                cursorColor: AppColors.primaryOrange,
                 decoration: InputDecoration(
-                  fillColor: AppColors.sheetBg,
+                  fillColor: AppColors.white,
                   border: InputBorder.none,
                   hintText: AppStrings.search,
                   hintStyle: AppTextStyles.search,

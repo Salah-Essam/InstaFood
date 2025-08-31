@@ -28,7 +28,7 @@ class SecondSplashScreen extends StatelessWidget {
     final contentTop = imageBottom + 6.h; // very small gap under image
 
     return Scaffold(
-      backgroundColor: AppColors.secondSplashBackground,
+      backgroundColor: AppColors.splashOrange,
       body: SafeArea(
         child: Stack(
           children: [
@@ -80,12 +80,12 @@ class SecondSplashScreen extends StatelessWidget {
                           context.push(RouterConstants.login);
                         }
                       },
-                      backgroundColor: AppColors.loginButtonBackground,
+                      backgroundColor: AppColors.loginButton,
                       width: 207.w,
                       height: 45.h,
                       borderRadius: 30,
                       textStyle: TextStyle(
-                        color: AppColors.primary,
+                        color: AppColors.primaryOrange,
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w700,
                         height: 22.h / 16.sp,
@@ -100,12 +100,12 @@ class SecondSplashScreen extends StatelessWidget {
                           context.push(RouterConstants.signup);
                         }
                       },
-                      backgroundColor: AppColors.signupButtonBackground,
+                      backgroundColor: AppColors.loginButton,
                       width: 207.w,
                       height: 45.h,
                       borderRadius: 30,
                       textStyle: TextStyle(
-                        color: AppColors.primary,
+                        color: AppColors.primaryOrange,
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w700,
                         height: 22.h / 16.sp,

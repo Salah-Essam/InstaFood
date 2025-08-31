@@ -18,7 +18,7 @@ class SharedScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.statusBar,
+      backgroundColor: AppColors.primaryYellow,
       body: Column(
         children: [
           SizedBox(

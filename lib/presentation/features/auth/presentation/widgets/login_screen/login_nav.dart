@@ -22,7 +22,7 @@ class LoginNav {
               TextSpan(
                 text: 'Log In',
                 style: AppTextStyles.small.copyWith(
-                  color: AppColors.primary,
+                  color: AppColors.primaryOrange,
                   decoration: TextDecoration.underline,
                 ),
               ),

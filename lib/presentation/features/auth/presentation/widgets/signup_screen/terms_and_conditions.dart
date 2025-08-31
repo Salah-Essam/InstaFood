@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
+
 class TermsAndConditions extends StatelessWidget {
   const TermsAndConditions({super.key});
 
@@ -12,10 +13,7 @@ class TermsAndConditions extends StatelessWidget {
           textAlign: TextAlign.center,
           text: TextSpan(
             text: "By continuing, you agree to ",
-            style: TextStyle(
-              color: AppColors.darktext,
-              fontSize: 14,
-            ),
+            style: TextStyle(color: AppColors.blackish, fontSize: 14),
             children: [
               WidgetSpan(
                 child: GestureDetector(
@@ -23,7 +21,7 @@ class TermsAndConditions extends StatelessWidget {
                   child: Text(
                     "Terms of Use",
                     style: TextStyle(
-                      color: AppColors.primary,
+                      color: AppColors.primaryOrange,
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       decoration: TextDecoration.underline,
@@ -33,10 +31,7 @@ class TermsAndConditions extends StatelessWidget {
               ),
               TextSpan(
                 text: " and ",
-                style: TextStyle(
-                  color: AppColors.darktext,
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: AppColors.blackish, fontSize: 14),
               ),
               WidgetSpan(
                 child: GestureDetector(
@@ -44,7 +39,7 @@ class TermsAndConditions extends StatelessWidget {
                   child: Text(
                     "Privacy Policy",
                     style: TextStyle(
-                      color: AppColors.primary,
+                      color: AppColors.primaryOrange,
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       decoration: TextDecoration.underline,
@@ -54,10 +49,7 @@ class TermsAndConditions extends StatelessWidget {
               ),
               TextSpan(
                 text: ".",
-                style: TextStyle(
-                  color: AppColors.darktext,
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: AppColors.blackish, fontSize: 14),
               ),
             ],
           ),

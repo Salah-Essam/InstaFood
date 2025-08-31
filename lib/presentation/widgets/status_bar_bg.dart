@@ -11,7 +11,7 @@ class StatusBarBackground extends StatelessWidget {
   const StatusBarBackground({
     super.key,
     required this.child,
-    this.backgroundColor = AppColors.statusBar,
+    this.backgroundColor = AppColors.primaryYellow,
     this.showStatusBar = true,
   });
 

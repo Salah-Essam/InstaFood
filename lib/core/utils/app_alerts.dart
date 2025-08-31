@@ -44,7 +44,7 @@ class AppAlerts {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           AppButton(
-                            backgroundColor: AppColors.orange2,
+                            backgroundColor: AppColors.lightOrange,
                             width: 125,
                             height: 35,
                             onPressed: () {},
@@ -54,7 +54,7 @@ class AppAlerts {
                             ),
                           ),
                           AppButton(
-                            backgroundColor: AppColors.primary,
+                            backgroundColor: AppColors.primaryOrange,
                             width: 125,
                             height: 35,
                             onPressed: () {},

@@ -6,19 +6,19 @@ class AppTextStyles {
   static TextStyle get title => TextStyle(
     fontSize: 22.sp,
     fontWeight: FontWeight.w700,
-    color: AppColors.title,
+    color: AppColors.textPrimary,
   );
   static TextStyle get dialogTitle => TextStyle(
     fontSize: 20.sp,
     fontWeight: FontWeight.w700,
-    color: AppColors.title,
+    color: AppColors.textPrimary,
   );
 
   static TextStyle get body => TextStyle(
     fontSize: 13.sp,
     height: 1.4,
     fontWeight: FontWeight.w400,
-    color: AppColors.body,
+    color: AppColors.textSecondary,
   );
 
   static TextStyle get button => TextStyle(
@@ -30,26 +30,26 @@ class AppTextStyles {
   static TextStyle get skipButton => TextStyle(
     fontSize: 15.sp,
     fontWeight: FontWeight.w600,
-    color: AppColors.primary,
+    color: AppColors.primaryOrange,
   );
 
   // ===========================
   static TextStyle get greeting => TextStyle(
     fontWeight: FontWeight.w700,
     fontSize: 30.sp,
-    color: AppColors.fontWhite,
+    color: AppColors.textLight,
   );
 
   static TextStyle get greetingDialog => TextStyle(
     fontWeight: FontWeight.w500,
     fontSize: 13.sp,
-    color: AppColors.primary,
+    color: AppColors.primaryOrange,
   );
 
   static TextStyle dialogGreetingDialogeOrange = TextStyle(
     fontWeight: FontWeight.w500,
     fontSize: 24,
-    color: AppColors.primary,
+    color: AppColors.primaryOrange,
   );
   static TextStyle dialogGreetingDialogeWhite = TextStyle(
     fontWeight: FontWeight.w500,
@@ -59,47 +59,47 @@ class AppTextStyles {
   static TextStyle search = TextStyle(
     fontWeight: FontWeight.w300,
     fontSize: 12,
-    color: AppColors.body,
+    color: AppColors.textSecondary,
   );
 
   static TextStyle get small => TextStyle(
     fontWeight: FontWeight.w400,
     fontSize: 12.sp,
-    color: AppColors.darktext,
+    color: AppColors.textDarkBrown,
   );
 
   static TextStyle get header => TextStyle(
     fontWeight: FontWeight.w500,
     fontSize: 20.sp,
-    color: AppColors.darktext,
+    color: AppColors.textDarkBrown,
   );
 
   static TextStyle get ad => TextStyle(
     fontWeight: FontWeight.w400,
     fontSize: 16.sp,
-    color: AppColors.fontWhite,
+    color: AppColors.textLight,
   );
 
   static TextStyle get price => TextStyle(
     fontWeight: FontWeight.w400,
     fontSize: 11.sp,
-    color: AppColors.fontWhite,
+    color: AppColors.textLight,
   );
 
   static TextStyle pageTitle = TextStyle(
     fontWeight: FontWeight.w700,
     fontSize: 28,
-    color: AppColors.fontWhite,
+    color: AppColors.textLight,
   );
   static TextStyle itemPagePrice = TextStyle(
     fontWeight: FontWeight.w700,
     fontSize: 24,
-    color: AppColors.primary,
+    color: AppColors.primaryOrange,
   );
   static TextStyle mediumText = TextStyle(
     fontWeight: FontWeight.w400,
     fontSize: 16,
-    color: AppColors.darktext,
+    color: AppColors.textDarkBrown,
   );
 
   static TextStyle get login => TextStyle(
@@ -108,7 +108,7 @@ class AppTextStyles {
     fontWeight: FontWeight.w700,
   );
   static TextStyle get forgetPassword => TextStyle(
-    color: AppColors.primary,
+    color: AppColors.primaryOrange,
     fontSize: 14.sp,
     fontWeight: FontWeight.w500,
   );

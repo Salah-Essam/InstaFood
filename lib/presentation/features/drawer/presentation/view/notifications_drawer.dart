@@ -25,7 +25,7 @@ class NotificationsDrawer extends StatelessWidget {
                 Text(AppStrings.notifications, style: AppTextStyles.greeting),
               ],
             ),
-            Divider(color: AppColors.orange2, height: 64),
+            Divider(color: AppColors.lightOrange, height: 64),
             Row(
               children: [
                 SvgPicture.asset(AppAssets.productNotification),
@@ -33,14 +33,14 @@ class NotificationsDrawer extends StatelessWidget {
                 SizedBox(
                   width: 115,
                   child: Text(
-                    "We have added a product you might like.",
+                    AppStrings.weHaveAddedAProductYouMightLike,
                     maxLines: 3,
                     style: AppTextStyles.ad,
                   ),
                 ),
               ],
             ),
-            Divider(color: AppColors.orange2, height: 32),
+            Divider(color: AppColors.lightOrange, height: 32),
             Row(
               children: [
                 SvgPicture.asset(AppAssets.favNotification),
@@ -48,14 +48,14 @@ class NotificationsDrawer extends StatelessWidget {
                 SizedBox(
                   width: 115,
                   child: Text(
-                    "One of your favorite is on promotion.",
+                    AppStrings.oneOfYourFavoriteIsOnPromotion,
                     maxLines: 3,
                     style: AppTextStyles.ad,
                   ),
                 ),
               ],
             ),
-            Divider(color: AppColors.orange2, height: 32),
+            Divider(color: AppColors.lightOrange, height: 32),
             Row(
               children: [
                 SvgPicture.asset(AppAssets.orderNotification),
@@ -63,14 +63,14 @@ class NotificationsDrawer extends StatelessWidget {
                 SizedBox(
                   width: 115,
                   child: Text(
-                    "Your order has been delivered",
+                    AppStrings.yourOrderHasBeenDelivered,
                     maxLines: 3,
                     style: AppTextStyles.ad,
                   ),
                 ),
               ],
             ),
-            Divider(color: AppColors.orange2, height: 32),
+            Divider(color: AppColors.lightOrange, height: 32),
             Row(
               children: [
                 SvgPicture.asset(AppAssets.deliveryNotification),
@@ -78,14 +78,14 @@ class NotificationsDrawer extends StatelessWidget {
                 SizedBox(
                   width: 115,
                   child: Text(
-                    "The delivery is on his way",
+                    AppStrings.theDeliveryIsOnHisWay,
                     maxLines: 3,
                     style: AppTextStyles.ad,
                   ),
                 ),
               ],
             ),
-            Divider(color: AppColors.orange2, height: 32),
+            Divider(color: AppColors.lightOrange, height: 32),
           ],
         ),
       ),

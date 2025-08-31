@@ -9,17 +9,12 @@ import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_c
 class PasswordResetDialog extends StatelessWidget {
   final String email;
 
-  const PasswordResetDialog({
-    super.key,
-    required this.email,
-  });
+  const PasswordResetDialog({super.key, required this.email});
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       contentPadding: const EdgeInsets.all(24),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -29,42 +24,42 @@ class PasswordResetDialog extends StatelessWidget {
             width: 64,
             height: 64,
             decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.1),
+              color: AppColors.primaryOrange.withAlpha(26),
               shape: BoxShape.circle,
             ),
             child: Icon(
               Icons.lock_reset,
               size: 32,
-              color: AppColors.primary,
+              color: AppColors.primaryOrange,
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Title
           Text(
             'Reset Password?',
             style: AppTextStyles.login.copyWith(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: AppColors.darkBrown,
+              color: AppColors.blackish,
             ),
           ),
-          
+
           const SizedBox(height: 12),
-          
+
           // Message
           Text(
             'You\'ve failed to login twice. Would you like to reset your password for:',
             textAlign: TextAlign.center,
             style: AppTextStyles.forgetPassword.copyWith(
               fontSize: 14,
-              color: AppColors.darkBrown.withOpacity(0.7),
+              color: AppColors.blackish.withAlpha(179),
             ),
           ),
-          
+
           const SizedBox(height: 8),
-          
+
           // Email
           Text(
             email,
@@ -72,12 +67,12 @@ class PasswordResetDialog extends StatelessWidget {
             style: AppTextStyles.login.copyWith(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: AppColors.primary,
+              color: AppColors.primaryOrange,
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Buttons
           Row(
             children: [
@@ -92,21 +87,21 @@ class PasswordResetDialog extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
-                      side: BorderSide(color: AppColors.primary),
+                      side: BorderSide(color: AppColors.primaryOrange),
                     ),
                   ),
                   child: Text(
                     'Cancel',
                     style: AppTextStyles.login.copyWith(
-                      color: AppColors.primary,
+                      color: AppColors.primaryOrange,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
               ),
-              
+
               const SizedBox(width: 12),
-              
+
               // Reset button
               Expanded(
                 child: ElevatedButton(
@@ -115,7 +110,7 @@ class PasswordResetDialog extends StatelessWidget {
                     context.go(RouterConstants.forgotPassword, extra: email);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
+                    backgroundColor: AppColors.primaryOrange,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(

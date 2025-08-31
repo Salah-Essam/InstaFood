@@ -14,7 +14,7 @@ class SearchPage extends StatelessWidget {
     return BlocProvider(
       create: (context) => sl<ItemCubit>()..searchItem(""),
       child: Scaffold(
-        backgroundColor: AppColors.yellowBase,
+        backgroundColor: AppColors.primaryYellow,
         appBar: CustomAppBar(inableSearch: true, leading: true),
         body: BlocBuilder<ItemCubit, ItemState>(
           builder: (context, state) {

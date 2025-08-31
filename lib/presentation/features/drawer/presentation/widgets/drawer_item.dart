@@ -35,7 +35,7 @@ class DrawerItem extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-              color: AppColors.orange2,
+              color: AppColors.lightOrange,
               fontSize: fontSize ?? 18,
               fontWeight: FontWeight.w500,
             ),

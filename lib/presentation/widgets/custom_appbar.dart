@@ -30,7 +30,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 32, bottom: 8),
       child: AppBar(
-        backgroundColor: AppColors.statusBar,
+        backgroundColor: AppColors.primaryYellow,
         scrolledUnderElevation: 0.0,
         toolbarHeight: 58,
         leading: leading

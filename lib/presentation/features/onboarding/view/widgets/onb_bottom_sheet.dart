@@ -21,7 +21,7 @@ class OnbBottomSheet extends StatelessWidget {
       width: 1.sw,
       height: OnboardingConstants.bottomSheetHeight.h,
       decoration: BoxDecoration(
-        color: AppColors.sheetBg.withAlpha(240), // Slightly transparent
+        color: AppColors.white.withAlpha(240), // Slightly transparent
         boxShadow: [
           BoxShadow(
             color: AppColors.sheetShadow,
@@ -46,7 +46,7 @@ class OnbBottomSheet extends StatelessWidget {
                 width: OnboardingConstants.iconSize.w,
                 height: OnboardingConstants.iconSize.w,
                 colorFilter: const ColorFilter.mode(
-                  AppColors.primary,
+                  AppColors.primaryOrange,
                   BlendMode.srcIn,
                 ),
               ),
@@ -70,7 +70,7 @@ class OnbBottomSheet extends StatelessWidget {
                   dotHeight: OnboardingConstants.pageIndicatorDotHeight,
                   dotWidth: OnboardingConstants.pageIndicatorDotWidth,
                   spacing: OnboardingConstants.pageIndicatorSpacing,
-                  activeDotColor: AppColors.primary,
+                  activeDotColor: AppColors.primaryOrange,
                   dotColor: const Color(0xFFE8E8E8),
                 ),
                 onDotClicked: (i) => cubit.goTo(i),
