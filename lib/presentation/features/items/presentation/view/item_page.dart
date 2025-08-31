@@ -8,6 +8,8 @@ import 'package:insta_food/presentation/features/items/data/model/item_model.dar
 import 'package:insta_food/presentation/features/items/presentation/widgets/app_counter.dart';
 import 'package:insta_food/presentation/features/items/presentation/widgets/fav_button.dart';
 import 'package:insta_food/presentation/features/items/presentation/widgets/radio_button_collection.dart';
+import 'package:insta_food/presentation/features/items/presentation/widgets/rating_container.dart';
+import 'package:insta_food/presentation/widgets/app_backbutton.dart';
 import 'package:insta_food/presentation/widgets/app_button_onb.dart';
 import 'package:insta_food/presentation/widgets/cached_image.dart';
 
@@ -24,49 +26,16 @@ class ItemPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 60, right: 35, left: 35),
             child: Row(
+              spacing: 3,
               children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 16, right: 2),
-                    child: InkWell(
-                      child: SvgPicture.asset(
-                        AppAssets.backArrow,
-                        fit: BoxFit.fill,
-                      ),
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ),
-                ),
+                Align(alignment: Alignment.centerLeft, child: AppBackButton()),
                 Text(item.itemName, style: AppTextStyles.header),
                 Spacer(),
                 FavButton(),
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 57, vertical: 6),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Container(
-                width: 34,
-                height: 14,
-                decoration: BoxDecoration(
-                  color: AppColors.primaryOrange,
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("5.0", style: AppTextStyles.price),
-                    SvgPicture.asset(AppAssets.star),
-                  ],
-                ),
-              ),
-            ),
-          ),
+          Align(alignment: Alignment.centerLeft, child: RatingContainer()),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(top: 12),

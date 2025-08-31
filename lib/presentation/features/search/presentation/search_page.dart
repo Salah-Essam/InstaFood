@@ -1,7 +1,10 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:insta_food/core/di/di.dart';
+import 'package:insta_food/core/network/network_info.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
+import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/presentation/features/home/presentation/widget/item_tile.dart';
 import 'package:insta_food/presentation/features/items/presentation/cubit/item_cubit.dart';
 import 'package:insta_food/presentation/widgets/custom_appbar.dart';
@@ -33,29 +36,50 @@ class SearchPage extends StatelessWidget {
                     horizontal: 32,
                     vertical: 16,
                   ),
-                  child: Builder(
-                    builder: (context) {
-                      if (state is ItemLoading) {
-                        return Center(child: CircularProgressIndicator());
-                      } else if (state is ItemFailure) {
-                        return Center(child: Text('Error: ${state.message}'));
-                      } else if (state is ItemLoaded) {
-                        return GridView.builder(
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                mainAxisSpacing: 8,
-                                crossAxisSpacing: 8,
-                                childAspectRatio: 88 / 108,
-                              ),
-                          itemCount: state.searchedItems.length,
-                          itemBuilder: (context, index) {
-                            final item = state.searchedItems[index];
-                            return ItemTile(item: item, height: 108, width: 88);
-                          },
+                  child: FutureBuilder(
+                    future: sl<NetworkInfo>().isConnected,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError || snapshot.data == false) {
+                        return Center(
+                          child: Text(
+                            'No internet connection. Please check your connectivity.',
+                            style: AppTextStyles.header,
+                            textAlign: TextAlign.center,
+                          ),
                         );
                       } else {
-                        return SizedBox.shrink();
+                        return Builder(
+                          builder: (context) {
+                            if (state is ItemLoading) {
+                              return Center(child: CircularProgressIndicator());
+                            } else if (state is ItemFailure) {
+                              return Center(
+                                child: Text('Error: ${state.message}'),
+                              );
+                            } else if (state is ItemLoaded) {
+                              return GridView.builder(
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 2,
+                                      mainAxisSpacing: 8,
+                                      crossAxisSpacing: 8,
+                                      childAspectRatio: 88 / 108,
+                                    ),
+                                itemCount: state.searchedItems.length,
+                                itemBuilder: (context, index) {
+                                  final item = state.searchedItems[index];
+                                  return ItemTile(
+                                    item: item,
+                                    height: 108,
+                                    width: 88,
+                                  );
+                                },
+                              );
+                            } else {
+                              return SizedBox.shrink();
+                            }
+                          },
+                        );
                       }
                     },
                   ),
