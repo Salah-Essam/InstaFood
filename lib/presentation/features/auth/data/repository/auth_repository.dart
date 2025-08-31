@@ -51,8 +51,22 @@ class AuthRepository {
       final uid = cred.user?.uid;
       if (uid == null) return null;
       // Fetch profile from Firestore
-      final profile = await _firestoreService.getUserById(uid) ?? await _firestoreService.getUserByEmail(email);
-      if (profile == null) return null;
+      var profile = await _firestoreService.getUserById(uid) ?? await _firestoreService.getUserByEmail(email);
+      // If Firestore profile is missing (legacy accounts), create a minimal one
+      if (profile == null) {
+        final minimal = UserModel(
+          id: uid,
+          fullName: _firebaseAuth.currentUser?.displayName ?? '',
+          email: _firebaseAuth.currentUser?.email ?? email,
+          password: password,
+          dateOfBirth: '',
+          phone: _firebaseAuth.currentUser?.phoneNumber ?? '',
+        );
+        await _firestoreService.addUser(minimal);
+        profile = minimal;
+      }
+  // touch last login timestamp
+  await _firestoreService.touchLastLogin(uid);
       // Merge local password (we only have the input password)
       final merged = UserModel(
         id: profile.id,
