@@ -10,6 +10,7 @@ import 'package:insta_food/core/theme/app_theme.dart';
 import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_state.dart';
 import 'package:insta_food/presentation/features/drawer/presentation/cubit/drawer_cubit.dart';
+import 'package:insta_food/presentation/features/cart/logic/cart_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,6 +22,7 @@ void main() async {
         BlocProvider<AuthCubit>(
           create: (_) => sl<AuthCubit>()..checkAuthStatus(),
         ),
+  BlocProvider(create: (_) => sl<CartCubit>()),
       ],
       child: const InstaFood(),
     ),

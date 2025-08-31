@@ -19,6 +19,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:insta_food/presentation/features/cart/firestore/cart_firestore_services.dart';
 import 'package:insta_food/presentation/features/order/firestore/order_firestore_services.dart';
+import 'package:insta_food/presentation/features/cart/data/datasources/cart_remote_data_source.dart';
+import 'package:insta_food/presentation/features/cart/data/repos/cart_repository_impl.dart';
+import 'package:insta_food/presentation/features/cart/data/repositories/cart_repository.dart';
+import 'package:insta_food/presentation/features/cart/logic/cart_cubit.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -66,6 +70,16 @@ Future<void> setupLocator() async {
   // Register cubits
   sl.registerFactory(() => AuthCubit(sl()));
   sl.registerLazySingleton<DrawerCubit>(() => DrawerCubit());
+  // Cart feature
+  sl.registerLazySingleton<CartRemoteDataSource>(
+      () => CartRemoteDataSourceImpl(service: sl<CartFirestoreService>()));
+  sl.registerLazySingleton<CartRepository>(
+      () => CartRepositoryImpl(remote: sl<CartRemoteDataSource>()));
+  sl.registerFactory<CartCubit>(() => CartCubit(
+        repo: sl<CartRepository>(),
+        authCubit: sl<AuthCubit>(),
+        session: sl<SessionManager>(),
+      ));
 
   // Register network services
   sl.registerLazySingleton<Connectivity>(() => Connectivity());
