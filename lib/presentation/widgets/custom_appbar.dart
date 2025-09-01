@@ -34,8 +34,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         backgroundColor: AppColors.primaryYellow,
         scrolledUnderElevation: 0.0,
         toolbarHeight: 58,
-        leading: leading ? AppBackButton() : SizedBox(),
-        leadingWidth: 20,
+        leading: leading ? AppBackButton() : null,
+        leadingWidth: 35,
+
         title: title == null
             ? (inableSearch
                   ? AppSearchBar(isEnabled: true)

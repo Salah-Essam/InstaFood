@@ -52,4 +52,9 @@ class AppAssets {
   static const String paymentGooglePlay = "assets/icons/PaymentGoogle-play.svg";
   static const String paymentMac = "assets/icons/PaymentMac.svg";
   static const String paymentPaypal = "assets/icons/PaymentPaypal.svg";
+  static const String paymentCard = "assets/icons/PaymentCard.svg";
+  static const String settingsNotificationIcon =
+      "assets/icons/Settings_Notification_Icon.svg";
+  static const String settingsKeyIcon = "assets/icons/Settings_Key_Icon.svg";
+  static const String settingsUserIcon = "assets/icons/Settings_User_Icon.svg";
 }

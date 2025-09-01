@@ -21,10 +21,7 @@ class CartDrawer extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24),
         child: BlocBuilder<CartCubit, CartState>(
           builder: (context, state) {
-            List<Widget> children = [
-              _header(),
-              const SizedBox(height: 16),
-            ];
+            List<Widget> children = [_header(), const SizedBox(height: 16)];
 
             if (state is CartLoading) {
               children.add(const Center(child: CircularProgressIndicator()));
@@ -39,12 +36,26 @@ class CartDrawer extends StatelessWidget {
                 children.add(_CheckoutButton());
               }
             } else if (state is CartError) {
-              children.add(Center(child: Text(state.message, style: AppTextStyles.mediumText.copyWith(color: Colors.white))));
+              children.add(
+                Center(
+                  child: Text(
+                    state.message,
+                    style: AppTextStyles.mediumText.copyWith(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              );
             } else {
               children.add(const _EmptyCart());
             }
 
-            return SingleChildScrollView(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: children));
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: children,
+              ),
+            );
           },
         ),
       ),
@@ -53,45 +64,45 @@ class CartDrawer extends StatelessWidget {
 }
 
 Widget _header() => Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    Row(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Image.asset('assets/icons/cart_drawer_icon.png', width: 24, height: 24),
-            const SizedBox(width: 8),
-            SizedBox(
-              height: 24,
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Cart',
-                  style: const TextStyle(
-                    fontFamily: 'LeagueSpartan',
-                    fontWeight: FontWeight.w700,
-                    fontSize: 24,
-                    height: 1.0,
-                    color: Colors.white,
-                  ),
-                ),
+      children: [
+        Image.asset('assets/icons/cart_drawer_icon.png', width: 24, height: 24),
+        const SizedBox(width: 8),
+        SizedBox(
+          height: 24,
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Cart',
+              style: const TextStyle(
+                fontFamily: 'LeagueSpartan',
+                fontWeight: FontWeight.w700,
+                fontSize: 24,
+                height: 1.0,
+                color: Colors.white,
               ),
             ),
-          ],
-        ),
-        const SizedBox(height: 10),
-        // Figma: one thin 1px line below the header (width ~259)
-        Transform.rotate(
-          angle: -0.22 * pi / 180,
-          child: Container(
-            margin: const EdgeInsets.only(left: 33),
-            height: 1,
-            width: 259.0018,
-            color: const Color(0xFFFFDECF),
           ),
         ),
       ],
-    );
+    ),
+    const SizedBox(height: 10),
+    // Figma: one thin 1px line below the header (width ~259)
+    Transform.rotate(
+      angle: -0.22 * pi / 180,
+      child: Container(
+        margin: const EdgeInsets.only(left: 33),
+        height: 1,
+        width: 259.0018,
+        color: const Color(0xFFFFDECF),
+      ),
+    ),
+  ],
+);
 
 class _EmptyCart extends StatelessWidget {
   const _EmptyCart();
@@ -100,7 +111,9 @@ class _EmptyCart extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 20), // 20px below header line per Figma (165 - 145)
+        const SizedBox(
+          height: 20,
+        ), // 20px below header line per Figma (165 - 145)
         Center(
           child: SizedBox(
             width: 153,
@@ -117,7 +130,9 @@ class _EmptyCart extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 143), // 308 - 165 = 143px between caption and plus icon
+        const SizedBox(
+          height: 143,
+        ), // 308 - 165 = 143px between caption and plus icon
         // Big plus circular icon (184x184, radius 51.54), centered
         Center(
           child: Container(
@@ -138,7 +153,13 @@ class _EmptyCart extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        Center(child: Text(AppStrings.wantToAddSomething, textAlign: TextAlign.center, style: AppTextStyles.greeting)),
+        Center(
+          child: Text(
+            AppStrings.wantToAddSomething,
+            textAlign: TextAlign.center,
+            style: AppTextStyles.greeting,
+          ),
+        ),
       ],
     );
   }
@@ -150,13 +171,18 @@ class _CartList extends StatelessWidget {
     return BlocBuilder<CartCubit, CartState>(
       buildWhen: (p, n) => n is CartLoaded,
       builder: (context, state) {
-  final loaded = state is CartLoaded ? state : CartLoaded(items: const [], tax: 1.0, delivery: 2.0);
+        final loaded = state is CartLoaded
+            ? state
+            : CartLoaded(items: const [], tax: 1.0, delivery: 2.0);
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text('You have ${loaded.items.length} items in the cart', style: AppTextStyles.mediumText.copyWith(color: Colors.white)),
+              child: Text(
+                'You have ${loaded.items.length} items in the cart',
+                style: AppTextStyles.mediumText.copyWith(color: Colors.white),
+              ),
             ),
             const SizedBox(height: 12),
             ListView.separated(
@@ -178,10 +204,20 @@ class _CartList extends StatelessWidget {
                         child: CachedNetworkImage(
                           imageUrl: it.imageUrl,
                           fit: BoxFit.cover,
-                          placeholder: (_, __) => const Center(child: SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))),
+                          placeholder: (_, __) => const Center(
+                            child: SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          ),
                           errorWidget: (_, __, ___) => Container(
                             color: Colors.white24,
-                            child: const Icon(Icons.image_not_supported_outlined, color: Colors.white70, size: 20),
+                            child: const Icon(
+                              Icons.image_not_supported_outlined,
+                              color: Colors.white70,
+                              size: 20,
+                            ),
                           ),
                         ),
                       ),
@@ -191,15 +227,35 @@ class _CartList extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(it.itemName, style: AppTextStyles.mediumText.copyWith(color: Colors.white)),
-                          Text(it.restaurantName, style: AppTextStyles.mediumText.copyWith(color: AppColors.lightOrange, fontSize: 12)),
+                          Text(
+                            it.itemName,
+                            style: AppTextStyles.mediumText.copyWith(
+                              color: Colors.white,
+                            ),
+                          ),
+                          Text(
+                            it.restaurantName,
+                            style: AppTextStyles.mediumText.copyWith(
+                              color: AppColors.lightOrange,
+                              fontSize: 12,
+                            ),
+                          ),
                           const SizedBox(height: 4),
                           Row(
                             children: [
-                              const Icon(Icons.circle, size: 6, color: Colors.white70),
+                              const Icon(
+                                Icons.circle,
+                                size: 6,
+                                color: Colors.white70,
+                              ),
                               const SizedBox(width: 6),
-                              Text('${(it.options['size'] ?? '').toString().isEmpty ? 'Size' : it.options['size']}  •  x${it.quantity}',
-                                  style: AppTextStyles.mediumText.copyWith(color: Colors.white, fontSize: 12)),
+                              Text(
+                                '${(it.options['size'] ?? '').toString().isEmpty ? 'Size' : it.options['size']}  •  x${it.quantity}',
+                                style: AppTextStyles.mediumText.copyWith(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                ),
+                              ),
                             ],
                           ),
                         ],
@@ -208,11 +264,21 @@ class _CartList extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                                Text('\$${it.unitPrice.toStringAsFixed(2)}', style: AppTextStyles.mediumText.copyWith(color: Colors.white)),
+                        Text(
+                          '\$${it.unitPrice.toStringAsFixed(2)}',
+                          style: AppTextStyles.mediumText.copyWith(
+                            color: Colors.white,
+                          ),
+                        ),
                         const SizedBox(height: 8),
                         InkWell(
-                          onTap: () => context.read<CartCubit>().remove(it.cartItemId),
-                          child: const Icon(Icons.delete_outline, color: Colors.white70, size: 20),
+                          onTap: () =>
+                              context.read<CartCubit>().remove(it.cartItemId),
+                          child: const Icon(
+                            Icons.delete_outline,
+                            color: Colors.white70,
+                            size: 20,
+                          ),
                         ),
                       ],
                     ),
@@ -246,22 +312,31 @@ class _Totals extends StatelessWidget {
           padding: EdgeInsets.only(left: 33.0),
           child: SizedBox(
             width: 259.0018,
-            child: DottedLine(dashLength: 4, dashGapLength: 4, lineThickness: 1, dashColor: Colors.white24),
+            child: DottedLine(
+              dashLength: 4,
+              dashGapLength: 4,
+              lineThickness: 1,
+              dashColor: Colors.white24,
+            ),
           ),
         ),
         const SizedBox(height: 8),
-        _row('Total', t.total.toStringAsFixed(2), s.copyWith(fontWeight: FontWeight.bold)),
+        _row(
+          'Total',
+          t.total.toStringAsFixed(2),
+          s.copyWith(fontWeight: FontWeight.bold),
+        ),
       ],
     );
   }
 
   Widget _row(String l, String r, TextStyle style) => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(l, style: style),
-          Text('\$'+r, style: style),
-        ],
-      );
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Text(l, style: style),
+      Text('\$' + r, style: style),
+    ],
+  );
 }
 
 class _CheckoutButton extends StatelessWidget {
@@ -273,7 +348,9 @@ class _CheckoutButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primaryYellow,
           foregroundColor: Colors.black,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
         ),
         onPressed: () {
           context.push(RouterConstants.confirmOrder);
@@ -286,4 +363,3 @@ class _CheckoutButton extends StatelessWidget {
     );
   }
 }
-

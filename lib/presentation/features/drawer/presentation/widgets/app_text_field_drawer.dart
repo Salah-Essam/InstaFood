@@ -49,6 +49,7 @@ class AppTextFieldDrawer extends StatelessWidget {
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
         errorText: errorText,
+        counterText: "",
       ),
       keyboardType: type,
       obscureText: isObscure ?? false,

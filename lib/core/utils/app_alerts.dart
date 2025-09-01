@@ -8,13 +8,19 @@ import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_c
 import 'package:insta_food/presentation/widgets/app_button_onb.dart';
 
 class AppAlerts {
-  static Future<void> showSuccessDialog(BuildContext context, {required String title, String? imageAsset}) async {
+  static Future<void> showSuccessDialog(
+    BuildContext context, {
+    required String title,
+    String? imageAsset,
+  }) async {
     return showDialog(
       context: context,
       barrierDismissible: true,
       builder: (context) {
         return Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
           child: SizedBox(
             height: 240,
             child: Padding(
@@ -30,17 +36,28 @@ class AppAlerts {
                         width: 72,
                         height: 72,
                         fit: BoxFit.contain,
-                        errorBuilder: (_, __, ___) => const Icon(Icons.check_circle, size: 72, color: Colors.green),
+                        errorBuilder: (_, __, ___) => const Icon(
+                          Icons.check_circle,
+                          size: 72,
+                          color: Colors.green,
+                        ),
                       ),
                     ),
-                  Text(title, style: AppTextStyles.dialogTitle, textAlign: TextAlign.center),
+                  Text(
+                    title,
+                    style: AppTextStyles.dialogTitle,
+                    textAlign: TextAlign.center,
+                  ),
                   const SizedBox(height: 16),
                   AppButton(
                     backgroundColor: AppColors.primaryOrange,
                     width: 140,
                     height: 40,
                     onPressed: () => Navigator.of(context).pop(),
-                    child: Text('OK', style: AppTextStyles.dialogGreetingDialogeWhite),
+                    child: Text(
+                      'OK',
+                      style: AppTextStyles.dialogGreetingDialogeWhite,
+                    ),
                   ),
                 ],
               ),
@@ -50,12 +67,15 @@ class AppAlerts {
       },
     );
   }
+
   static Future<void> showLoginRequiredDialog(BuildContext context) async {
     return showDialog(
       context: context,
       builder: (context) {
         return Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           child: SizedBox(
             height: 190,
             child: Padding(
@@ -63,7 +83,11 @@ class AppAlerts {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('You can\'t add to cart. Please login or create an account.', style: AppTextStyles.dialogTitle, textAlign: TextAlign.center),
+                  Text(
+                    'You can\'t add to cart. Please login or create an account.',
+                    style: AppTextStyles.dialogTitle,
+                    textAlign: TextAlign.center,
+                  ),
                   const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -73,31 +97,42 @@ class AppAlerts {
                         width: 120,
                         height: 35,
                         onPressed: () => Navigator.of(context).pop(),
-                        child: Text('Cancel', style: AppTextStyles.dialogGreetingDialogeOrange),
+                        child: Text(
+                          'Cancel',
+                          style: AppTextStyles.dialogGreetingDialogeOrange,
+                        ),
                       ),
-                      Row(children: [
-                        AppButton(
-                          backgroundColor: AppColors.primaryOrange,
-                          width: 110,
-                          height: 35,
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            context.go(RouterConstants.login);
-                          },
-                          child: Text('Login', style: AppTextStyles.dialogGreetingDialogeWhite),
-                        ),
-                        const SizedBox(width: 8),
-                        AppButton(
-                          backgroundColor: AppColors.primaryYellow,
-                          width: 110,
-                          height: 35,
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            context.go(RouterConstants.signup);
-                          },
-                          child: Text('Create', style: AppTextStyles.dialogGreetingDialogeOrange),
-                        ),
-                      ]),
+                      Row(
+                        children: [
+                          AppButton(
+                            backgroundColor: AppColors.primaryOrange,
+                            width: 110,
+                            height: 35,
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              context.go(RouterConstants.login);
+                            },
+                            child: Text(
+                              'Login',
+                              style: AppTextStyles.dialogGreetingDialogeWhite,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          AppButton(
+                            backgroundColor: AppColors.primaryYellow,
+                            width: 110,
+                            height: 35,
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              context.go(RouterConstants.signup);
+                            },
+                            child: Text(
+                              'Create',
+                              style: AppTextStyles.dialogGreetingDialogeOrange,
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ],
@@ -108,6 +143,7 @@ class AppAlerts {
       },
     );
   }
+
   static Future<dynamic> showLogoutAppDialog(
     BuildContext context, {
     required String title,
@@ -144,25 +180,27 @@ class AppAlerts {
 
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 32),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      child: Wrap(
                         children: [
                           AppButton(
                             backgroundColor: AppColors.lightOrange,
-                            width: 125,
-                            height: 35,
+                            width: 100,
+                            height: 30,
+                            borderRadius: 24,
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
                             child: Text(
                               "Cancel",
-                              style: AppTextStyles.dialogGreetingDialogeOrange,
+                              style: AppTextStyles.buttonOrangeText,
                             ),
                           ),
+                          SizedBox(height: 8, width: 8),
                           AppButton(
                             backgroundColor: AppColors.primaryOrange,
-                            width: 125,
-                            height: 35,
+                            width: 100,
+                            height: 30,
+                            borderRadius: 24,
                             onPressed: () async {
                               // Close dialog
                               Navigator.of(context).pop();
@@ -173,7 +211,7 @@ class AppAlerts {
                             },
                             child: Text(
                               "Yes, logout",
-                              style: AppTextStyles.dialogGreetingDialogeWhite,
+                              style: AppTextStyles.buttonWhiteText,
                             ),
                           ),
                         ],

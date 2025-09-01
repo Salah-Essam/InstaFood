@@ -31,12 +31,14 @@ class ItemPage extends StatefulWidget {
 }
 
 class _ItemPageState extends State<ItemPage> {
-  final ValueNotifier<ItemSize> _size = ValueNotifier<ItemSize>(ItemSize.medium);
+  final ValueNotifier<ItemSize> _size = ValueNotifier<ItemSize>(
+    ItemSize.medium,
+  );
   int _qty = 1;
 
   @override
   Widget build(BuildContext context) {
-  return Scaffold(
+    return Scaffold(
       backgroundColor: AppColors.primaryYellow,
       endDrawer: BlocBuilder<DrawerCubit, DrawerState>(
         builder: (context, drawerState) {
@@ -56,7 +58,6 @@ class _ItemPageState extends State<ItemPage> {
             child: Row(
               spacing: 3,
               children: [
-
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Padding(
@@ -78,8 +79,13 @@ class _ItemPageState extends State<ItemPage> {
                 FavButton(),
                 const SizedBox(width: 12),
                 GestureDetector(
-                  onTap: () => context.read<DrawerCubit>().openDrawer(DrawerType.cart),
-                  child: SvgPicture.asset(AppAssets.cart, width: 26, height: 26),
+                  onTap: () =>
+                      context.read<DrawerCubit>().openDrawer(DrawerType.cart),
+                  child: SvgPicture.asset(
+                    AppAssets.cart,
+                    width: 26,
+                    height: 26,
+                  ),
                 ),
               ],
             ),
@@ -135,13 +141,20 @@ class _ItemPageState extends State<ItemPage> {
                               ValueListenableBuilder<ItemSize>(
                                 valueListenable: _size,
                                 builder: (_, size, __) {
-                                  final price = (widget.item.itemPrice + size.priceModifier) * _qty;
-                                  return Text("\$${price.toStringAsFixed(2)}", style: AppTextStyles.itemPagePrice);
+                                  final price =
+                                      (widget.item.itemPrice +
+                                          size.priceModifier) *
+                                      _qty;
+                                  return Text(
+                                    "\$${price.toStringAsFixed(2)}",
+                                    style: AppTextStyles.itemPagePrice,
+                                  );
                                 },
                               ),
                               Counter(
                                 initNumber: _qty,
-                                counterCallback: (v) => setState(() => _qty = v),
+                                counterCallback: (v) =>
+                                    setState(() => _qty = v),
                               ),
                             ],
                           ),
@@ -159,7 +172,8 @@ class _ItemPageState extends State<ItemPage> {
                       BlocListener<CartCubit, CartState>(
                         listenWhen: (p, n) => n is CartActionBlocked,
                         listener: (context, state) {
-                          if (state is CartActionBlocked && state.reason == 'login_required') {
+                          if (state is CartActionBlocked &&
+                              state.reason == 'login_required') {
                             AppAlerts.showLoginRequiredDialog(context);
                           }
                         },
@@ -171,13 +185,18 @@ class _ItemPageState extends State<ItemPage> {
                               size: _size.value,
                               quantity: _qty,
                             );
-                            final isAuthed = context.read<AuthCubit>().state is! Unauthenticated;
-                            context.read<CartCubit>().addOrUpdate(item).then((_) {
+                            final isAuthed =
+                                context.read<AuthCubit>().state
+                                    is! Unauthenticated;
+                            context.read<CartCubit>().addOrUpdate(item).then((
+                              _,
+                            ) {
                               if (isAuthed) {
                                 AppAlerts.showSuccessDialog(
                                   context,
                                   title: 'Added to cart successfully!',
-                                  imageAsset: 'assets/images/greencheckmark.jpg',
+                                  imageAsset:
+                                      'assets/images/greencheckmark.jpg',
                                 );
                               }
                             });
@@ -192,7 +211,10 @@ class _ItemPageState extends State<ItemPage> {
                                 fit: BoxFit.fitHeight,
                               ),
                               SizedBox(width: 14),
-                              Text(AppStrings.addToCart, style: AppTextStyles.button),
+                              Text(
+                                AppStrings.addToCart,
+                                style: AppTextStyles.button,
+                              ),
                             ],
                           ),
                         ),
