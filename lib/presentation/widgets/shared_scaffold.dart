@@ -62,12 +62,18 @@ class SharedScaffold extends StatelessWidget {
                     topRight: Radius.circular(32),
                   ),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 32,
-                    vertical: 16,
+                child: SafeArea(
+                  top: false,
+                  left: false,
+                  right: false,
+                  bottom: true,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 16,
+                    ),
+                    child: pageDetails,
                   ),
-                  child: pageDetails,
                 ),
               ),
             ),

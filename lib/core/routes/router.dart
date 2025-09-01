@@ -27,6 +27,12 @@ import 'package:insta_food/presentation/features/search/presentation/search_page
 import 'package:insta_food/presentation/features/splash/view/second_splash_screen.dart';
 import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_state.dart';
+import 'package:insta_food/presentation/features/order/presentation/view/confirm_order_page.dart';
+import 'package:insta_food/presentation/features/order/logic/order_cubit.dart';
+import 'package:insta_food/core/di/di.dart';
+import 'package:insta_food/presentation/features/order/firestore/order_firestore_services.dart';
+import 'package:insta_food/presentation/features/cart/logic/cart_cubit.dart';
+import 'package:insta_food/presentation/features/order/presentation/view/payment_page.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: RouterConstants.splash,
@@ -88,6 +94,22 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: RouterConstants.paymentPage,
       builder: (context, state) => PaymentMethodsPage(),
+    ),
+    GoRoute(
+      name: 'payment',
+      path: RouterConstants.payment,
+      builder: (context, state) => const PaymentPage(),
+    ),
+    GoRoute(
+      path: RouterConstants.confirmOrder,
+      builder: (context, state) => BlocProvider(
+        create: (_) => OrderCubit(
+          service: sl<OrderFirestoreService>(),
+          cartCubit: context.read<CartCubit>(),
+          authCubit: context.read<AuthCubit>(),
+        ),
+        child: const ConfirmOrderPage(),
+      ),
     ),
     GoRoute(
       path: RouterConstants.contactPage,
