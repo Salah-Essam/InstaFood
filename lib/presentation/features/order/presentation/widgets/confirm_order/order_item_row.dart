@@ -30,51 +30,66 @@ class OrderItemRow extends StatelessWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Left: name + date stacked with no extra gap
                     Expanded(
-                      child: Text(it.itemName, style: AppTextStyles.mediumText.copyWith(color: Colors.black)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(it.itemName, style: AppTextStyles.mediumText.copyWith(color: Colors.black)),
+                          // date-time placed instantly below the name (no SizedBox in between)
+                          Text(
+                            _formatDate(it.addedAt ?? it.updatedAt),
+                            style: AppTextStyles.mediumText.copyWith(fontSize: 12, color: Colors.black54),
+                          ),
+                          const SizedBox(height: 6),
+                          // Cancel Order directly below date/time
+                          TextButton(
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              backgroundColor: AppColors.orange2,
+                              foregroundColor: AppColors.primaryOrange,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                            ),
+                            onPressed: () => context.read<CartCubit>().remove(it.cartItemId),
+                            child: const Text('Cancel Order'),
+                          ),
+                        ],
+                      ),
                     ),
-                    IconButton(
-                      onPressed: () => context.read<CartCubit>().remove(it.cartItemId),
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                      icon: const Icon(Icons.delete_outline, color: AppColors.primaryOrange, size: 18),
+                    // Right: trash icon on top, +/- below it with price on the right
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        IconButton(
+                          onPressed: () => context.read<CartCubit>().remove(it.cartItemId),
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                          icon: const Icon(Icons.delete_outline, color: AppColors.primaryOrange, size: 18),
+                        ),
+                        const SizedBox(height: 6),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            _iconPill(Icons.remove, enabled: it.quantity > 1, onTap: it.quantity > 1
+                                ? () {
+                                    context.read<CartCubit>().addOrUpdate(it.copyWith(quantity: it.quantity - 1));
+                                  }
+                                : null),
+                            const SizedBox(width: 6),
+                            Text('${it.quantity}', style: AppTextStyles.mediumText.copyWith(color: Colors.black)),
+                            const SizedBox(width: 6),
+                            _iconPill(Icons.add, enabled: true, onTap: () {
+                              context.read<CartCubit>().addOrUpdate(it.copyWith(quantity: it.quantity + 1));
+                            }),
+                            const SizedBox(width: 12),
+                            Text('\$${it.unitPrice.toStringAsFixed(2)}', style: AppTextStyles.mediumText.copyWith(color: AppColors.primaryOrange)),
+                          ],
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                const SizedBox(height: 2),
-                Text(_formatDate(it.addedAt ?? it.updatedAt), style: AppTextStyles.mediumText.copyWith(fontSize: 12, color: Colors.black54)),
-                const SizedBox(height: 6),
-                Row(
-                  children: [
-                    _iconPill(Icons.remove, enabled: it.quantity > 1, onTap: it.quantity > 1
-                        ? () {
-                            context.read<CartCubit>().addOrUpdate(it.copyWith(quantity: it.quantity - 1));
-                          }
-                        : null),
-                    const SizedBox(width: 6),
-                    Text('${it.quantity}', style: AppTextStyles.mediumText.copyWith(color: Colors.black)),
-                    const SizedBox(width: 6),
-                    _iconPill(Icons.add, enabled: true, onTap: () {
-                      context.read<CartCubit>().addOrUpdate(it.copyWith(quantity: it.quantity + 1));
-                    }),
-                    const Spacer(),
-                    Text('\$${it.unitPrice.toStringAsFixed(2)}', style: AppTextStyles.mediumText.copyWith(color: AppColors.primaryOrange)),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: TextButton(
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      backgroundColor: AppColors.orange2,
-                      foregroundColor: AppColors.primaryOrange,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                    ),
-                    onPressed: () => context.read<CartCubit>().remove(it.cartItemId),
-                    child: const Text('Cancel Order'),
-                  ),
-                ),
+                // Cancel button moved up under date/time
               ],
             ),
           ),
