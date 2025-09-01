@@ -22,6 +22,7 @@ import 'package:insta_food/presentation/features/cart/data/datasources/cart_remo
 import 'package:insta_food/presentation/features/cart/data/repos/cart_repository_impl.dart';
 import 'package:insta_food/presentation/features/cart/data/repositories/cart_repository.dart';
 import 'package:insta_food/presentation/features/cart/logic/cart_cubit.dart';
+import 'package:insta_food/presentation/features/order/logic/order_cubit.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -74,6 +75,13 @@ Future<void> setupLocator() async {
         repo: sl<CartRepository>(),
         authCubit: sl<AuthCubit>(),
         session: sl<SessionManager>(),
+      ));
+
+  // Order cubit factory
+  sl.registerFactory<OrderCubit>(() => OrderCubit(
+        service: sl<OrderFirestoreService>(),
+        cartCubit: sl<CartCubit>(),
+        authCubit: sl<AuthCubit>(),
       ));
 
   // Register network services

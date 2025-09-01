@@ -30,7 +30,7 @@ class CartCubit extends Cubit<CartState> {
 				watch(state.user.id ?? session.getUser()?.id ?? '');
 			} else {
 				_sub?.cancel();
-				emit(CartLoaded(items: const []));
+				emit(CartLoaded(items: const [], tax: 1.0, delivery: 2.0));
 			}
 		});
 	}
@@ -45,7 +45,7 @@ class CartCubit extends Cubit<CartState> {
 		_sub?.cancel();
 		emit(CartLoading());
 		_sub = repo.watchCart(uid).listen(
-			(items) => emit(CartLoaded(items: items)),
+			(items) => emit(CartLoaded(items: items, tax: 1.0, delivery: 2.0)),
 			onError: (e) => emit(CartError(e.toString())),
 		);
 	}
