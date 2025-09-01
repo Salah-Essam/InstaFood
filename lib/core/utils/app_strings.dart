@@ -85,6 +85,9 @@ class AppStrings {
   static const String filter = "Filter";
   static const String portions = "Portion Size";
   static const String addToCart = "Add to Cart";
+    // Cart
+    static const String yourCartIsEmpty = "Your cart is empty";
+    static const String wantToAddSomething = "Want To Add Something?";
   //===========================================
   static const String areYouSureYouWantYoLogout =
       "Are you sure you want you logout ?";

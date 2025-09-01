@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dotted_line/dotted_line.dart';
+import 'package:insta_food/core/utils/app_strings.dart';
+import 'dart:math' show pi;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
@@ -19,8 +21,6 @@ class CartDrawer extends StatelessWidget {
           builder: (context, state) {
             List<Widget> children = [
               _header(),
-              const SizedBox(height: 8),
-              Container(height: 1, color: AppColors.lightOrange),
               const SizedBox(height: 16),
             ];
 
@@ -54,14 +54,33 @@ Widget _header() => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset('assets/icons/cart_drawer_icon.png', width: 24, height: 24),
             const SizedBox(width: 8),
-            Text('Cart', style: AppTextStyles.greeting),
+            Text(
+              'Cart',
+              style: const TextStyle(
+                fontFamily: 'LeagueSpartan',
+                fontWeight: FontWeight.w700,
+                fontSize: 24,
+                height: 26/24,
+                color: Colors.white,
+              ),
+            ),
           ],
         ),
-        const SizedBox(height: 8),
-        Image.asset('assets/icons/Line1_drawer.png', height: 2, fit: BoxFit.fill),
+        const SizedBox(height: 10),
+        // Figma: one thin 1px line below the header (width ~259)
+        Transform.rotate(
+          angle: -0.22 * pi / 180,
+          child: Container(
+            margin: const EdgeInsets.only(left: 33),
+            height: 1,
+            width: 259.0018,
+            color: const Color(0xFFFFDECF),
+          ),
+        ),
       ],
     );
 
@@ -70,14 +89,47 @@ class _EmptyCart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 24),
-  Image.asset('assets/icons/Line4_drawer.png', height: 2, fit: BoxFit.fill),
-  const SizedBox(height: 24),
-  Center(child: Image.asset('assets/icons/Add to car Icon.png', width: 120, height: 120)),
+        const SizedBox(height: 20), // 20px below header line per Figma (165 - 145)
+        Center(
+          child: SizedBox(
+            width: 153,
+            child: Text(
+              AppStrings.yourCartIsEmpty,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontFamily: 'LeagueSpartan',
+                fontWeight: FontWeight.w500,
+                fontSize: 20,
+                height: 1.0,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 143), // 308 - 165 = 143px between caption and plus icon
+        // Big plus circular icon (184x184, radius 51.54), centered
+        Center(
+          child: Container(
+            width: 184,
+            height: 184,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(51.54),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(51.54),
+              child: Image.asset(
+                'assets/icons/Add to car Icon.png',
+                width: 184,
+                height: 184,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+        ),
         const SizedBox(height: 16),
-        Text('Want To Add\nSomething?', textAlign: TextAlign.center, style: AppTextStyles.greeting),
+        Center(child: Text(AppStrings.wantToAddSomething, textAlign: TextAlign.center, style: AppTextStyles.greeting)),
       ],
     );
   }
@@ -93,13 +145,31 @@ class _CartList extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('You have ${loaded.items.length} items in the cart', style: AppTextStyles.mediumText.copyWith(color: Colors.white)),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text('You have ${loaded.items.length} items in the cart', style: AppTextStyles.mediumText.copyWith(color: Colors.white)),
+            ),
             const SizedBox(height: 12),
             ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: loaded.items.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              separatorBuilder: (_, __) => Column(children: [
+                const SizedBox(height: 12),
+                // Solid separator between products (slight rotation -0.22°)
+                Padding(
+                  padding: const EdgeInsets.only(left: 33.0),
+                  child: Transform.rotate(
+                    angle: -0.22 * pi / 180,
+                    child: const SizedBox(
+                      width: 259.0018,
+                      height: 1,
+                      child: ColoredBox(color: Color(0xFFFFDECF)),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+              ]),
               itemBuilder: (context, i) {
                 final it = loaded.items[i];
                 return Row(
@@ -121,7 +191,7 @@ class _CartList extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -155,8 +225,14 @@ class _CartList extends StatelessWidget {
                 );
               },
             ),
-            const SizedBox(height: 12),
-            const DottedLine(dashLength: 4, dashGapLength: 4, lineThickness: 1, dashColor: Colors.white24),
+            const SizedBox(height: 8),
+            const Padding(
+              padding: EdgeInsets.only(left: 33.0),
+              child: SizedBox(
+                width: 259.0018,
+                child: DottedLine(dashLength: 4, dashGapLength: 4, lineThickness: 1, dashColor: Colors.white24),
+              ),
+            ),
           ],
         );
       },
