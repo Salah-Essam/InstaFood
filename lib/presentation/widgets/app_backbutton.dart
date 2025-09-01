@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
+import 'package:insta_food/core/routes/router_constants.dart';
 import 'package:insta_food/core/theme/app_assets.dart';
 
 class AppBackButton extends StatelessWidget {
@@ -9,7 +11,13 @@ class AppBackButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.pop(context);
+        // Prefer router-aware back; fallback to home to avoid black screen
+        final router = GoRouter.of(context);
+        if (router.canPop()) {
+          router.pop();
+        } else {
+          router.go(RouterConstants.bottomNavBar);
+        }
       },
       borderRadius: BorderRadius.circular(24),
       child: SizedBox(

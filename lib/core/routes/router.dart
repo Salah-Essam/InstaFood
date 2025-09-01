@@ -36,6 +36,8 @@ import 'package:insta_food/core/di/di.dart';
 import 'package:insta_food/presentation/features/order/firestore/order_firestore_services.dart';
 import 'package:insta_food/presentation/features/cart/logic/cart_cubit.dart';
 import 'package:insta_food/presentation/features/order/presentation/view/payment_page.dart';
+import 'package:insta_food/presentation/features/order/presentation/view/order_confirmed_page.dart';
+import 'package:insta_food/presentation/features/order/presentation/view/delivery_time_page.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: RouterConstants.splash,
@@ -100,7 +102,37 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: RouterConstants.payment,
-      builder: (context, state) => const PaymentPage(),
+      builder: (context, state) => BlocProvider(
+        create: (_) => OrderCubit(
+          service: sl<OrderFirestoreService>(),
+          cartCubit: context.read<CartCubit>(),
+          authCubit: context.read<AuthCubit>(),
+        ),
+        child: const PaymentPage(),
+      ),
+    ),
+    GoRoute(
+      path: RouterConstants.orderConfirmed,
+      builder: (context, state) => BlocProvider(
+        create: (_) => OrderCubit(
+          service: sl<OrderFirestoreService>(),
+          cartCubit: context.read<CartCubit>(),
+          authCubit: context.read<AuthCubit>(),
+        ),
+        child: const OrderConfirmedPage(),
+      ),
+    ),
+    GoRoute(
+      path: RouterConstants.deliveryTime,
+      builder: (context, state) => const DeliveryTimePage(),
+    ),
+    GoRoute(
+      path: RouterConstants.orderConfirmed,
+      builder: (context, state) => const OrderConfirmedPage(),
+    ),
+    GoRoute(
+      path: RouterConstants.deliveryTime,
+      builder: (context, state) => const DeliveryTimePage(),
     ),
     GoRoute(
       path: RouterConstants.addNewPaymentPage,

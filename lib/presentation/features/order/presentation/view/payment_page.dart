@@ -4,6 +4,10 @@ import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/presentation/features/cart/logic/cart_cubit.dart';
 import 'package:insta_food/presentation/features/cart/logic/cart_state.dart';
+import 'package:insta_food/presentation/features/order/logic/order_cubit.dart';
+import 'package:insta_food/presentation/features/order/logic/order_state.dart';
+import 'package:go_router/go_router.dart';
+import 'package:insta_food/core/routes/router_constants.dart';
 import 'package:insta_food/presentation/widgets/shared_scaffold.dart';
 import 'package:insta_food/presentation/features/order/presentation/widgets/payment/address_pill.dart';
 import 'package:insta_food/presentation/features/order/presentation/widgets/payment/common_widgets.dart' as pw;
@@ -18,13 +22,9 @@ class PaymentPage extends StatelessWidget {
       appBarTitle: 'Payment',
       pageDetails: BlocBuilder<CartCubit, CartState>(
         builder: (context, state) {
-          if (state is! CartLoaded || state.items.isEmpty) {
-            return Center(
-              child: Text('Your cart is empty', style: AppTextStyles.mediumText),
-            );
-          }
-
-          final total = state.total;
+          final isLoaded = state is CartLoaded;
+          final items = isLoaded ? state.items : const [];
+          final total = isLoaded ? state.total : 0.0;
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,7 +54,7 @@ class PaymentPage extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 8),
-                ...state.items.map((it) => Padding(
+                ...items.map((it) => Padding(
                       padding: const EdgeInsets.only(bottom: 4.0),
                       child: Row(
                         children: [
@@ -79,10 +79,10 @@ class PaymentPage extends StatelessWidget {
                         ],
                       ),
                     )),
-                Row(
+        Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text('\$${total.toStringAsFixed(2)}',
+          Text('\$${total.toStringAsFixed(2)}',
                         style: AppTextStyles.mediumText.copyWith(color: Colors.black, fontWeight: FontWeight.w600)),
                   ],
                 ),
@@ -121,22 +121,41 @@ class PaymentPage extends StatelessWidget {
                 const pw.LightDivider(),
 
                 const SizedBox(height: 20),
-                Center(
-                  child: SizedBox(
-                    width: 220,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.orange2,
-                        foregroundColor: AppColors.primaryOrange,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
+                BlocBuilder<OrderCubit, OrderState>(
+                  builder: (context, orderState) {
+                    final placing = orderState is OrderPlacing;
+                    return Center(
+                      child: SizedBox(
+                        width: 220,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.orange2,
+                            foregroundColor: AppColors.primaryOrange,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                          ),
+                          onPressed: placing
+                              ? null
+                              : () async {
+                                  final cubit = context.read<OrderCubit>();
+                                  if (!isLoaded || items.isEmpty) {
+                                    // Fallback navigation to keep UX flow moving (no order stored)
+                                    if (context.mounted) {
+                                      context.go(RouterConstants.orderConfirmed);
+                                    }
+                                    return;
+                                  }
+                                  await cubit.placeOrder(shippingAddress: '778 Locust View Drive Oaklanda, CA');
+                                  final st = cubit.state;
+                                  if (st is OrderPlaced && context.mounted) {
+                                    context.go(RouterConstants.orderConfirmed, extra: st.orderId);
+                                  }
+                                },
+                          child: Text(placing ? 'Processing…' : 'Pay Now'),
+                        ),
                       ),
-                      onPressed: () {
-                        // TODO: integrate with OrderCubit after payment succeeds
-                      },
-                      child: const Text('Pay Now'),
-                    ),
-                  ),
+                    );
+                  },
                 ),
                 const SizedBox(height: 8),
               ],
