@@ -185,9 +185,7 @@ class FilterPage extends StatelessWidget {
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
-                                children: [40, 250, 500, 750, 1000].map((
-                                  value,
-                                ) {
+                                children: [40, 200, 370, 535, 700].map((value) {
                                   return Text(
                                     '\$$value',
                                     style: AppTextStyles.small,
