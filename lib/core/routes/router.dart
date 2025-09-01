@@ -6,9 +6,21 @@ import 'package:insta_food/core/routes/router_constants.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/storage/shared_prefrences/shared_prefs_service.dart';
 import 'package:insta_food/presentation/features/BottomNavBar/presentation/pages/bottom_nav_bar.dart';
+import 'package:insta_food/presentation/features/ContactUs%20&%20FAQs/presentation/pages/contact_us_page.dart';
+import 'package:insta_food/presentation/features/ContactUs%20&%20FAQs/presentation/pages/help_faqs_page.dart';
+import 'package:insta_food/presentation/features/DeliveryAddress/presentation/pages/add_new_address_page.dart';
+import 'package:insta_food/presentation/features/DeliveryAddress/presentation/pages/delivery_address_page.dart';
+import 'package:insta_food/presentation/features/PaymentMethods/presentation/pages/add_card_page.dart';
+import 'package:insta_food/presentation/features/PaymentMethods/presentation/pages/payment_methods_page.dart';
 import 'package:insta_food/presentation/features/Profile/presentation/pages/profile_page.dart';
+
 import 'package:insta_food/presentation/features/category/presentation/view/category_page.dart';
 import 'package:insta_food/presentation/features/filter/presentation/cubit/filter_cubit.dart';
+
+import 'package:insta_food/presentation/features/Settings/presentation/pages/notification_setting_page.dart';
+import 'package:insta_food/presentation/features/Settings/presentation/pages/passwrod_setting_page.dart';
+import 'package:insta_food/presentation/features/Settings/presentation/pages/settings_page.dart';
+
 
 import 'package:insta_food/presentation/features/filter/presentation/view/filter_page.dart';
 import 'package:insta_food/presentation/features/home/presentation/view/home_page.dart';
@@ -24,6 +36,12 @@ import 'package:insta_food/presentation/features/search/presentation/search_page
 import 'package:insta_food/presentation/features/splash/view/second_splash_screen.dart';
 import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_state.dart';
+import 'package:insta_food/presentation/features/order/presentation/view/confirm_order_page.dart';
+import 'package:insta_food/presentation/features/order/logic/order_cubit.dart';
+import 'package:insta_food/core/di/di.dart';
+import 'package:insta_food/presentation/features/order/firestore/order_firestore_services.dart';
+import 'package:insta_food/presentation/features/cart/logic/cart_cubit.dart';
+import 'package:insta_food/presentation/features/order/presentation/view/payment_page.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: RouterConstants.splash,
@@ -73,6 +91,57 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: RouterConstants.profilePage,
       builder: (context, state) => ProfilePage(),
+    ),
+    GoRoute(
+      path: RouterConstants.addressPage,
+      builder: (context, state) => DeliveryAddressPage(),
+    ),
+    GoRoute(
+      path: RouterConstants.addNewAddressPage,
+      builder: (context, state) => AddNewAddressPage(),
+    ),
+    GoRoute(
+      path: RouterConstants.paymentPage,
+      builder: (context, state) => PaymentMethodsPage(),
+    ),
+    GoRoute(
+      path: RouterConstants.payment,
+      builder: (context, state) => const PaymentPage(),
+    ),
+    GoRoute(
+      path: RouterConstants.addNewPaymentPage,
+      builder: (context, state) => AddCardPage(),
+    ),
+    GoRoute(
+      path: RouterConstants.notificationSetting,
+      builder: (context, state) => NotificationSettingPage(),
+    ),
+    GoRoute(
+      path: RouterConstants.passwordSetting,
+      builder: (context, state) => PasswrodSettingPage(),
+    ),
+    GoRoute(
+      path: RouterConstants.confirmOrder,
+      builder: (context, state) => BlocProvider(
+        create: (_) => OrderCubit(
+          service: sl<OrderFirestoreService>(),
+          cartCubit: context.read<CartCubit>(),
+          authCubit: context.read<AuthCubit>(),
+        ),
+        child: const ConfirmOrderPage(),
+      ),
+    ),
+    GoRoute(
+      path: RouterConstants.contactPage,
+      builder: (context, state) => ContactUsPage(),
+    ),
+    GoRoute(
+      path: RouterConstants.helpFAQsPage,
+      builder: (context, state) => HelpFAQsPage(),
+    ),
+    GoRoute(
+      path: RouterConstants.settingsPage,
+      builder: (context, state) => SettingsPage(),
     ),
     GoRoute(
       path: RouterConstants.filterPage,

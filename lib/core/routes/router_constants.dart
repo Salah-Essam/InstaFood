@@ -10,12 +10,21 @@ class RouterConstants {
   static const String signup = '/signup';
   static const String orderPage = '/orderPage';
   static const String addressPage = '/addressPage';
+  static const String addNewAddressPage = '/addNewAddressPage';
   static const String paymentPage = '/paymentPage';
+  static const String payment = '/payment';
+  static const String confirmOrder = '/confirmOrder';
   static const String contactPage = '/contactPage';
-  static const String helpPage = '/helpPage';
+  static const String helpFAQsPage = '/helpPage';
   static const String settingsPage = '/settingsPage';
   static const String filterPage = '/filterPage';
   static const String itemPage = '/itemPage';
   static const String forgotPassword = '/set_password';
+
   static const String categoryPage = '/categoryPage';
+
+  static const String addNewPaymentPage = '/addNewPaymentPage';
+  static const String passwordSetting = '/passwordSetting';
+  static const String notificationSetting = '/notificationSetting';
+
 }

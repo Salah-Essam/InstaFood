@@ -50,4 +50,13 @@ class AppAssets {
   static const String google = "assets/icons/Google_Icon.svg";
   static const String fingerprint = "assets/icons/Fingerprint_Icon.svg";
   static const String eye = "assets/icons/Show_Off.svg";
+  static const String paymentCardIcon = "assets/icons/PaymentCard icon.svg";
+  static const String paymentGooglePlay = "assets/icons/PaymentGoogle-play.svg";
+  static const String paymentMac = "assets/icons/PaymentMac.svg";
+  static const String paymentPaypal = "assets/icons/PaymentPaypal.svg";
+  static const String paymentCard = "assets/icons/PaymentCard.svg";
+  static const String settingsNotificationIcon =
+      "assets/icons/Settings_Notification_Icon.svg";
+  static const String settingsKeyIcon = "assets/icons/Settings_Key_Icon.svg";
+  static const String settingsUserIcon = "assets/icons/Settings_User_Icon.svg";
 }

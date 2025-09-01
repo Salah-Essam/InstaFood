@@ -32,6 +32,16 @@ class AppTextStyles {
     fontWeight: FontWeight.w600,
     color: AppColors.primaryOrange,
   );
+  static TextStyle get buttonOrangeText => TextStyle(
+    fontSize: 15.sp,
+    fontWeight: FontWeight.w600,
+    color: AppColors.primaryOrange,
+  );
+  static TextStyle get buttonWhiteText => TextStyle(
+    fontSize: 15.sp,
+    fontWeight: FontWeight.w600,
+    color: AppColors.white,
+  );
 
   // ===========================
   static TextStyle get greeting => TextStyle(
@@ -76,7 +86,7 @@ class AppTextStyles {
 
   static TextStyle get ad => TextStyle(
     fontWeight: FontWeight.w400,
-    fontSize: 16.sp,
+    fontSize: 14.sp,
     color: AppColors.textLight,
   );
 
@@ -118,4 +128,72 @@ class AppTextStyles {
     fontSize: 14.sp,
     fontWeight: FontWeight.w500,
   );
+
+  // ========================= Black Fonts =========================
+
+  static TextStyle get fontBlackSmall => TextStyle(
+    color: AppColors.textDarkBrown,
+    fontSize: 12,
+    fontWeight: FontWeight.w500,
+  );
+  static TextStyle get fontBlackSmallBold => TextStyle(
+    color: AppColors.textDarkBrown,
+    fontSize: 12,
+    fontWeight: FontWeight.bold,
+  );
+  static TextStyle get fontBlackMed => TextStyle(
+    color: AppColors.textDarkBrown,
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
+  );
+  static TextStyle get fontBlackMedBold => TextStyle(
+    color: AppColors.textDarkBrown,
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
+  );
+  static TextStyle get fontBlackLarge => TextStyle(
+    color: AppColors.textDarkBrown,
+    fontSize: 24,
+    fontWeight: FontWeight.w500,
+  );
+  static TextStyle get fontBlackLargeBold => TextStyle(
+    color: AppColors.textDarkBrown,
+    fontSize: 24,
+    fontWeight: FontWeight.bold,
+  );
+
+  // ========================= White Fonts =========================
+
+  static TextStyle get fontWhiteSmall => TextStyle(
+    color: AppColors.textLight,
+    fontSize: 12,
+    fontWeight: FontWeight.w500,
+  );
+  static TextStyle get fontWhiteSmallBold => TextStyle(
+    color: AppColors.textLight,
+    fontSize: 12,
+    fontWeight: FontWeight.bold,
+  );
+  static TextStyle get fontWhiteMed => TextStyle(
+    color: AppColors.textLight,
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
+  );
+  static TextStyle get fontWhiteMedBold => TextStyle(
+    color: AppColors.textLight,
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
+  );
+  static TextStyle get fontWhiteLarge => TextStyle(
+    color: AppColors.textLight,
+    fontSize: 24,
+    fontWeight: FontWeight.w500,
+  );
+  static TextStyle get fontWhiteLargeBold => TextStyle(
+    color: AppColors.textLight,
+    fontSize: 24,
+    fontWeight: FontWeight.bold,
+  );
+
+  // ========================= AppColors Fonts =========================
 }

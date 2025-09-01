@@ -17,6 +17,7 @@ class ButtonGrid extends StatelessWidget {
   ButtonGrid({super.key, this.pushPage = true});
   @override
   Widget build(BuildContext context) {
+
     return BlocBuilder<FilterCubit, FilterState>(
       builder: (context, state) {
         return SizedBox(
@@ -83,6 +84,7 @@ class ButtonGrid extends StatelessWidget {
           ),
         );
       },
+
     );
   }
 }
