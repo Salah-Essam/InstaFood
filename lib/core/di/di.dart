@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:hive/hive.dart';
 import 'package:insta_food/core/di/register_restaurants.dart';
+import 'package:insta_food/core/network/Firebase/firebase_auth_service.dart';
 import 'package:insta_food/core/network/Firebase/firebase_options.dart';
 import 'package:get_it/get_it.dart';
 import 'package:insta_food/core/di/register_items.dart';
@@ -14,6 +15,7 @@ import 'package:insta_food/presentation/features/auth/data/repository/auth_repos
 import 'package:insta_food/core/network/Firebase/firebase_firestore_service.dart';
 import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 import 'package:insta_food/presentation/features/filter/presentation/cubit/filter_cubit.dart';
+import 'package:insta_food/presentation/features/order/logic/order_cubit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:insta_food/core/session/session_manager.dart';
 import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_cubit.dart';

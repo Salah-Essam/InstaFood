@@ -15,8 +15,6 @@ import 'package:insta_food/presentation/features/PaymentMethods/presentation/pag
 import 'package:insta_food/presentation/features/Profile/presentation/pages/profile_page.dart';
 
 import 'package:insta_food/presentation/features/category/presentation/view/category_page.dart';
-import 'package:insta_food/presentation/features/filter/presentation/cubit/filter_cubit.dart';
-
 import 'package:insta_food/presentation/features/Settings/presentation/pages/notification_setting_page.dart';
 import 'package:insta_food/presentation/features/Settings/presentation/pages/passwrod_setting_page.dart';
 import 'package:insta_food/presentation/features/Settings/presentation/pages/settings_page.dart';
@@ -40,7 +38,6 @@ import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_c
 import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_state.dart';
 import 'package:insta_food/presentation/features/order/presentation/view/confirm_order_page.dart';
 import 'package:insta_food/presentation/features/order/logic/order_cubit.dart';
-import 'package:insta_food/core/di/di.dart';
 import 'package:insta_food/presentation/features/order/firestore/order_firestore_services.dart';
 import 'package:insta_food/presentation/features/cart/logic/cart_cubit.dart';
 import 'package:insta_food/presentation/features/order/presentation/view/payment_page.dart';
@@ -156,21 +153,22 @@ final GoRouter appRouter = GoRouter(
         return ItemPage(item: item);
       },
     ),
-    GoRoute(
-
-      path: RouterConstants.restaurants,
-      builder: (context, state) => BlocProvider(
-  create: (_) => sl<RestaurantsCubit>(),
-        child: const RestaurantListPage(),
-      ),
-      path: RouterConstants.categoryPage,
-      builder: (context, state) => CategoryPage(),
-      // onExit: (GoRouterState state) {
-      //   // Reset when leaving category page
-      //   sl<FilterCubit>().setCategoryFilter(null);
-      //   return true;
-      // },
+  GoRoute(
+    path: RouterConstants.restaurants,
+    builder: (context, state) => BlocProvider(
+      create: (_) => sl<RestaurantsCubit>(),
+      child: const RestaurantListPage(),
     ),
+  ),
+  GoRoute(
+    path: RouterConstants.categoryPage,
+    builder: (context, state) => CategoryPage(),
+    // onExit: (GoRouterState state) {
+    //   // Reset when leaving category page
+    //   sl<FilterCubit>().setCategoryFilter(null);
+    //   return true;
+    // },
+  ),
   ],
 );
 
