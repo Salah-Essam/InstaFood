@@ -9,6 +9,9 @@ import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/presentation/widgets/shared_scaffold.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:insta_food/core/utils/app_strings.dart';
+import 'package:insta_food/presentation/features/order/presentation/widgets/delivery_time/address_pill_current.dart';
+import 'package:insta_food/presentation/features/order/presentation/widgets/delivery_time/timeline_row.dart';
 
 class DeliveryTimePage extends StatefulWidget {
   const DeliveryTimePage({super.key});
@@ -65,30 +68,13 @@ class _DeliveryTimePageState extends State<DeliveryTimePage> {
   @override
   Widget build(BuildContext context) {
     return SharedScaffold(
-      appBarTitle: 'Delivery time',
+      appBarTitle: AppStrings.deliveryTime,
       pageDetails: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Shipping Address', style: AppTextStyles.greeting.copyWith(color: Colors.black)),
+          Text(AppStrings.shippingAddress, style: AppTextStyles.greeting.copyWith(color: Colors.black)),
           const SizedBox(height: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF3E9B5),
-              borderRadius: BorderRadius.circular(24),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.location_on_outlined, color: Colors.black87, size: 18),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text('Your current location',
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.mediumText.copyWith(color: Colors.black)),
-                ),
-              ],
-            ),
-          ),
+          const AddressPillCurrent(),
           const SizedBox(height: 12),
           SizedBox(
             height: 180,
@@ -97,7 +83,7 @@ class _DeliveryTimePageState extends State<DeliveryTimePage> {
           const SizedBox(height: 12),
           Row(
             children: [
-              Text('Delivery Time', style: AppTextStyles.mediumText.copyWith(color: Colors.black, fontWeight: FontWeight.w600)),
+              Text(AppStrings.deliveryTime, style: AppTextStyles.mediumText.copyWith(color: Colors.black, fontWeight: FontWeight.w600)),
               const Spacer(),
               Text(_etaMin != null ? '${_etaMin!.toStringAsFixed(0)} mins' : '—',
                   style: AppTextStyles.mediumText.copyWith(color: AppColors.primaryOrange, fontWeight: FontWeight.w700)),
@@ -107,7 +93,7 @@ class _DeliveryTimePageState extends State<DeliveryTimePage> {
             Text('Distance ~ ${_distanceKm!.toStringAsFixed(2)} km',
                 style: AppTextStyles.mediumText.copyWith(color: Colors.black54, fontSize: 12)),
           const SizedBox(height: 4),
-          Text('Estimated Delivery', style: AppTextStyles.mediumText.copyWith(color: Colors.black54)),
+          Text(AppStrings.estimatedDelivery, style: AppTextStyles.mediumText.copyWith(color: Colors.black54)),
           const SizedBox(height: 12),
           Container(
             padding: const EdgeInsets.all(12),
@@ -119,51 +105,16 @@ class _DeliveryTimePageState extends State<DeliveryTimePage> {
               ],
             ),
             child: Column(
-              children: [
-                _timelineRow('Your order has been accepted', '2 min'),
-                _timelineRow("The restaurant is preparing your order", '5 min'),
-                _timelineRow('The delivery is on his way', '10 min'),
-                _timelineRow('Your order has been delivered', '8 min'),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _pill('Return Home', Colors.white, AppColors.primaryOrange, border: true, onTap: () {
-                      context.go(RouterConstants.bottomNavBar);
-                    }),
-                    _pill('Track Order', AppColors.orange2, AppColors.primaryOrange),
-                  ],
-                )
+                TimelineRow(title: 'Your order has been accepted', time: '2 min'),
+                TimelineRow(title: 'The restaurant is preparing your order', time: '5 min'),
+                TimelineRow(title: 'The delivery is on his way', time: '10 min'),
+                TimelineRow(title: 'Your order has been delivered', time: '8 min'),
+                const SizedBox(height: 8),
+                    _ActionPills(onReturnHome: () => context.go(RouterConstants.bottomNavBar)),
               ],
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _pill(String text, Color bg, Color fg, {bool border = false, VoidCallback? onTap}) {
-    final child = Container(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(24),
-        border: border ? Border.all(color: AppColors.primaryOrange) : null,
-      ),
-      child: Text(text, style: AppTextStyles.mediumText.copyWith(color: fg, fontWeight: FontWeight.w600)),
-    );
-    return onTap == null ? child : InkWell(onTap: onTap, borderRadius: BorderRadius.circular(24), child: child);
-  }
-
-  Widget _timelineRow(String title, String time) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6.0),
-      child: Row(
-        children: [
-          Container(width: 8, height: 8, decoration: const BoxDecoration(color: AppColors.primaryOrange, shape: BoxShape.circle)),
-          const SizedBox(width: 8),
-          Expanded(child: Text(title, style: AppTextStyles.mediumText.copyWith(color: Colors.black)) ),
-          Text(time, style: AppTextStyles.mediumText.copyWith(color: Colors.black54)),
         ],
       ),
     );
@@ -206,5 +157,46 @@ class _DeliveryTimePageState extends State<DeliveryTimePage> {
         MarkerLayer(markers: markers),
       ],
     );
+  }
+
+  // TimelineRow moved to widgets/delivery_time/timeline_row.dart
+}
+
+class _ActionPills extends StatelessWidget {
+   const _ActionPills({required this.onReturnHome});
+   final VoidCallback onReturnHome;
+
+   @override
+   Widget build(BuildContext context) {
+     TextStyle style(Color c) => AppTextStyles.mediumText.copyWith(color: c, fontWeight: FontWeight.w600);
+     return Row(
+       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+       children: [
+         InkWell(
+           onTap: onReturnHome,
+           borderRadius: BorderRadius.circular(24),
+           child: Container(
+             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+             decoration: BoxDecoration(
+               color: Colors.white,
+               borderRadius: BorderRadius.circular(24),
+               border: Border.all(color: AppColors.primaryOrange),
+             ),
+             child: Text(AppStrings.returnHome, style: style(AppColors.primaryOrange)),
+           ),
+         ),
+         InkWell(
+           borderRadius: BorderRadius.circular(24),
+           child: Container(
+             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+             decoration: BoxDecoration(
+               color: AppColors.orange2,
+               borderRadius: BorderRadius.circular(24),
+             ),
+             child: Text(AppStrings.trackOrder, style: style(AppColors.primaryOrange)),
+           ),
+         ),
+       ],
+     );
   }
 }

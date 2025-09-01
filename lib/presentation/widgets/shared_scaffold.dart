@@ -8,10 +8,13 @@ class SharedScaffold extends StatelessWidget {
     super.key,
     required this.appBarTitle,
     required this.pageDetails,
+    this.fullYellow = false,
   });
 
   final String appBarTitle;
   final Widget pageDetails;
+  // When true, renders the entire page on a yellow background without the inner white rounded container.
+  final bool fullYellow;
 
   @override
   Widget build(BuildContext context) {
@@ -46,28 +49,42 @@ class SharedScaffold extends StatelessWidget {
           Expanded(
             child: SizedBox(
               width: double.infinity,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(32),
-                    topRight: Radius.circular(32),
-                  ),
-                ),
-                child: SafeArea(
-                  top: false,
-                  left: false,
-                  right: false,
-                  bottom: true,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 32,
-                      vertical: 16,
+              child: fullYellow
+                  ? SafeArea(
+                      top: false,
+                      left: false,
+                      right: false,
+                      bottom: true,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 32,
+                          vertical: 16,
+                        ),
+                        child: pageDetails,
+                      ),
+                    )
+                  : DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: AppColors.white,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(32),
+                          topRight: Radius.circular(32),
+                        ),
+                      ),
+                      child: SafeArea(
+                        top: false,
+                        left: false,
+                        right: false,
+                        bottom: true,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 32,
+                            vertical: 16,
+                          ),
+                          child: pageDetails,
+                        ),
+                      ),
                     ),
-                    child: pageDetails,
-                  ),
-                ),
-              ),
             ),
           ),
         ],

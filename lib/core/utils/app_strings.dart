@@ -99,4 +99,24 @@ class AppStrings {
       "Your order has been delivered";
   static const String theDeliveryIsOnHisWay = "The delivery is on his way";
   static const String noData = "noData";
+
+    // ========================= Order / Delivery Flow =========================
+    static const String orderConfirmedTitle = 'Order Confirmed';
+    static const String orderConfirmedHeadline = 'Order Confirmed!';
+    static const String orderPlacedSuccessfully = 'Your order has been placed\nsuccessfully';
+    static const String trackMyOrder = 'Track my order';
+    static const String supportReachOut =
+            'If you have any questions, please reach out directly to our customer support';
+
+    static const String deliveryTime = 'Delivery time';
+    static const String shippingAddress = 'Shipping Address';
+    static const String estimatedDelivery = 'Estimated Delivery';
+    static const String returnHome = 'Return Home';
+    static const String trackOrder = 'Track Order';
+
+    // Dialogs
+    static const String enableLocationTitle = 'Enable location?';
+    static const String enableLocationBody = 'We need your GPS to track your order in real time.';
+    static const String notNow = 'Not now';
+    static const String allow = 'Allow';
 }
