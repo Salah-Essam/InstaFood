@@ -5,14 +5,21 @@ import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/presentation/features/items/data/model/item_size.dart';
 
 class RadioButtonCollection extends StatefulWidget {
-  const RadioButtonCollection({super.key});
+  /// Selected size notifier shared with parent; if null, an internal state is used.
+  final ValueNotifier<ItemSize>? controller;
+  const RadioButtonCollection({super.key, this.controller});
 
   @override
   State<RadioButtonCollection> createState() => _RadioButtonCollectionState();
 }
 
 class _RadioButtonCollectionState extends State<RadioButtonCollection> {
-  ItemSize _selectedSize = ItemSize.medium;
+  late final ValueNotifier<ItemSize> _notifier;
+  @override
+  void initState() {
+    super.initState();
+    _notifier = widget.controller ?? ValueNotifier<ItemSize>(ItemSize.medium);
+  }
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
@@ -30,42 +37,47 @@ class _RadioButtonCollectionState extends State<RadioButtonCollection> {
               return AppColors.primaryOrange; // Inactive color
             }),
           ),
-          child: RadioListTile<ItemSize>(
-            value: ItemSize.values[index],
-            groupValue: _selectedSize,
-            onChanged: (ItemSize? newSize) {
-              setState(() {
-                _selectedSize = newSize!;
-              });
-            },
-            controlAffinity: ListTileControlAffinity.trailing,
-            contentPadding: EdgeInsets.symmetric(horizontal: 8),
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  ItemSize.values[index].displayName,
-                  style: AppTextStyles.mediumText,
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(1.0),
-                    child: DottedLine(
-                      direction: Axis.horizontal,
-                      lineThickness: 1.0,
-                      dashLength: 2.0,
-                      dashColor: AppColors.primaryOrange,
-                      dashGapLength: 4.0,
-                      dashGapColor: Colors.transparent,
+          child: ValueListenableBuilder<ItemSize>(
+            valueListenable: _notifier,
+            builder: (_, selected, __) {
+              return RadioListTile<ItemSize>(
+                value: ItemSize.values[index],
+                groupValue: selected,
+                onChanged: (ItemSize? newSize) {
+                  if (newSize == null) return;
+                  if (widget.controller == null) setState(() {});
+                  _notifier.value = newSize;
+                },
+                controlAffinity: ListTileControlAffinity.trailing,
+                contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      ItemSize.values[index].displayName,
+                      style: AppTextStyles.mediumText,
                     ),
-                  ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(1.0),
+                        child: DottedLine(
+                          direction: Axis.horizontal,
+                          lineThickness: 1.0,
+                          dashLength: 2.0,
+                          dashColor: AppColors.primaryOrange,
+                          dashGapLength: 4.0,
+                          dashGapColor: Colors.transparent,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      "\$${ItemSize.values[index].priceModifier}",
+                      style: AppTextStyles.mediumText,
+                    ),
+                  ],
                 ),
-                Text(
-                  "\$${ItemSize.values[index].priceModifier}",
-                  style: AppTextStyles.mediumText,
-                ),
-              ],
-            ),
+              );
+            },
           ),
         );
       },

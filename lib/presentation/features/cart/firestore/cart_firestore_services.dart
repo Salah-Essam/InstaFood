@@ -39,5 +39,12 @@ class CartFirestoreService {
 	Future<QuerySnapshot<Map<String, dynamic>>> getCart({required String uid}) {
 		return _userCart(uid).orderBy(CartFs.fAddedAt, descending: false).get();
 	}
+
+	/// Real-time updates to the user's cart collection
+	Stream<QuerySnapshot<Map<String, dynamic>>> userCartStream(String uid) {
+		return _userCart(uid)
+			.orderBy(CartFs.fAddedAt, descending: false)
+			.snapshots();
+	}
 }
 
