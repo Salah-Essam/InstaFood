@@ -8,6 +8,48 @@ import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_c
 import 'package:insta_food/presentation/widgets/app_button_onb.dart';
 
 class AppAlerts {
+  static Future<void> showSuccessDialog(BuildContext context, {required String title, String? imageAsset}) async {
+    return showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          child: SizedBox(
+            height: 240,
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (imageAsset != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12.0),
+                      child: Image.asset(
+                        imageAsset,
+                        width: 72,
+                        height: 72,
+                        fit: BoxFit.contain,
+                        errorBuilder: (_, __, ___) => const Icon(Icons.check_circle, size: 72, color: Colors.green),
+                      ),
+                    ),
+                  Text(title, style: AppTextStyles.dialogTitle, textAlign: TextAlign.center),
+                  const SizedBox(height: 16),
+                  AppButton(
+                    backgroundColor: AppColors.primaryOrange,
+                    width: 140,
+                    height: 40,
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text('OK', style: AppTextStyles.dialogGreetingDialogeWhite),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
   static Future<void> showLoginRequiredDialog(BuildContext context) async {
     return showDialog(
       context: context,

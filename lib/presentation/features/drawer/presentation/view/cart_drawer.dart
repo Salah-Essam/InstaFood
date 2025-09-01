@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
@@ -105,7 +107,19 @@ class _CartList extends StatelessWidget {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: Image.network(it.imageUrl, width: 54, height: 54, fit: BoxFit.cover),
+                      child: SizedBox(
+                        width: 54,
+                        height: 54,
+                        child: CachedNetworkImage(
+                          imageUrl: it.imageUrl,
+                          fit: BoxFit.cover,
+                          placeholder: (_, __) => const Center(child: SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))),
+                          errorWidget: (_, __, ___) => Container(
+                            color: Colors.white24,
+                            child: const Icon(Icons.image_not_supported_outlined, color: Colors.white70, size: 20),
+                          ),
+                        ),
+                      ),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
@@ -119,7 +133,8 @@ class _CartList extends StatelessWidget {
                             children: [
                               const Icon(Icons.circle, size: 6, color: Colors.white70),
                               const SizedBox(width: 6),
-                              Text('x${it.quantity}', style: AppTextStyles.mediumText.copyWith(color: Colors.white, fontSize: 12)),
+                              Text('${(it.options['size'] ?? '').toString().isEmpty ? 'Size' : it.options['size']}  •  x${it.quantity}',
+                                  style: AppTextStyles.mediumText.copyWith(color: Colors.white, fontSize: 12)),
                             ],
                           ),
                         ],
@@ -128,7 +143,7 @@ class _CartList extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Text(it.unitPrice.toStringAsFixed(2), style: AppTextStyles.mediumText.copyWith(color: Colors.white)),
+                                Text('\$${it.unitPrice.toStringAsFixed(2)}', style: AppTextStyles.mediumText.copyWith(color: Colors.white)),
                         const SizedBox(height: 8),
                         InkWell(
                           onTap: () => context.read<CartCubit>().remove(it.cartItemId),
@@ -140,6 +155,8 @@ class _CartList extends StatelessWidget {
                 );
               },
             ),
+            const SizedBox(height: 12),
+            const DottedLine(dashLength: 4, dashGapLength: 4, lineThickness: 1, dashColor: Colors.white24),
           ],
         );
       },
@@ -167,7 +184,10 @@ class _Totals extends StatelessWidget {
 
   Widget _row(String l, String r, TextStyle style) => Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [Text(l, style: style), Text('2$r', style: style)],
+        children: [
+          Text(l, style: style),
+          Text('\$'+r, style: style),
+        ],
       );
 }
 

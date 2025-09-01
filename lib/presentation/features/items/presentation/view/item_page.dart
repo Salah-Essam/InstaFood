@@ -16,6 +16,10 @@ import 'package:insta_food/presentation/widgets/cached_image.dart';
 import 'package:insta_food/presentation/features/cart/data/models/cart_item_model.dart';
 import 'package:insta_food/presentation/features/cart/logic/cart_cubit.dart';
 import 'package:insta_food/presentation/features/cart/logic/cart_state.dart';
+import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_cubit.dart';
+import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_state.dart';
+import 'package:insta_food/presentation/features/drawer/presentation/cubit/drawer_cubit.dart';
+import 'package:insta_food/presentation/features/drawer/presentation/view/app_drawer.dart';
 
 class ItemPage extends StatefulWidget {
   final ItemModel item;
@@ -31,8 +35,19 @@ class _ItemPageState extends State<ItemPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+  return Scaffold(
       backgroundColor: AppColors.primaryYellow,
+      endDrawer: BlocBuilder<DrawerCubit, DrawerState>(
+        builder: (context, drawerState) {
+          if (drawerState is DrawerOpened) {
+            return AppDrawer(drawerSelected: drawerState.type);
+          }
+          return AppDrawer(drawerSelected: DrawerType.profile);
+        },
+      ),
+      onEndDrawerChanged: (isOpen) {
+        if (!isOpen) context.read<DrawerCubit>().closeDrawer();
+      },
       body: Column(
         children: [
           Padding(
@@ -57,6 +72,11 @@ class _ItemPageState extends State<ItemPage> {
                 Text(widget.item.itemName, style: AppTextStyles.header),
                 Spacer(),
                 FavButton(),
+                const SizedBox(width: 12),
+                GestureDetector(
+                  onTap: () => context.read<DrawerCubit>().openDrawer(DrawerType.cart),
+                  child: SvgPicture.asset(AppAssets.cart, width: 26, height: 26),
+                ),
               ],
             ),
           ),
@@ -128,10 +148,16 @@ class _ItemPageState extends State<ItemPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("\$${widget.item.itemPrice}", style: AppTextStyles.itemPagePrice),
+                              ValueListenableBuilder<ItemSize>(
+                                valueListenable: _size,
+                                builder: (_, size, __) {
+                                  final price = (widget.item.itemPrice + size.priceModifier) * _qty;
+                                  return Text("\$${price.toStringAsFixed(2)}", style: AppTextStyles.itemPagePrice);
+                                },
+                              ),
                               Counter(
                                 initNumber: _qty,
-                                counterCallback: (v) => _qty = v,
+                                counterCallback: (v) => setState(() => _qty = v),
                               ),
                             ],
                           ),
@@ -154,30 +180,39 @@ class _ItemPageState extends State<ItemPage> {
                           }
                         },
                         child: AppButton(
-                        width: 180,
-                        onPressed: () {
-                          final item = CartItemModel.fromItem(
-                            item: widget.item,
-                            size: _size.value,
-                            quantity: _qty,
-                          );
-                          context.read<CartCubit>().addOrUpdate(item);
-                        },
-                        borderRadius: 44.79,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SvgPicture.asset(
-                              AppAssets.orderBag,
-                              fit: BoxFit.fitHeight,
-                            ),
-                            SizedBox(width: 14),
-            Text(AppStrings.addToCart, style: AppTextStyles.button),
-                          ],
+                          width: 180,
+                          onPressed: () {
+                            final item = CartItemModel.fromItem(
+                              item: widget.item,
+                              size: _size.value,
+                              quantity: _qty,
+                            );
+                            final isAuthed = context.read<AuthCubit>().state is! Unauthenticated;
+                            context.read<CartCubit>().addOrUpdate(item).then((_) {
+                              if (isAuthed) {
+                                AppAlerts.showSuccessDialog(
+                                  context,
+                                  title: 'Added to cart successfully!',
+                                  imageAsset: 'assets/images/greencheckmark.jpg',
+                                );
+                              }
+                            });
+                          },
+                          borderRadius: 44.79,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SvgPicture.asset(
+                                AppAssets.orderBag,
+                                fit: BoxFit.fitHeight,
+                              ),
+                              SizedBox(width: 14),
+                              Text(AppStrings.addToCart, style: AppTextStyles.button),
+                            ],
+                          ),
                         ),
-          ),
-          ),
+                      ),
                     ],
                   ),
                 ),

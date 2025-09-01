@@ -16,9 +16,10 @@ class CartLoaded extends CartState {
 	final double tax;
 	final double delivery;
 	final double total;
-		CartLoaded({required this.items, this.tax = 0, this.delivery = 0})
-				: subtotal = items.fold(0.0, (p, e) => p + e.totalPrice),
-					total = items.fold(0.0, (p, e) => p + e.totalPrice) + tax + delivery;
+	// Tax here is an absolute value (not percentage). If you want percentage, compute it before passing.
+	CartLoaded({required this.items, this.tax = 0, this.delivery = 0})
+			: subtotal = items.fold(0.0, (p, e) => p + e.totalPrice),
+				total = items.fold(0.0, (p, e) => p + e.totalPrice) + tax + delivery;
 
 	@override
 	List<Object?> get props => [items, subtotal, tax, delivery, total];
