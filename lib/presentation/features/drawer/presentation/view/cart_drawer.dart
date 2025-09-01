@@ -8,6 +8,8 @@ import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/presentation/features/cart/logic/cart_cubit.dart';
 import 'package:insta_food/presentation/features/cart/logic/cart_state.dart';
+import 'package:go_router/go_router.dart';
+import 'package:insta_food/core/routes/router_constants.dart';
 
 class CartDrawer extends StatelessWidget {
   const CartDrawer({super.key});
@@ -273,7 +275,9 @@ class _CheckoutButton extends StatelessWidget {
           foregroundColor: Colors.black,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         ),
-        onPressed: () {},
+        onPressed: () {
+          context.push(RouterConstants.confirmOrder);
+        },
         child: const Padding(
           padding: EdgeInsets.symmetric(vertical: 12.0),
           child: Text('Checkout'),
