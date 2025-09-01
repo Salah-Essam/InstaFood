@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
-import 'package:insta_food/core/theme/app_assets.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
+import 'package:insta_food/presentation/widgets/app_backbutton.dart';
 
 class SharedScaffold extends StatelessWidget {
   const SharedScaffold({
@@ -29,21 +27,15 @@ class SharedScaffold extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 48, left: 16, right: 64),
                 child: Row(
                   children: [
-                    InkWell(
-                      onTap: context.pop,
-                      borderRadius: BorderRadius.circular(24),
-                      child: SizedBox(
-                        height: 50,
-                        width: 50,
-                        child: SvgPicture.asset(
-                          AppAssets.backArrow,
-                          fit: BoxFit.scaleDown,
-                        ),
-                      ),
-                    ),
+                    AppBackButton(),
                     Expanded(
                       child: Center(
-                        child: Text(appBarTitle, style: AppTextStyles.greeting),
+                        child: Text(
+                          appBarTitle,
+                          style: AppTextStyles.fontWhiteLargeBold,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ),
                   ],

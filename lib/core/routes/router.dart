@@ -9,8 +9,11 @@ import 'package:insta_food/presentation/features/ContactUs%20&%20FAQs/presentati
 import 'package:insta_food/presentation/features/ContactUs%20&%20FAQs/presentation/pages/help_faqs_page.dart';
 import 'package:insta_food/presentation/features/DeliveryAddress/presentation/pages/add_new_address_page.dart';
 import 'package:insta_food/presentation/features/DeliveryAddress/presentation/pages/delivery_address_page.dart';
+import 'package:insta_food/presentation/features/PaymentMethods/presentation/pages/add_card_page.dart';
 import 'package:insta_food/presentation/features/PaymentMethods/presentation/pages/payment_methods_page.dart';
 import 'package:insta_food/presentation/features/Profile/presentation/pages/profile_page.dart';
+import 'package:insta_food/presentation/features/Settings/presentation/pages/notification_setting_page.dart';
+import 'package:insta_food/presentation/features/Settings/presentation/pages/passwrod_setting_page.dart';
 import 'package:insta_food/presentation/features/Settings/presentation/pages/settings_page.dart';
 
 import 'package:insta_food/presentation/features/filter/presentation/filter_page.dart';
@@ -96,9 +99,20 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => PaymentMethodsPage(),
     ),
     GoRoute(
-      name: 'payment',
       path: RouterConstants.payment,
       builder: (context, state) => const PaymentPage(),
+    ),
+    GoRoute(
+      path: RouterConstants.addNewPaymentPage,
+      builder: (context, state) => AddCardPage(),
+    ),
+    GoRoute(
+      path: RouterConstants.notificationSetting,
+      builder: (context, state) => NotificationSettingPage(),
+    ),
+    GoRoute(
+      path: RouterConstants.passwordSetting,
+      builder: (context, state) => PasswrodSettingPage(),
     ),
     GoRoute(
       path: RouterConstants.confirmOrder,

@@ -65,7 +65,10 @@ class AddNewAddressPage extends StatelessWidget {
                     width: 130,
                     height: 30,
                     borderRadius: 24,
-                    child: Text("Apply", style: AppTextStyles.buttonWhiteText),
+                    child: Text(
+                      "Apply",
+                      style: AppTextStyles.fontWhiteSmallBold,
+                    ),
                   ),
                 ),
               ),
