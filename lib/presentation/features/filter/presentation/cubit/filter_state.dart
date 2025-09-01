@@ -16,17 +16,20 @@ final class SetFilter extends FilterState {
   const SetFilter({this.selectedCategory, this.maxPrice, this.minRating});
 
   SetFilter copyWith({
-    FoodCategory? selectedCategory,
-    double? maxPrice,
-    int? minRating,
+    Object? selectedCategory = _noValue,
+    Object? maxPrice = _noValue,
+    Object? minRating = _noValue,
   }) {
     return SetFilter(
-      selectedCategory: selectedCategory ?? this.selectedCategory,
-      maxPrice: maxPrice ?? this.maxPrice,
-      minRating: minRating ?? this.minRating,
+      selectedCategory: selectedCategory == _noValue
+          ? this.selectedCategory
+          : selectedCategory as FoodCategory?,
+      maxPrice: maxPrice == _noValue ? this.maxPrice : maxPrice as double?,
+      minRating: minRating == _noValue ? this.minRating : minRating as int?,
     );
   }
 
+  static const _noValue = Object();
   void printFilterParams() {
     print('=== FILTER PARAMETERS ===');
     print('Selected Category: ${selectedCategory?.name ?? "None"}');

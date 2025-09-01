@@ -97,6 +97,7 @@ class FilterPage extends StatelessWidget {
                                       v.toInt(),
                                     );
                                   },
+
                                   starBuilder: (index, color) {
                                     final currentRating = state is SetFilter
                                         ? state.minRating ?? 0

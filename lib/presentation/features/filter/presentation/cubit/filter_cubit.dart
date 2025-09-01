@@ -16,7 +16,7 @@ class FilterCubit extends Cubit<FilterState> {
     }
   }
 
-  void setRatingFilter(int rating) {
+  void setRatingFilter(int? rating) {
     final currentState = state;
 
     if (currentState is SetFilter) {
