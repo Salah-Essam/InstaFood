@@ -167,18 +167,34 @@ class FilterPage extends StatelessWidget {
                         ),
                         Padding(
                           padding: EdgeInsetsGeometry.symmetric(horizontal: 14),
-                          child: Slider(
-                            value: state is SetFilter
-                                ? (state.maxPrice ?? 40).toDouble()
-                                : 40.0,
-                            onChanged: (v) {
-                              context.read<FilterCubit>().setPriceFilter(
-                                v.toDouble(),
-                              );
-                            },
-                            //thumbColor: AppColors.primaryOrange,
-                            min: 40,
-                            max: 700,
+                          child: Column(
+                            children: [
+                              Slider(
+                                value: state is SetFilter
+                                    ? (state.maxPrice ?? 40).toDouble()
+                                    : 40.0,
+                                onChanged: (v) {
+                                  context.read<FilterCubit>().setPriceFilter(
+                                    v.toDouble(),
+                                  );
+                                },
+                                //thumbColor: AppColors.primaryOrange,
+                                min: 40,
+                                max: 700,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [40, 250, 500, 750, 1000].map((
+                                  value,
+                                ) {
+                                  return Text(
+                                    '\$$value',
+                                    style: AppTextStyles.small,
+                                  );
+                                }).toList(),
+                              ),
+                            ],
                           ),
                         ),
                         SizedBox(height: 20),
