@@ -1,11 +1,9 @@
-import 'package:dio/dio.dart';
 import 'package:insta_food/core/network/APIs/api_constants.dart';
-import 'package:insta_food/presentation/features/Restaurants/data/model/Restaurant_model.dart';
-import 'package:insta_food/presentation/features/Restaurants/data/model/menu_model.dart';
+import 'package:insta_food/core/network/APIs/api_service.dart';
+import 'package:insta_food/presentation/features/Restaurants/data/model/restaurant_model.dart';
 
 
-/// Abstract class for contract
-abstract class RestaurantRemoteDataSource {
+abstract class RestaurantsRemoteDataSource {
   Future<List<Restaurant>> getAllRestaurants();
   Future<List<Restaurant>> getRestaurantsByCategory(String category);
   Future<List<Restaurant>> getRestaurantsByAddressAndName({
@@ -13,21 +11,16 @@ abstract class RestaurantRemoteDataSource {
     String? name,
   });
   Future<Restaurant> getRestaurantById(int id);
-  Future<List<MenuItem>> getRestaurantMenu(int restaurantId);
-  Future<List<MenuItem>> getRestaurantMenuSortedByPrice(
-      int restaurantId, String order);
 }
 
 /// Implementation using Dio
-class RestaurantRemoteDataSourceImpl implements RestaurantRemoteDataSource {
-  final Dio dio;
-  static const String baseUrl = ApiConstants.baseUrl;
-
-  RestaurantRemoteDataSourceImpl(this.dio);
+class RestaurantsRemoteDataSourceImpl implements RestaurantsRemoteDataSource {
+  final ApiService apiService;
+  RestaurantsRemoteDataSourceImpl({required this.apiService});
 
   @override
   Future<List<Restaurant>> getAllRestaurants() async {
-    final response = await dio.get(baseUrl);
+    final response = await apiService.get(path: ApiConstants.restaurant);
     return (response.data as List)
         .map((json) => Restaurant.fromJson(json))
         .toList();
@@ -35,9 +28,7 @@ class RestaurantRemoteDataSourceImpl implements RestaurantRemoteDataSource {
 
   @override
   Future<List<Restaurant>> getRestaurantsByCategory(String category) async {
-    final response = await dio.get(baseUrl, queryParameters: {
-      "category": category,
-    });
+    final response = await apiService.get(path: ApiConstants.category + category);
     return (response.data as List)
         .map((json) => Restaurant.fromJson(json))
         .toList();
@@ -48,10 +39,9 @@ class RestaurantRemoteDataSourceImpl implements RestaurantRemoteDataSource {
     String? address,
     String? name,
   }) async {
-    final response = await dio.get(baseUrl, queryParameters: {
-      if (address != null) "address": address,
-      if (name != null) "name": name,
-    });
+    final response = await apiService.get(path: ApiConstants.addressandname
+        .replaceFirst('{address}', address ?? '')
+        .replaceFirst('{name}', name ?? ''));
     return (response.data as List)
         .map((json) => Restaurant.fromJson(json))
         .toList();
@@ -59,27 +49,7 @@ class RestaurantRemoteDataSourceImpl implements RestaurantRemoteDataSource {
 
   @override
   Future<Restaurant> getRestaurantById(int id) async {
-    final response = await dio.get("$baseUrl/$id");
+    final response = await apiService.get(path: "${ApiConstants.restaurant}/$id");
     return Restaurant.fromJson(response.data);
-  }
-
-  @override
-  Future<List<MenuItem>> getRestaurantMenu(int restaurantId) async {
-    final response = await dio.get("$baseUrl/$restaurantId/menu");
-    return (response.data as List)
-        .map((json) => MenuItem.fromJson(json))
-        .toList();
-  }
-
-  @override
-  Future<List<MenuItem>> getRestaurantMenuSortedByPrice(
-      int restaurantId, String order) async {
-    final response = await dio.get(
-      "$baseUrl/$restaurantId/menu",
-      queryParameters: {"sortbyprice": order}, // asc or desc
-    );
-    return (response.data as List)
-        .map((json) => MenuItem.fromJson(json))
-        .toList();
   }
 }

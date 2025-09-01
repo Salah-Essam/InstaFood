@@ -17,6 +17,8 @@ import 'package:insta_food/presentation/features/filter/presentation/filter_page
 import 'package:insta_food/presentation/features/home/presentation/view/home_page.dart';
 import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 import 'package:insta_food/presentation/features/items/presentation/view/item_page.dart';
+import 'package:insta_food/presentation/features/Restaurants/presentation/pages/restaurant_page.dart';
+import 'package:insta_food/presentation/features/Restaurants/presentation/cubit/restaurants_cubit.dart';
 
 import 'package:insta_food/presentation/features/auth/presentation/pages/login.dart';
 import 'package:insta_food/presentation/features/auth/presentation/pages/set_password.dart';
@@ -133,6 +135,13 @@ final GoRouter appRouter = GoRouter(
         final ItemModel item = state.extra as ItemModel;
         return ItemPage(item: item);
       },
+    ),
+    GoRoute(
+      path: RouterConstants.restaurants,
+      builder: (context, state) => BlocProvider(
+  create: (_) => sl<RestaurantsCubit>(),
+        child: const RestaurantListPage(),
+      ),
     ),
   ],
 );

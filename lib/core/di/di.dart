@@ -2,14 +2,17 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:hive/hive.dart';
+import 'package:insta_food/core/di/register_restaurants.dart';
 import 'package:insta_food/core/network/Firebase/firebase_options.dart';
 import 'package:get_it/get_it.dart';
 import 'package:insta_food/core/di/register_items.dart';
 import 'package:insta_food/core/network/APIs/api_service.dart';
 import 'package:insta_food/core/network/network_info.dart';
 import 'package:insta_food/core/storage/hive_service.dart';
+import 'package:insta_food/presentation/features/Restaurants/data/model/restaurant_model.dart';
 import 'package:insta_food/presentation/features/auth/data/repository/auth_repository.dart';
 import 'package:insta_food/core/network/Firebase/firebase_firestore_service.dart';
+import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:insta_food/core/session/session_manager.dart';
 import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_cubit.dart';
@@ -22,7 +25,6 @@ import 'package:insta_food/presentation/features/cart/data/datasources/cart_remo
 import 'package:insta_food/presentation/features/cart/data/repos/cart_repository_impl.dart';
 import 'package:insta_food/presentation/features/cart/data/repositories/cart_repository.dart';
 import 'package:insta_food/presentation/features/cart/logic/cart_cubit.dart';
-import 'package:insta_food/presentation/features/order/logic/order_cubit.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -77,13 +79,6 @@ Future<void> setupLocator() async {
         session: sl<SessionManager>(),
       ));
 
-  // Order cubit factory
-  sl.registerFactory<OrderCubit>(() => OrderCubit(
-        service: sl<OrderFirestoreService>(),
-        cartCubit: sl<CartCubit>(),
-        authCubit: sl<AuthCubit>(),
-      ));
-
   // Register network services
   sl.registerLazySingleton<Connectivity>(() => Connectivity());
   sl.registerLazySingleton<Dio>(() => Dio());
@@ -93,7 +88,17 @@ Future<void> setupLocator() async {
   );
 
  
-  sl.registerLazySingleton<Box>(() => Hive.box(cacheItemsKey));
+sl.registerLazySingleton<Box<ItemModel>>(
+  () => Hive.box<ItemModel>(cacheItemsKey),
+  instanceName: cacheItemsKey,
+);
+
+sl.registerLazySingleton<Box<Restaurant>>(
+  () => Hive.box<Restaurant>(cacheRestaurantsKey),
+  instanceName: cacheRestaurantsKey,
+);
+
+  registerRestaurants();
   registerItems();
 }
   

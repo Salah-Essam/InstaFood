@@ -1,9 +1,18 @@
+import 'package:hive_flutter/hive_flutter.dart';
 
+part 'restaurant_model.g.dart';
+
+@HiveType(typeId: 1)  
 class Restaurant {
+  @HiveField(0)
   final int restaurantID;
+  @HiveField(1)
   final String restaurantName;
+  @HiveField(2)
   final String address;
+  @HiveField(3)
   final String type;
+  @HiveField(4)
   final bool parkingLot;
 
   Restaurant({
