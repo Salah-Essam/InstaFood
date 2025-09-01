@@ -11,6 +11,7 @@ import 'package:insta_food/core/storage/hive_service.dart';
 import 'package:insta_food/presentation/features/auth/data/repository/auth_repository.dart';
 import 'package:insta_food/core/network/Firebase/firebase_auth_service.dart'; // may still be used elsewhere
 import 'package:insta_food/core/network/Firebase/firebase_firestore_service.dart';
+import 'package:insta_food/presentation/features/filter/presentation/cubit/filter_cubit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:insta_food/core/session/session_manager.dart';
 import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_cubit.dart';
@@ -35,9 +36,7 @@ Future<void> setupLocator() async {
   await Hive.openBox('userBox');
 
   // Initialize Firebase
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // Register Firebase raw instances
   sl.registerLazySingleton(() => FirebaseAuth.instance);
@@ -45,32 +44,47 @@ Future<void> setupLocator() async {
 
   // Higher level Firebase services (auth service kept if other layers still use it)
   sl.registerLazySingleton<FirebaseAuthService>(
-    () => FirebaseAuthService(firebaseAuth: sl()),);
+    () => FirebaseAuthService(firebaseAuth: sl()),
+  );
   sl.registerLazySingleton<FirebaseFirestoreService>(
-    () => FirebaseFirestoreService(firestore: sl()));
+    () => FirebaseFirestoreService(firestore: sl()),
+  );
   // Feature Firestore services
-  sl.registerLazySingleton<CartFirestoreService>(() => CartFirestoreService(firestore: sl()));
-  sl.registerLazySingleton<OrderFirestoreService>(() => OrderFirestoreService(firestore: sl()));
+  sl.registerLazySingleton<CartFirestoreService>(
+    () => CartFirestoreService(firestore: sl()),
+  );
+  sl.registerLazySingleton<OrderFirestoreService>(
+    () => OrderFirestoreService(firestore: sl()),
+  );
 
   // Session manager (SharedPreferences)
   final sharedPrefs = await SharedPreferences.getInstance();
   sl.registerLazySingleton<SessionManager>(
-    () => SessionManager(prefs: sharedPrefs));
+    () => SessionManager(prefs: sharedPrefs),
+  );
 
   // Hive boxes registration (distinct names to avoid ambiguity)
-  sl.registerLazySingleton<Box>(() => Hive.box('userBox'), instanceName: 'userBox');
+  sl.registerLazySingleton<Box>(
+    () => Hive.box('userBox'),
+    instanceName: 'userBox',
+  );
   // (Existing cache box registration remains below)
 
   // Auth repository (constructor: FirebaseAuth, FirebaseFirestoreService, userBox)
-  sl.registerLazySingleton<AuthRepository>(() => AuthRepository(
-        sl<FirebaseAuth>(),
-        sl<FirebaseFirestoreService>(),
-        sl<Box>(instanceName: 'userBox'),
-      ));
+  sl.registerLazySingleton<AuthRepository>(
+    () => AuthRepository(
+      sl<FirebaseAuth>(),
+      sl<FirebaseFirestoreService>(),
+      sl<Box>(instanceName: 'userBox'),
+    ),
+  );
 
   // Register cubits
   sl.registerFactory(() => AuthCubit(sl()));
   sl.registerLazySingleton<DrawerCubit>(() => DrawerCubit());
+
+  sl.registerLazySingleton<FilterCubit>(() => FilterCubit());
+
   // Cart feature
   sl.registerLazySingleton<CartRemoteDataSource>(
       () => CartRemoteDataSourceImpl(service: sl<CartFirestoreService>()));
@@ -88,6 +102,7 @@ Future<void> setupLocator() async {
         cartCubit: sl<CartCubit>(),
         authCubit: sl<AuthCubit>(),
       ));
+
 
   // Register network services
   sl.registerLazySingleton<Connectivity>(() => Connectivity());

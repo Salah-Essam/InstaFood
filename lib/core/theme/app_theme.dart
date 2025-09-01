@@ -33,5 +33,44 @@ class AppTheme {
       suffixIconColor: Colors.grey,
       prefixIconColor: Colors.grey,
     ),
+    // sliderTheme: SliderThemeData(
+    //   activeTrackColor: AppColors.primaryOrange,
+    //   inactiveTrackColor: AppColors.grey.withOpacity(0.3),
+    //   trackHeight: 7.749244689941406,
+
+    //   thumbColor: AppColors.primaryOrange,
+    //   thumbShape: RoundSliderThumbShape(
+    //     enabledThumbRadius: 10.0, // Size of the thumb
+    //     disabledThumbRadius: 8.0,
+    //     elevation: 2.0,
+    //   ),
+    // ),
+    sliderTheme: SliderThemeData(
+      activeTrackColor: AppColors.primaryOrange,
+      inactiveTrackColor: AppColors.grey.withOpacity(0.3),
+      trackHeight: 7.75,
+      // Thumb properties
+      thumbColor: AppColors.primaryOrange,
+      thumbShape: RoundSliderThumbShape(
+        enabledThumbRadius: 12.0,
+        disabledThumbRadius: 10.0,
+        elevation: 2.0,
+      ),
+
+      // Overlay properties
+      overlayColor: AppColors.white,
+      overlayShape: RoundSliderOverlayShape(overlayRadius: 16.0),
+
+      // Value indicator properties
+      valueIndicatorTextStyle: AppTextStyles.small,
+
+      // For keypoints/divisions
+      activeTickMarkColor: AppColors.primaryOrange,
+      inactiveTickMarkColor: AppColors.grey.withOpacity(0.5),
+      tickMarkShape: RoundSliderTickMarkShape(tickMarkRadius: 2.0),
+
+      // Optional: Show always the value indicator
+      showValueIndicator: ShowValueIndicator.always,
+    ),
   );
 }
