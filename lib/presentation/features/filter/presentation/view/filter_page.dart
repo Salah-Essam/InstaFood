@@ -11,8 +11,10 @@ import 'package:insta_food/presentation/features/filter/presentation/cubit/filte
 import 'package:insta_food/presentation/features/filter/presentation/widget/catagory_button_grid.dart';
 import 'package:insta_food/presentation/features/filter/presentation/widget/subCategory_button_grid.dart';
 import 'package:insta_food/presentation/features/home/presentation/widget/home_button_grid.dart';
+import 'package:insta_food/presentation/features/search/presentation/search_page.dart';
 import 'package:insta_food/presentation/widgets/app_button_onb.dart';
 import 'package:insta_food/presentation/widgets/custom_appbar.dart';
+import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 
 class FilterPage extends StatelessWidget {
   const FilterPage({super.key});
@@ -50,6 +52,7 @@ class FilterPage extends StatelessWidget {
                     if (state is SetFilter) {
                       state.printFilterParams();
                     }
+
                     return ListView(
                       children: [
                         Text(
@@ -178,7 +181,6 @@ class FilterPage extends StatelessWidget {
                                     v.toDouble(),
                                   );
                                 },
-                                //thumbColor: AppColors.primaryOrange,
                                 min: 40,
                                 max: 700,
                               ),
@@ -199,7 +201,14 @@ class FilterPage extends StatelessWidget {
                         Align(
                           alignment: Alignment.bottomCenter,
                           child: AppButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              context.read<FilterCubit>().applyFilters();
+                              pushScreen(
+                                context,
+                                screen: SearchPage(),
+                                withNavBar: true,
+                              );
+                            },
                             borderRadius: 51,
                             label: AppStrings.apply,
                             height: 38,

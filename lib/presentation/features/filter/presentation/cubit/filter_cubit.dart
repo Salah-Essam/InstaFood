@@ -14,9 +14,18 @@ class FilterCubit extends Cubit<FilterState> {
       if (currentState.selectedCategory == category) {
         emit(currentState.copyWith(selectedCategory: null));
       } else {
-        emit(currentState.copyWith(selectedCategory: category));
+        emit(SetCatagoryFilter(selectedCategory: category));
+      }
+    } else if (currentState is ApplyFilter) {
+      if (currentState.selectedCategory == category) {
+        // Toggle off: same category selected, so deselect
+        emit(SetCatagoryFilter(selectedCategory: null));
+      } else {
+        // Toggle on: different category selected
+        emit(SetCatagoryFilter(selectedCategory: category));
       }
     } else {
+      // From any other state (FilterInitial, etc.)
       emit(SetCatagoryFilter(selectedCategory: category));
     }
   }
@@ -42,10 +51,12 @@ class FilterCubit extends Cubit<FilterState> {
     if (currentState is SetFilter) {
       // If clicking the already selected category, deselect it
       if (currentState.selectedCategory == category) {
-        emit(currentState.copyWith(selectedCategory: null));
+        emit(currentState.copyWith(selectedCategory: null, subCategory: null));
       } else {
         // Select the new category (automatically deselects previous)
-        emit(currentState.copyWith(selectedCategory: category));
+        emit(
+          currentState.copyWith(selectedCategory: category, subCategory: null),
+        );
       }
     } else {
       // If no filter state exists, create one with this category
@@ -82,6 +93,26 @@ class FilterCubit extends Cubit<FilterState> {
       }
     } else {
       emit(SetFilter(maxPrice: price));
+    }
+  }
+
+  void applyFilters() {
+    final currentState = state;
+
+    if (currentState is SetFilter) {
+      emit(
+        ApplyFilter(
+          subCategory: currentState.subCategory,
+          selectedCategory: currentState.selectedCategory,
+          minRating: currentState.minRating,
+          maxPrice: currentState.maxPrice,
+        ),
+      );
+    } else if (currentState is SetCatagoryFilter) {
+      emit(ApplyFilter(selectedCategory: currentState.selectedCategory));
+    } else if (currentState is ApplyFilter) {
+      // Already applied, do nothing or re-emit
+      emit(currentState);
     }
   }
 

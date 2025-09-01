@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart' show immutable;
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:insta_food/presentation/features/filter/presentation/cubit/filter_cubit.dart';
+import 'package:insta_food/presentation/features/filter/utils/filter_util.dart';
 import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 import 'package:insta_food/presentation/features/items/data/repositories/item_repository.dart';
 
@@ -7,8 +11,9 @@ part 'item_state.dart';
 
 class ItemCubit extends Cubit<ItemState> {
   final ItemRepository itemRepository;
-
-  ItemCubit({required this.itemRepository}) : super(ItemInit());
+  final FilterCubit filterCubit;
+  ItemCubit({required this.itemRepository, required this.filterCubit})
+    : super(ItemInit());
   Future<void> getallItems() async {
     emit(ItemLoading());
     final result = await itemRepository.fetchItems();
@@ -20,11 +25,13 @@ class ItemCubit extends Cubit<ItemState> {
       (items) {
         final itemList = items.cast<ItemModel>();
         final featuredItems = _getFeaturedItems(itemList, count: 5);
+        final filteredlist = _applyFilters(itemList, filterCubit.state);
         emit(
           ItemLoaded(
             itemList: itemList,
             featuredItems: featuredItems,
-            searchedItems: itemList,
+            searchedItems: filteredlist,
+            activeFilters: filterCubit.state,
           ),
         );
       },
@@ -32,28 +39,16 @@ class ItemCubit extends Cubit<ItemState> {
   }
 
   Future<void> searchItem(String name) async {
-    if (name.isEmpty) {
-      // If search is empty, show all items
-      if (state is ItemLoaded) {
-        final currentState = state as ItemLoaded;
-        emit(
-          ItemLoaded(
-            itemList: currentState.itemList,
-            searchedItems: currentState.itemList,
-          ),
-        );
-      } else {
-        await getallItems();
-      }
-      return;
-    }
     emit(ItemLoading());
     final result = await itemRepository.fetchItem(name);
     result.fold(
       // Failure case (left side)
       (failure) => emit(ItemFailure(message: failure.message)),
       // Success case (right side)
-      (items) => emit(ItemLoaded(searchedItems: items, itemList: items)),
+      (items) {
+        final filteredlist = _applyFilters(items, filterCubit.state);
+        emit(ItemLoaded(searchedItems: filteredlist, itemList: items));
+      },
     );
   }
 
@@ -61,5 +56,19 @@ class ItemCubit extends Cubit<ItemState> {
     if (allItems.isEmpty) return [];
     final shuffled = List<ItemModel>.from(allItems)..shuffle();
     return shuffled.take(count).toList();
+  }
+
+  List<ItemModel> _applyFilters(
+    List<ItemModel> items,
+    FilterState filterState,
+  ) {
+    if (filterState is ApplyFilter) {
+      return ListFilter.applyFilters(
+        items: items,
+        category: filterState.selectedCategory,
+        subCategory: filterState.subCategory,
+      ); // Return all items if no filters applied
+    }
+    return items;
   }
 }

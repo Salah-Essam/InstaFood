@@ -11,10 +11,12 @@ class ItemLoaded extends ItemState {
   final List<ItemModel> itemList;
   final List<ItemModel>? featuredItems;
   final List<ItemModel> searchedItems;
+  final FilterState? activeFilters;
   ItemLoaded({
     required this.itemList,
     this.featuredItems,
     required this.searchedItems,
+    this.activeFilters,
   });
 }
 
