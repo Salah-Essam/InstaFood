@@ -22,7 +22,7 @@ enum FoodCategory {
   vegan(
     name: AppStrings.vegan,
     icon: AppAssets.vegan,
-    keywords: ['vegan', 'plant-based', 'dairy-free'],
+    keywords: ['coconut milk', 'vegetables', 'pizza'],
     exclusionKeywords: [
       'meat',
       'chicken',
@@ -38,20 +38,14 @@ enum FoodCategory {
   desserts(
     name: AppStrings.desserts,
     icon: AppAssets.desserts,
-    keywords: [
-      'sweet',
-      'pastry',
-      'syrup',
-      'sugar',
-      'pudding',
-      'vermicelli',
-      'fried bread',
-    ],
+    keywords: ['sweet', 'syrup', 'sugar', 'pudding', 'vermicelli'],
+    exclusionKeywords: ["sweet churma", "drink"],
   ),
   drinks(
     name: AppStrings.drinks,
     icon: AppAssets.drinks,
     keywords: ['drink', 'brewed', 'coffee', 'beer'],
+    exclusionKeywords: ['coffee-soaked'],
   );
 
   final String name;

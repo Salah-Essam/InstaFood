@@ -10,6 +10,7 @@ class ListFilter {
   }) {
     return items.where((item) {
       // Category filter
+
       if (category != null) {
         // Check if item description contains ANY of the category's keywords (subcategories)
         if (subCategory == null) {
@@ -20,8 +21,18 @@ class ListFilter {
                 ) ??
                 false,
           );
-
-          if (!hasMatchingSubCategory) {
+          dynamic hasExclusionMatch = null;
+          if (category.exclusionKeywords != null) {
+            hasExclusionMatch = category.exclusionKeywords.any(
+              (keyword) =>
+                  item.itemDescription?.toLowerCase().contains(
+                    keyword.toLowerCase(),
+                  ) ??
+                  false,
+            );
+          }
+          // Include if matches inclusion keywords BUT NOT exclusion keywords
+          if (!hasMatchingSubCategory || hasExclusionMatch) {
             return false;
           }
         } else if (subCategory != null &&
