@@ -7,7 +7,7 @@ import 'package:insta_food/core/storage/shared_prefrences/shared_prefs_service.d
 import 'package:insta_food/presentation/features/BottomNavBar/presentation/pages/bottom_nav_bar.dart';
 import 'package:insta_food/presentation/features/Profile/presentation/pages/profile_page.dart';
 
-import 'package:insta_food/presentation/features/filter/presentation/filter_page.dart';
+import 'package:insta_food/presentation/features/filter/presentation/view/filter_page.dart';
 import 'package:insta_food/presentation/features/home/presentation/view/home_page.dart';
 import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 import 'package:insta_food/presentation/features/items/presentation/view/item_page.dart';

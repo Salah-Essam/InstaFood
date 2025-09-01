@@ -30,6 +30,8 @@ class AppStrings {
   static const String recommend = "Recommend";
   static const String viewAll = "View All";
   static const String categories = "Categories";
+  static const String sortBy = "Sort by";
+  static const String topRated = "Top Rated";
   //=====================================================================================
   static const String signup = "Sign Up";
   static const String login = "Login";
