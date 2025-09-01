@@ -17,14 +17,7 @@ enum FoodCategory {
   meals(
     name: AppStrings.meals,
     icon: AppAssets.meals,
-    keywords: [
-      'curry',
-      'biryani',
-      'grilled',
-      'cooked',
-      'served with rice',
-      'served with naan',
-    ],
+    keywords: ['curry', 'biryani', 'grilled', 'cooked', 'rice', 'naan'],
   ),
   vegan(
     name: AppStrings.vegan,
@@ -58,14 +51,7 @@ enum FoodCategory {
   drinks(
     name: AppStrings.drinks,
     icon: AppAssets.drinks,
-    keywords: [
-      'drink',
-      'brewed',
-      'coffee',
-      'beer',
-      'yogurt-based drink',
-      'served on tap',
-    ],
+    keywords: ['drink', 'brewed', 'coffee', 'beer'],
   );
 
   final String name;

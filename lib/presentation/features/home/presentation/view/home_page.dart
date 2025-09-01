@@ -20,8 +20,12 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => sl<ItemCubit>()..getallItems(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => sl<ItemCubit>()..getallItems()),
+        BlocProvider(create: (context) => sl<FilterCubit>()),
+      ],
+
       child: Scaffold(
         backgroundColor: AppColors.primaryYellow,
         appBar: CustomAppBar(),
@@ -63,10 +67,7 @@ class HomePage extends StatelessWidget {
                               MediaQuery.of(context).padding.bottom,
                             ),
                             children: [
-                              BlocProvider(
-                                create: (context) => sl<FilterCubit>(),
-                                child: ButtonGrid(),
-                              ),
+                              ButtonGrid(),
                               SizedBox(height: 5),
                               Container(
                                 color: AppColors.primaryOrange,

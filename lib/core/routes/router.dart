@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:insta_food/core/di/di.dart';
 import 'package:insta_food/core/routes/router_constants.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/storage/shared_prefrences/shared_prefs_service.dart';
 import 'package:insta_food/presentation/features/BottomNavBar/presentation/pages/bottom_nav_bar.dart';
 import 'package:insta_food/presentation/features/Profile/presentation/pages/profile_page.dart';
+import 'package:insta_food/presentation/features/category/presentation/view/category_page.dart';
+import 'package:insta_food/presentation/features/filter/presentation/cubit/filter_cubit.dart';
 
 import 'package:insta_food/presentation/features/filter/presentation/view/filter_page.dart';
 import 'package:insta_food/presentation/features/home/presentation/view/home_page.dart';
@@ -81,6 +84,15 @@ final GoRouter appRouter = GoRouter(
         final ItemModel item = state.extra as ItemModel;
         return ItemPage(item: item);
       },
+    ),
+    GoRoute(
+      path: RouterConstants.categoryPage,
+      builder: (context, state) => CategoryPage(),
+      // onExit: (GoRouterState state) {
+      //   // Reset when leaving category page
+      //   sl<FilterCubit>().setCategoryFilter(null);
+      //   return true;
+      // },
     ),
   ],
 );

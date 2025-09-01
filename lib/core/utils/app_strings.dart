@@ -32,6 +32,8 @@ class AppStrings {
   static const String categories = "Categories";
   static const String sortBy = "Sort by";
   static const String topRated = "Top Rated";
+  static const String price = "Price";
+  static const String apply = "Apply";
   //=====================================================================================
   static const String signup = "Sign Up";
   static const String login = "Login";

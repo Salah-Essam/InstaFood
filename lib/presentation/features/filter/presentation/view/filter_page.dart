@@ -8,7 +8,10 @@ import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/core/utils/app_strings.dart';
 import 'package:insta_food/presentation/features/filter/presentation/cubit/filter_cubit.dart';
+import 'package:insta_food/presentation/features/filter/presentation/widget/catagory_button_grid.dart';
+import 'package:insta_food/presentation/features/filter/presentation/widget/subCategory_button_grid.dart';
 import 'package:insta_food/presentation/features/home/presentation/widget/home_button_grid.dart';
+import 'package:insta_food/presentation/widgets/app_button_onb.dart';
 import 'package:insta_food/presentation/widgets/custom_appbar.dart';
 
 class FilterPage extends StatelessWidget {
@@ -16,8 +19,8 @@ class FilterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => sl<FilterCubit>(),
+    return BlocProvider.value(
+      value: sl<FilterCubit>(),
       child: Scaffold(
         backgroundColor: AppColors.primaryYellow,
         appBar: CustomAppBar(
@@ -64,7 +67,7 @@ class FilterPage extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            child: ButtonGrid(),
+                            child: CatagoryButtonGrid(),
                           ),
                         ),
                         Text(AppStrings.sortBy, style: AppTextStyles.header),
@@ -123,19 +126,72 @@ class FilterPage extends StatelessWidget {
                           builder: (context) {
                             if (state is SetFilter) {
                               if (state.selectedCategory != null) {
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 13,
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(
+                                        color: AppColors.border,
+                                        width: 0.5,
+                                      ),
+                                    ),
                                   ),
-                                  child: Text(
-                                    AppStrings.categories,
-                                    style: AppTextStyles.mediumText,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 13,
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          AppStrings.categories,
+                                          style: AppTextStyles.mediumText,
+                                        ),
+                                        SizedBox(height: 16),
+                                        SubcategoryButtonGrid(
+                                          category: state.selectedCategory!,
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 );
                               }
                             }
                             return SizedBox.shrink();
                           },
+                        ),
+                        Text(
+                          AppStrings.price,
+                          style: AppTextStyles.dialogGreetingDialogeOrange
+                              .copyWith(fontSize: 20),
+                        ),
+                        Padding(
+                          padding: EdgeInsetsGeometry.symmetric(horizontal: 14),
+                          child: Slider(
+                            value: state is SetFilter
+                                ? (state.maxPrice ?? 40).toDouble()
+                                : 40.0,
+                            onChanged: (v) {
+                              context.read<FilterCubit>().setPriceFilter(
+                                v.toDouble(),
+                              );
+                            },
+                            //thumbColor: AppColors.primaryOrange,
+                            min: 40,
+                            max: 700,
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: AppButton(
+                            onPressed: () {},
+                            borderRadius: 51,
+                            label: AppStrings.apply,
+                            height: 38,
+                            width: 157,
+                            textStyle: AppTextStyles.button,
+                          ),
                         ),
                       ],
                     );

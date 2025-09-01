@@ -6,13 +6,18 @@ part 'filter_state.dart';
 
 class FilterCubit extends Cubit<FilterState> {
   FilterCubit() : super(FilterInitial());
-  void setCategoryFilter(FoodCategory category) {
+
+  void setCategoryFilter(FoodCategory? category) {
     final currentState = state;
 
-    if (currentState is SetFilter) {
-      emit(currentState.copyWith(selectedCategory: category));
+    if (currentState is SetCatagoryFilter) {
+      if (currentState.selectedCategory == category) {
+        emit(currentState.copyWith(selectedCategory: null));
+      } else {
+        emit(currentState.copyWith(selectedCategory: category));
+      }
     } else {
-      emit(SetFilter(selectedCategory: category));
+      emit(SetCatagoryFilter(selectedCategory: category));
     }
   }
 
@@ -46,5 +51,41 @@ class FilterCubit extends Cubit<FilterState> {
       // If no filter state exists, create one with this category
       emit(SetFilter(selectedCategory: category));
     }
+  }
+
+  void toggleSubCategory(String category) {
+    final currentState = state;
+
+    if (currentState is SetFilter) {
+      // If clicking the already selected category, deselect it
+      if (currentState.subCategory == category) {
+        emit(currentState.copyWith(subCategory: null));
+      } else {
+        // Select the new category (automatically deselects previous)
+        emit(currentState.copyWith(subCategory: category));
+      }
+    } else {
+      // If no filter state exists, create one with this category
+      emit(SetFilter(subCategory: category));
+    }
+  }
+
+  void setPriceFilter(double? price) {
+    final currentState = state;
+
+    if (currentState is SetFilter) {
+      // Toggle logic: if same rating clicked, deselect it
+      if (currentState.maxPrice == price) {
+        emit(currentState.copyWith(maxPrice: null));
+      } else {
+        emit(currentState.copyWith(maxPrice: price));
+      }
+    } else {
+      emit(SetFilter(maxPrice: price));
+    }
+  }
+
+  void resetFilter() {
+    emit(FilterInitial());
   }
 }

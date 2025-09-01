@@ -102,6 +102,12 @@ class AppTextStyles {
     color: AppColors.textDarkBrown,
   );
 
+  static TextStyle get subCatagoryButton => TextStyle(
+    fontSize: 14.sp,
+    fontWeight: FontWeight.w400,
+    color: AppColors.primaryOrange,
+  );
+
   static TextStyle get login => TextStyle(
     color: AppColors.white,
     fontSize: 18.sp,
