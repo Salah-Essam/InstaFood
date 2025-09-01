@@ -6,6 +6,7 @@ import 'package:insta_food/core/theme/app_assets.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/core/utils/app_strings.dart';
+import 'package:insta_food/presentation/features/filter/presentation/cubit/filter_cubit.dart';
 import 'package:insta_food/presentation/features/home/presentation/widget/ad_slider.dart';
 import 'package:insta_food/presentation/features/home/presentation/widget/app_greeting.dart';
 import 'package:insta_food/presentation/features/home/presentation/widget/bestseller_row.dart';
@@ -19,8 +20,12 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => sl<ItemCubit>()..getallItems(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => sl<ItemCubit>()..getallItems()),
+        BlocProvider(create: (context) => sl<FilterCubit>()),
+      ],
+
       child: Scaffold(
         backgroundColor: AppColors.primaryYellow,
         appBar: CustomAppBar(),

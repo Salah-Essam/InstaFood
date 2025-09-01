@@ -9,12 +9,10 @@ class ItemLoading extends ItemState {}
 
 class ItemLoaded extends ItemState {
   final List<ItemModel> itemList;
-  final String? sortOrder;
   final List<ItemModel>? featuredItems;
   final List<ItemModel> searchedItems;
   ItemLoaded({
     required this.itemList,
-    this.sortOrder,
     this.featuredItems,
     required this.searchedItems,
   });

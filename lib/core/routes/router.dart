@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:insta_food/core/di/di.dart';
 import 'package:insta_food/core/routes/router_constants.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/storage/shared_prefrences/shared_prefs_service.dart';
@@ -12,11 +13,16 @@ import 'package:insta_food/presentation/features/DeliveryAddress/presentation/pa
 import 'package:insta_food/presentation/features/PaymentMethods/presentation/pages/add_card_page.dart';
 import 'package:insta_food/presentation/features/PaymentMethods/presentation/pages/payment_methods_page.dart';
 import 'package:insta_food/presentation/features/Profile/presentation/pages/profile_page.dart';
+
+import 'package:insta_food/presentation/features/category/presentation/view/category_page.dart';
+import 'package:insta_food/presentation/features/filter/presentation/cubit/filter_cubit.dart';
+
 import 'package:insta_food/presentation/features/Settings/presentation/pages/notification_setting_page.dart';
 import 'package:insta_food/presentation/features/Settings/presentation/pages/passwrod_setting_page.dart';
 import 'package:insta_food/presentation/features/Settings/presentation/pages/settings_page.dart';
 
-import 'package:insta_food/presentation/features/filter/presentation/filter_page.dart';
+
+import 'package:insta_food/presentation/features/filter/presentation/view/filter_page.dart';
 import 'package:insta_food/presentation/features/home/presentation/view/home_page.dart';
 import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 import 'package:insta_food/presentation/features/items/presentation/view/item_page.dart';
@@ -151,11 +157,19 @@ final GoRouter appRouter = GoRouter(
       },
     ),
     GoRoute(
+
       path: RouterConstants.restaurants,
       builder: (context, state) => BlocProvider(
   create: (_) => sl<RestaurantsCubit>(),
         child: const RestaurantListPage(),
       ),
+      path: RouterConstants.categoryPage,
+      builder: (context, state) => CategoryPage(),
+      // onExit: (GoRouterState state) {
+      //   // Reset when leaving category page
+      //   sl<FilterCubit>().setCategoryFilter(null);
+      //   return true;
+      // },
     ),
   ],
 );

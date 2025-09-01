@@ -5,7 +5,7 @@ import 'package:insta_food/core/theme/app_assets.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/utils/app_strings.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
-import 'package:insta_food/presentation/features/filter/presentation/filter_page.dart';
+import 'package:insta_food/presentation/features/filter/presentation/view/filter_page.dart';
 import 'package:insta_food/presentation/features/items/presentation/cubit/item_cubit.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 
