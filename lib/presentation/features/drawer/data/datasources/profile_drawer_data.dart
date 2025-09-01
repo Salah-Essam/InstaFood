@@ -33,7 +33,7 @@ class ProfileDrawerData {
     ProfileDawerItemModel(
       name: AppStrings.helpFAQs,
       icon: AppAssets.helpFAQs,
-      pagePath: RouterConstants.helpPage,
+      pagePath: RouterConstants.helpFAQsPage,
     ),
     ProfileDawerItemModel(
       name: AppStrings.settings,

@@ -5,7 +5,13 @@ import 'package:insta_food/core/routes/router_constants.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/storage/shared_prefrences/shared_prefs_service.dart';
 import 'package:insta_food/presentation/features/BottomNavBar/presentation/pages/bottom_nav_bar.dart';
+import 'package:insta_food/presentation/features/ContactUs%20&%20FAQs/presentation/pages/contact_us_page.dart';
+import 'package:insta_food/presentation/features/ContactUs%20&%20FAQs/presentation/pages/help_faqs_page.dart';
+import 'package:insta_food/presentation/features/DeliveryAddress/presentation/pages/add_new_address_page.dart';
+import 'package:insta_food/presentation/features/DeliveryAddress/presentation/pages/delivery_address_page.dart';
+import 'package:insta_food/presentation/features/PaymentMethods/presentation/pages/payment_methods_page.dart';
 import 'package:insta_food/presentation/features/Profile/presentation/pages/profile_page.dart';
+import 'package:insta_food/presentation/features/Settings/presentation/pages/settings_page.dart';
 
 import 'package:insta_food/presentation/features/filter/presentation/filter_page.dart';
 import 'package:insta_food/presentation/features/home/presentation/view/home_page.dart';
@@ -70,6 +76,30 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: RouterConstants.profilePage,
       builder: (context, state) => ProfilePage(),
+    ),
+    GoRoute(
+      path: RouterConstants.addressPage,
+      builder: (context, state) => DeliveryAddressPage(),
+    ),
+    GoRoute(
+      path: RouterConstants.addNewAddressPage,
+      builder: (context, state) => AddNewAddressPage(),
+    ),
+    GoRoute(
+      path: RouterConstants.paymentPage,
+      builder: (context, state) => PaymentMethodsPage(),
+    ),
+    GoRoute(
+      path: RouterConstants.contactPage,
+      builder: (context, state) => ContactUsPage(),
+    ),
+    GoRoute(
+      path: RouterConstants.helpFAQsPage,
+      builder: (context, state) => HelpFAQsPage(),
+    ),
+    GoRoute(
+      path: RouterConstants.settingsPage,
+      builder: (context, state) => SettingsPage(),
     ),
     GoRoute(
       path: RouterConstants.filterPage,

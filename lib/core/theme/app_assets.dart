@@ -48,4 +48,8 @@ class AppAssets {
   static const String google = "assets/icons/Google_Icon.svg";
   static const String fingerprint = "assets/icons/Fingerprint_Icon.svg";
   static const String eye = "assets/icons/Show_Off.svg";
+  static const String paymentCardIcon = "assets/icons/PaymentCard icon.svg";
+  static const String paymentGooglePlay = "assets/icons/PaymentGoogle-play.svg";
+  static const String paymentMac = "assets/icons/PaymentMac.svg";
+  static const String paymentPaypal = "assets/icons/PaymentPaypal.svg";
 }

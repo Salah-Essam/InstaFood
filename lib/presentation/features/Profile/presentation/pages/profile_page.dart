@@ -8,7 +8,7 @@ import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/presentation/features/Profile/presentation/cubit/ProfileImageCubit/profile_image_cubit.dart';
 import 'package:insta_food/presentation/widgets/app_button_onb.dart';
-import 'package:insta_food/presentation/widgets/app_text_field.dart';
+import 'package:insta_food/presentation/features/drawer/presentation/widgets/app_text_field_drawer.dart';
 import 'package:insta_food/presentation/widgets/shared_scaffold.dart';
 import 'package:intl/intl.dart';
 import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_cubit.dart';
@@ -100,19 +100,19 @@ class ProfilePage extends StatelessWidget {
             SizedBox(height: 32),
             Text("Full Name", style: AppTextStyles.header),
             SizedBox(height: 8),
-            AppTextField(controller: nameController, onChange: (p0) {}),
+            AppTextFieldDrawer(controller: nameController, onChange: (p0) {}),
             SizedBox(height: 24),
             Text("Date of Birth", style: AppTextStyles.header),
             SizedBox(height: 8),
-            AppTextField(controller: dateController, onChange: (p0) {}),
+            AppTextFieldDrawer(controller: dateController, onChange: (p0) {}),
             SizedBox(height: 24),
             Text("Email", style: AppTextStyles.header),
             SizedBox(height: 8),
-            AppTextField(controller: emailController, onChange: (p0) {}),
+            AppTextFieldDrawer(controller: emailController, onChange: (p0) {}),
             SizedBox(height: 24),
             Text("Phone Number", style: AppTextStyles.header),
             SizedBox(height: 8),
-            AppTextField(controller: phoneController, onChange: (p0) {}),
+            AppTextFieldDrawer(controller: phoneController, onChange: (p0) {}),
             SizedBox(height: 24),
             Center(
               child: AppButton(

@@ -13,58 +13,62 @@ class AdvertismentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 323,
-      height: 128,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: AppColors.primaryOrange,
-      ),
-      child: Stack(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(AppStrings.advertisment, style: AppTextStyles.ad),
-                      Text(AppStrings.ad2, style: AppTextStyles.ad),
-                      Text(AppStrings.ad3, style: AppTextStyles.greeting),
-                    ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Container(
+        width: 350,
+        height: 128,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: AppColors.primaryOrange,
+        ),
+        child: Stack(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(AppStrings.advertisment, style: AppTextStyles.ad),
+                        Text(AppStrings.ad2, style: AppTextStyles.ad),
+                        Text(AppStrings.ad3, style: AppTextStyles.greeting),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Flexible(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(15),
-                    bottomRight: Radius.circular(15),
-                  ),
-                  child: CachedImage(
-                    item: item,
-                    width: 161.5,
-                    height: double.infinity,
+                Flexible(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(15),
+                      bottomRight: Radius.circular(15),
+                    ),
+                    child: CachedImage(
+                      item: item,
+                      width: 161.5,
+                      height: double.infinity,
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          Positioned(
-            top: 0,
-            left: 110,
-            child: SvgPicture.asset(AppAssets.ellipse),
-          ),
-          Align(
-            alignment: Alignment.bottomLeft,
-            child: SvgPicture.asset(
-              AppAssets.ellipseRotated,
-              fit: BoxFit.contain,
+              ],
             ),
-          ),
-        ],
+            Positioned(
+              top: 0,
+              left: 110,
+              child: SvgPicture.asset(AppAssets.ellipse),
+            ),
+            Align(
+              alignment: Alignment.bottomLeft,
+              child: SvgPicture.asset(
+                AppAssets.ellipseRotated,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
