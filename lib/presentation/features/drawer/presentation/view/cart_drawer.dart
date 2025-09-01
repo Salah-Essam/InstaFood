@@ -148,7 +148,7 @@ class _CartList extends StatelessWidget {
     return BlocBuilder<CartCubit, CartState>(
       buildWhen: (p, n) => n is CartLoaded,
       builder: (context, state) {
-        final loaded = state is CartLoaded ? state : CartLoaded(items: const []);
+  final loaded = state is CartLoaded ? state : CartLoaded(items: const [], tax: 1.0, delivery: 2.0);
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
