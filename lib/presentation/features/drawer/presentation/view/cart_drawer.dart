@@ -54,18 +54,25 @@ Widget _header() => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Image.asset('assets/icons/cart_drawer_icon.png', width: 24, height: 24),
             const SizedBox(width: 8),
-            Text(
-              'Cart',
-              style: const TextStyle(
-                fontFamily: 'LeagueSpartan',
-                fontWeight: FontWeight.w700,
-                fontSize: 24,
-                height: 26/24,
-                color: Colors.white,
+            SizedBox(
+              height: 24,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Cart',
+                  style: const TextStyle(
+                    fontFamily: 'LeagueSpartan',
+                    fontWeight: FontWeight.w700,
+                    fontSize: 24,
+                    height: 1.0,
+                    color: Colors.white,
+                  ),
+                ),
               ),
             ),
           ],
@@ -154,22 +161,8 @@ class _CartList extends StatelessWidget {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: loaded.items.length,
-              separatorBuilder: (_, __) => Column(children: [
-                const SizedBox(height: 12),
-                // Solid separator between products (slight rotation -0.22°)
-                Padding(
-                  padding: const EdgeInsets.only(left: 33.0),
-                  child: Transform.rotate(
-                    angle: -0.22 * pi / 180,
-                    child: const SizedBox(
-                      width: 259.0018,
-                      height: 1,
-                      child: ColoredBox(color: Color(0xFFFFDECF)),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-              ]),
+              // No line between products per Figma; keep only spacing
+              separatorBuilder: (_, __) => const SizedBox(height: 16),
               itemBuilder: (context, i) {
                 final it = loaded.items[i];
                 return Row(
@@ -225,14 +218,7 @@ class _CartList extends StatelessWidget {
                 );
               },
             ),
-            const SizedBox(height: 8),
-            const Padding(
-              padding: EdgeInsets.only(left: 33.0),
-              child: SizedBox(
-                width: 259.0018,
-                child: DottedLine(dashLength: 4, dashGapLength: 4, lineThickness: 1, dashColor: Colors.white24),
-              ),
-            ),
+            // Dotted line moved to before the Total row inside _Totals
           ],
         );
       },
@@ -252,6 +238,15 @@ class _Totals extends StatelessWidget {
         _row('Subtotal', t.subtotal.toStringAsFixed(2), s),
         _row('Tax and Fees', t.tax.toStringAsFixed(2), s),
         _row('Delivery', t.delivery.toStringAsFixed(2), s),
+        const SizedBox(height: 8),
+        // Dotted line appears right before the Total row per Figma
+        const Padding(
+          padding: EdgeInsets.only(left: 33.0),
+          child: SizedBox(
+            width: 259.0018,
+            child: DottedLine(dashLength: 4, dashGapLength: 4, lineThickness: 1, dashColor: Colors.white24),
+          ),
+        ),
         const SizedBox(height: 8),
         _row('Total', t.total.toStringAsFixed(2), s.copyWith(fontWeight: FontWeight.bold)),
       ],
