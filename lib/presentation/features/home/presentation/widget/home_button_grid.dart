@@ -14,62 +14,59 @@ class ButtonGrid extends StatelessWidget {
   ButtonGrid({super.key});
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => sl<FilterCubit>(),
-      child: BlocBuilder<FilterCubit, FilterState>(
-        builder: (context, state) {
-          return SizedBox(
-            height: 100,
-            child: ListView.builder(
-              itemCount: FoodCategory.values.length,
-              shrinkWrap: true,
-              physics: const BouncingScrollPhysics(),
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 12),
+    return BlocBuilder<FilterCubit, FilterState>(
+      builder: (context, state) {
+        return SizedBox(
+          height: 100,
+          child: ListView.builder(
+            itemCount: FoodCategory.values.length,
+            shrinkWrap: true,
+            physics: const BouncingScrollPhysics(),
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
 
-              itemBuilder: (context, index) {
-                // Get the category key and asset path by index
-                final category = FoodCategory.values[index];
+            itemBuilder: (context, index) {
+              // Get the category key and asset path by index
+              final category = FoodCategory.values[index];
 
-                final isSelected =
-                    state is SetFilter && state.selectedCategory == category;
-                return Padding(
-                  padding: const EdgeInsets.only(right: 19, left: 1),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      AppButton(
-                        onPressed: () {
-                          context.read<FilterCubit>().toggleCategory(category);
-                        },
-                        backgroundColor: isSelected
-                            ? AppColors.primaryYellow
-                            : AppColors.lightYellow,
-                        borderRadius: 30,
-                        width: 49,
-                        height: 62,
-                        child: SizedBox(
-                          height: 37,
-                          width: 33,
-                          child: Transform.scale(
-                            scale: 1,
-                            child: SvgPicture.asset(
-                              category.icon,
-                              fit: BoxFit.contain,
-                            ),
+              final isSelected =
+                  state is SetFilter && state.selectedCategory == category;
+              return Padding(
+                padding: const EdgeInsets.only(right: 19, left: 1),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    AppButton(
+                      onPressed: () {
+                        context.read<FilterCubit>().toggleCategory(category);
+                      },
+                      backgroundColor: isSelected
+                          ? AppColors.primaryYellow
+                          : AppColors.lightYellow,
+                      borderRadius: 30,
+                      width: 49,
+                      height: 62,
+                      child: SizedBox(
+                        height: 37,
+                        width: 33,
+                        child: Transform.scale(
+                          scale: 1,
+                          child: SvgPicture.asset(
+                            category.icon,
+                            fit: BoxFit.contain,
                           ),
                         ),
                       ),
-                      SizedBox(height: 8),
-                      Text(category.name, style: AppTextStyles.small),
-                    ],
-                  ),
-                );
-              },
-            ),
-          );
-        },
-      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(category.name, style: AppTextStyles.small),
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }

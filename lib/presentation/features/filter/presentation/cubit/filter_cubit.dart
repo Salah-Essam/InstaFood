@@ -35,18 +35,13 @@ class FilterCubit extends Cubit<FilterState> {
     final currentState = state;
 
     if (currentState is SetFilter) {
-      print(
-        'VALIDATION: Current selected index: ${currentState.selectedCategory?.index}',
-      );
-      print('VALIDATION: Clicked category index: ${category.index}');
       // If clicking the already selected category, deselect it
       if (currentState.selectedCategory == category) {
-        emit(SetFilter(selectedCategory: null));
+        emit(currentState.copyWith(selectedCategory: null));
       } else {
         // Select the new category (automatically deselects previous)
-        emit(SetFilter(selectedCategory: category));
+        emit(currentState.copyWith(selectedCategory: category));
       }
-      print(currentState.selectedCategory?.name ?? "none");
     } else {
       // If no filter state exists, create one with this category
       emit(SetFilter(selectedCategory: category));

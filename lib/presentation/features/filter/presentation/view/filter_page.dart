@@ -16,7 +16,6 @@ class FilterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double ratingValue = 3;
     return BlocProvider(
       create: (context) => sl<FilterCubit>(),
       child: Scaffold(
@@ -44,8 +43,10 @@ class FilterPage extends StatelessWidget {
                   vertical: 16,
                 ),
                 child: BlocBuilder<FilterCubit, FilterState>(
-                  bloc: FilterCubit(),
                   builder: (context, state) {
+                    if (state is SetFilter) {
+                      state.printFilterParams();
+                    }
                     return ListView(
                       children: [
                         Text(

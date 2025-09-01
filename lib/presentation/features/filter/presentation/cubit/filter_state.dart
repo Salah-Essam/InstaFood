@@ -27,6 +27,14 @@ final class SetFilter extends FilterState {
     );
   }
 
+  void printFilterParams() {
+    print('=== FILTER PARAMETERS ===');
+    print('Selected Category: ${selectedCategory?.name ?? "None"}');
+    print('Max Price: ${maxPrice ?? "No limit"}');
+    print('Min Rating: ${minRating ?? "No minimum"}');
+    print('=========================');
+  }
+
   @override
   List<Object?> get props => [selectedCategory, maxPrice, minRating];
 }
