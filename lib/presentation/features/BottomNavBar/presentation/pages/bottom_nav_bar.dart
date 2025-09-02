@@ -95,7 +95,7 @@ class BottomNavBar extends StatelessWidget {
         ),
         body: PopScope(
           canPop: false,
-          onPopInvoked: (didPop) {
+          onPopInvokedWithResult: (didPop, result) {
             // When back is pressed at tab-level pages, go to first tab instead of exiting.
             if (!didPop) {
               if (BottomNavController.controller.index != 0) {
@@ -105,7 +105,7 @@ class BottomNavBar extends StatelessWidget {
           },
           child: PersistentTabView(
             controller: BottomNavController.controller,
-            tabs: _tabs(),
+            tabs: _tabs(context),
             screenTransitionAnimation: ScreenTransitionAnimation(
               curve: Curves.ease,
               duration: Duration(milliseconds: 300),

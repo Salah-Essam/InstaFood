@@ -28,7 +28,6 @@ import 'package:insta_food/presentation/features/cart/data/datasources/cart_remo
 import 'package:insta_food/presentation/features/cart/data/repos/cart_repository_impl.dart';
 import 'package:insta_food/presentation/features/cart/data/repositories/cart_repository.dart';
 import 'package:insta_food/presentation/features/cart/logic/cart_cubit.dart';
-import 'package:insta_food/presentation/features/order/logic/order_cubit.dart';
 import 'package:insta_food/presentation/features/order/data/repos/orders_repository.dart';
 import 'package:insta_food/presentation/features/order/logic/orders_cubit.dart';
 
