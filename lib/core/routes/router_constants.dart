@@ -13,6 +13,9 @@ class RouterConstants {
   static const String addNewAddressPage = '/addNewAddressPage';
   static const String paymentPage = '/paymentPage';
   static const String payment = '/payment';
+  static const String orderConfirmed = '/orderConfirmed';
+  static const String deliveryTime = '/deliveryTime';
+  static const String leaveReview = '/leaveReview';
   static const String confirmOrder = '/confirmOrder';
   static const String contactPage = '/contactPage';
   static const String helpFAQsPage = '/helpPage';

@@ -40,6 +40,22 @@ class OrderCubit extends Cubit<OrderState> {
 		}
 	}
 
+	Future<void> completeAndClear({required String orderId, String? transactionId}) async {
+		final auth = authCubit.state;
+		if (auth is! Authenticated || (auth.user.id ?? '').isEmpty) {
+			emit(OrderError('login_required'));
+			return;
+		}
+		final uid = auth.user.id!;
+		try {
+			await service.markOrderCompleted(uid: uid, orderId: orderId, transactionId: transactionId);
+			await cartCubit.clear();
+			emit(OrderPlaced(orderId));
+		} catch (e) {
+			emit(OrderError(e.toString()));
+		}
+	}
+
 	Map<String, dynamic> _buildOrderPayload(CartLoaded cart, String shippingAddress) {
 		return {
 			OrderFs.fItems: cart.items.map(_cartItemToMap).toList(),

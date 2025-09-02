@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:insta_food/core/routes/router_constants.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 
 class PlaceOrderButton extends StatelessWidget {
@@ -20,7 +21,7 @@ class PlaceOrderButton extends StatelessWidget {
         onPressed: disabled
             ? null
             : () {
-                context.pushNamed('payment');
+                context.push(RouterConstants.payment);
               },
         child: const Padding(
           padding: EdgeInsets.symmetric(vertical: 12.0),
