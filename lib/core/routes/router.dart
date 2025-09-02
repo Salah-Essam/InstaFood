@@ -30,6 +30,7 @@ import 'package:insta_food/presentation/features/auth/presentation/pages/set_pas
 import 'package:insta_food/presentation/features/auth/presentation/pages/signup.dart';
 
 import 'package:insta_food/presentation/features/onboarding/onboarding.dart';
+import 'package:insta_food/presentation/features/order/presentation/view/my_orders_page.dart';
 import 'package:insta_food/presentation/features/search/presentation/search_page.dart';
 import 'package:insta_food/presentation/features/splash/view/second_splash_screen.dart';
 import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_cubit.dart';
@@ -132,6 +133,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: RouterConstants.addNewPaymentPage,
       builder: (context, state) => AddCardPage(),
+    ),
+    GoRoute(
+      path: RouterConstants.orderPage,
+      builder: (context, state) => MyOrdersPage(),
     ),
     GoRoute(
       path: RouterConstants.notificationSetting,

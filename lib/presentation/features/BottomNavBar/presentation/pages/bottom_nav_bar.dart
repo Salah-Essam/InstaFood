@@ -127,39 +127,3 @@ class BottomNavBar extends StatelessWidget {
     );
   }
 }
-
-class Page extends StatefulWidget {
-  const Page({super.key, required this.name, this.scaffoldKey, this.onInit});
-  final GlobalKey<ScaffoldState>? scaffoldKey;
-  final String name;
-  final VoidCallback? onInit;
-
-  @override
-  State<Page> createState() => _PageState();
-}
-
-class _PageState extends State<Page> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => widget.onInit?.call());
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.menu),
-            iconSize: 24,
-            onPressed: () {
-              widget.scaffoldKey?.currentState?.openEndDrawer();
-            },
-          ),
-        ],
-      ),
-      body: Center(child: Text(widget.name)),
-    );
-  }
-}
