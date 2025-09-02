@@ -9,6 +9,7 @@ import 'package:insta_food/presentation/features/filter/presentation/cubit/filte
 import 'package:insta_food/presentation/features/home/presentation/widget/item_tile.dart';
 import 'package:insta_food/presentation/features/items/presentation/cubit/item_cubit.dart';
 import 'package:insta_food/presentation/widgets/custom_appbar.dart';
+import 'package:insta_food/presentation/widgets/item_card.dart';
 
 class SearchPage extends StatelessWidget {
   const SearchPage({super.key});
@@ -61,22 +62,14 @@ class SearchPage extends StatelessWidget {
                                 child: Text('Error: ${state.message}'),
                               );
                             } else if (state is ItemLoaded) {
-                              return GridView.builder(
-                                gridDelegate:
-                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 2,
-                                      mainAxisSpacing: 8,
-                                      crossAxisSpacing: 8,
-                                      childAspectRatio: 88 / 108,
-                                    ),
+                              return ListView.builder(
+                                shrinkWrap: true,
+                                scrollDirection: Axis.vertical,
+                                physics: ScrollPhysics(),
                                 itemCount: state.searchedItems.length,
                                 itemBuilder: (context, index) {
                                   final item = state.searchedItems[index];
-                                  return ItemTile(
-                                    item: item,
-                                    height: 108,
-                                    width: 88,
-                                  );
+                                  return ItemCard(item: item);
                                 },
                               );
                             } else {

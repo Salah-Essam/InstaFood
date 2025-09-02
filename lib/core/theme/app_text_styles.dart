@@ -212,4 +212,9 @@ class AppTextStyles {
     fontSize: 12,
     fontWeight: FontWeight.bold,
   );
+  static final TextStyle fontPrimaryMediumRagular = TextStyle(
+    color: AppColors.primaryOrange,
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
+  );
 }

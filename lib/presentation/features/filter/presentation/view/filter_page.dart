@@ -48,10 +48,6 @@ class FilterPage extends StatelessWidget {
                 ),
                 child: BlocBuilder<FilterCubit, FilterState>(
                   builder: (context, state) {
-                    if (state is SetFilter) {
-                      state.printFilterParams();
-                    }
-
                     return ListView(
                       children: [
                         Text(
