@@ -19,16 +19,20 @@ class TotalsSection extends StatelessWidget {
         const SizedBox(height: 8),
         const LightDivider(),
         const SizedBox(height: 8),
-        _row('Total', t.total.toStringAsFixed(2), s.copyWith(fontWeight: FontWeight.bold)),
+        _row(
+          'Total',
+          t.total.toStringAsFixed(2),
+          s.copyWith(fontWeight: FontWeight.bold),
+        ),
       ],
     );
   }
 
   Widget _row(String l, String r, TextStyle style) => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(l, style: style),
-          Text('\$'+r, style: style),
-        ],
-      );
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Text(l, style: style),
+      Text('\$$r', style: style),
+    ],
+  );
 }

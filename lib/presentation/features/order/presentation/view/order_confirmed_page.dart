@@ -37,14 +37,14 @@ class _OrderConfirmedPageState extends State<OrderConfirmedPage> {
     // Receive orderId via GoRouter.extra
     _orderId ??= GoRouterState.of(context).extra as String?;
     if (_orderId != null) {
-  // Mark as paid (keep active) and clear cart once (side-effect) without requiring OrderCubit
+      // Mark as paid (keep active) and clear cart once (side-effect) without requiring OrderCubit
       final auth = context.read<AuthCubit>().state;
       final cart = context.read<CartCubit>();
       if (auth is Authenticated && (auth.user.id ?? '').isNotEmpty) {
         final uid = auth.user.id!;
         // Fire-and-forget
-    sl<OrderFirestoreService>()
-      .markOrderPaid(uid: uid, orderId: _orderId!)
+        sl<OrderFirestoreService>()
+            .markOrderPaid(uid: uid, orderId: _orderId!)
             .then((_) => cart.clear())
             .catchError((_) {});
       }
@@ -55,10 +55,12 @@ class _OrderConfirmedPageState extends State<OrderConfirmedPage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        context.go(RouterConstants.bottomNavBar);
-        return false;
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          context.go(RouterConstants.bottomNavBar);
+        }
       },
       child: SharedScaffold(
         appBarTitle: AppStrings.orderConfirmedTitle,
@@ -82,7 +84,11 @@ class _OrderConfirmedPageState extends State<OrderConfirmedPage> {
                 const Text(
                   AppStrings.orderPlacedSuccessfully,
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.w400),
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -96,25 +102,33 @@ class _OrderConfirmedPageState extends State<OrderConfirmedPage> {
                 const SizedBox(height: 16),
                 TrackOrderButton(
                   onTap: () async {
-                    final allow = await showDialog<bool>(
+                    final allow =
+                        await showDialog<bool>(
                           context: context,
                           builder: (ctx) => AlertDialog(
                             title: const Text(AppStrings.enableLocationTitle),
                             content: const Text(AppStrings.enableLocationBody),
                             actions: [
-                              TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text(AppStrings.notNow)),
-                              TextButton(onPressed: () => Navigator.of(ctx).pop(true), child: const Text(AppStrings.allow)),
+                              TextButton(
+                                onPressed: () => Navigator.of(ctx).pop(false),
+                                child: const Text(AppStrings.notNow),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.of(ctx).pop(true),
+                                child: const Text(AppStrings.allow),
+                              ),
                             ],
                           ),
                         ) ??
                         false;
                     if (!allow) return;
                     // Ask for GPS permission first
-                    LocationPermission permission = await Geolocator.checkPermission();
+                    LocationPermission permission =
+                        await Geolocator.checkPermission();
                     if (permission == LocationPermission.denied) {
                       permission = await Geolocator.requestPermission();
                     }
-                    if (!mounted) return;
+                    if (!context.mounted) return;
                     context.push(RouterConstants.deliveryTime);
                   },
                 ),
@@ -124,7 +138,11 @@ class _OrderConfirmedPageState extends State<OrderConfirmedPage> {
                   child: Text(
                     AppStrings.supportReachOut,
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.black87, fontSize: 12, fontWeight: FontWeight.w400),
+                    style: TextStyle(
+                      color: Colors.black87,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -157,14 +175,19 @@ class _OrderConfirmedPageState extends State<OrderConfirmedPage> {
       // Use location only if already permitted (avoid prompting here)
       final enabled = await Geolocator.isLocationServiceEnabled();
       final permission = await Geolocator.checkPermission();
-      if (enabled && permission != LocationPermission.denied && permission != LocationPermission.deniedForever) {
+      if (enabled &&
+          permission != LocationPermission.denied &&
+          permission != LocationPermission.deniedForever) {
         final pos = await Geolocator.getCurrentPosition();
         final user = LatLng(pos.latitude, pos.longitude);
         // Pseudo nearest restaurant: within ~2km
         final rand = math.Random();
         final offsetLat = (rand.nextDouble() - 0.5) * 0.02;
         final offsetLng = (rand.nextDouble() - 0.5) * 0.02;
-        final rest = LatLng(user.latitude + offsetLat, user.longitude + offsetLng);
+        final rest = LatLng(
+          user.latitude + offsetLat,
+          user.longitude + offsetLng,
+        );
         final distKm = const Distance().as(LengthUnit.Kilometer, user, rest);
         final travelMinutes = (distKm / 0.5); // 0.5 km per minute ≈ 30km/h
         const prepMinutes = 10;

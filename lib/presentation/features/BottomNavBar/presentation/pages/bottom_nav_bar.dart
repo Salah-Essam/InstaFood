@@ -3,9 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:insta_food/core/theme/app_assets.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
+import 'package:insta_food/presentation/features/Restaurants/presentation/pages/restaurant_page.dart';
 import 'package:insta_food/presentation/features/drawer/presentation/cubit/drawer_cubit.dart';
-import 'package:go_router/go_router.dart';
-import 'package:insta_food/core/routes/router_constants.dart';
 import 'package:insta_food/presentation/features/drawer/presentation/view/app_drawer.dart';
 import 'package:insta_food/presentation/features/home/presentation/view/home_page.dart';
 import 'package:insta_food/presentation/features/favorites/presentation/favorites_page.dart';
@@ -32,7 +31,7 @@ class BottomNavBar extends StatelessWidget {
         ),
       ),
       PersistentTabConfig(
-        screen: Page(name: 'Menu', scaffoldKey: _scaffoldKey, onInit: () => context.go(RouterConstants.restaurants)),
+        screen: RestaurantListPage(),
         item: ItemConfig(
           icon: SvgPicture.asset(
             AppAssets.navBarMenu,
@@ -52,7 +51,7 @@ class BottomNavBar extends StatelessWidget {
         ),
       ),
       PersistentTabConfig(
-  screen: const MyOrdersPage(),
+        screen: const MyOrdersPage(),
         item: ItemConfig(
           icon: SvgPicture.asset(
             AppAssets.navBarOrders,
@@ -98,6 +97,7 @@ class BottomNavBar extends StatelessWidget {
           canPop: false,
           onPopInvokedWithResult: (didPop, result) {
             // When back is pressed at tab-level pages, go to first tab instead of exiting.
+
             if (!didPop) {
               if (BottomNavController.controller.index != 0) {
                 BottomNavController.switchTo(0);

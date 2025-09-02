@@ -41,7 +41,10 @@ class _DeliveryTimePageState extends State<DeliveryTimePage> {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
     }
-    if (permission == LocationPermission.deniedForever || permission == LocationPermission.denied) return;
+    if (permission == LocationPermission.deniedForever ||
+        permission == LocationPermission.denied) {
+      return;
+    }
 
     final pos = await Geolocator.getCurrentPosition();
     final user = LatLng(pos.latitude, pos.longitude);
@@ -72,28 +75,47 @@ class _DeliveryTimePageState extends State<DeliveryTimePage> {
       pageDetails: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(AppStrings.shippingAddress, style: AppTextStyles.greeting.copyWith(color: Colors.black)),
+          Text(
+            AppStrings.shippingAddress,
+            style: AppTextStyles.greeting.copyWith(color: Colors.black),
+          ),
           const SizedBox(height: 8),
           const AddressPillCurrent(),
           const SizedBox(height: 12),
-          SizedBox(
-            height: 180,
-            child: _buildMap(),
-          ),
+          SizedBox(height: 180, child: _buildMap()),
           const SizedBox(height: 12),
           Row(
             children: [
-              Text(AppStrings.deliveryTime, style: AppTextStyles.mediumText.copyWith(color: Colors.black, fontWeight: FontWeight.w600)),
+              Text(
+                AppStrings.deliveryTime,
+                style: AppTextStyles.mediumText.copyWith(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
               const Spacer(),
-              Text(_etaMin != null ? '${_etaMin!.toStringAsFixed(0)} mins' : '—',
-                  style: AppTextStyles.mediumText.copyWith(color: AppColors.primaryOrange, fontWeight: FontWeight.w700)),
+              Text(
+                _etaMin != null ? '${_etaMin!.toStringAsFixed(0)} mins' : '—',
+                style: AppTextStyles.mediumText.copyWith(
+                  color: AppColors.primaryOrange,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
             ],
           ),
           if (_distanceKm != null)
-            Text('Distance ~ ${_distanceKm!.toStringAsFixed(2)} km',
-                style: AppTextStyles.mediumText.copyWith(color: Colors.black54, fontSize: 12)),
+            Text(
+              'Distance ~ ${_distanceKm!.toStringAsFixed(2)} km',
+              style: AppTextStyles.mediumText.copyWith(
+                color: Colors.black54,
+                fontSize: 12,
+              ),
+            ),
           const SizedBox(height: 4),
-          Text(AppStrings.estimatedDelivery, style: AppTextStyles.mediumText.copyWith(color: Colors.black54)),
+          Text(
+            AppStrings.estimatedDelivery,
+            style: AppTextStyles.mediumText.copyWith(color: Colors.black54),
+          ),
           const SizedBox(height: 12),
           Container(
             padding: const EdgeInsets.all(12),
@@ -101,17 +123,35 @@ class _DeliveryTimePageState extends State<DeliveryTimePage> {
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
-                BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 6, offset: const Offset(0, 2)),
+                BoxShadow(
+                  color: Colors.black.withAlpha(13),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
               ],
             ),
             child: Column(
-                  children: [
-                TimelineRow(title: 'Your order has been accepted', time: '2 min'),
-                TimelineRow(title: 'The restaurant is preparing your order', time: '5 min'),
-                TimelineRow(title: 'The delivery is on his way', time: '10 min'),
-                TimelineRow(title: 'Your order has been delivered', time: '8 min'),
+              children: [
+                TimelineRow(
+                  title: 'Your order has been accepted',
+                  time: '2 min',
+                ),
+                TimelineRow(
+                  title: 'The restaurant is preparing your order',
+                  time: '5 min',
+                ),
+                TimelineRow(
+                  title: 'The delivery is on his way',
+                  time: '10 min',
+                ),
+                TimelineRow(
+                  title: 'Your order has been delivered',
+                  time: '8 min',
+                ),
                 const SizedBox(height: 8),
-                    _ActionPills(onReturnHome: () => context.go(RouterConstants.bottomNavBar)),
+                _ActionPills(
+                  onReturnHome: () => context.go(RouterConstants.bottomNavBar),
+                ),
               ],
             ),
           ),
@@ -129,20 +169,32 @@ class _DeliveryTimePageState extends State<DeliveryTimePage> {
         point: _user!,
         width: 40,
         height: 40,
-        child: const Icon(Icons.person_pin_circle, color: AppColors.primaryOrange, size: 36),
+        child: const Icon(
+          Icons.person_pin_circle,
+          color: AppColors.primaryOrange,
+          size: 36,
+        ),
       ),
       if (_restaurant != null)
         Marker(
           point: _restaurant!,
           width: 40,
           height: 40,
-          child: const Icon(Icons.restaurant, color: Colors.redAccent, size: 28),
+          child: const Icon(
+            Icons.restaurant,
+            color: Colors.redAccent,
+            size: 28,
+          ),
         ),
     ];
 
     final poly = _restaurant != null
         ? [
-            Polyline(points: [_user!, _restaurant!], color: AppColors.primaryOrange, strokeWidth: 4),
+            Polyline(
+              points: [_user!, _restaurant!],
+              color: AppColors.primaryOrange,
+              strokeWidth: 4,
+            ),
           ]
         : <Polyline>[];
 
@@ -163,40 +215,49 @@ class _DeliveryTimePageState extends State<DeliveryTimePage> {
 }
 
 class _ActionPills extends StatelessWidget {
-   const _ActionPills({required this.onReturnHome});
-   final VoidCallback onReturnHome;
+  const _ActionPills({required this.onReturnHome});
+  final VoidCallback onReturnHome;
 
-   @override
-   Widget build(BuildContext context) {
-     TextStyle style(Color c) => AppTextStyles.mediumText.copyWith(color: c, fontWeight: FontWeight.w600);
-     return Row(
-       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-       children: [
-         InkWell(
-           onTap: onReturnHome,
-           borderRadius: BorderRadius.circular(24),
-           child: Container(
-             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-             decoration: BoxDecoration(
-               color: Colors.white,
-               borderRadius: BorderRadius.circular(24),
-               border: Border.all(color: AppColors.primaryOrange),
-             ),
-             child: Text(AppStrings.returnHome, style: style(AppColors.primaryOrange)),
-           ),
-         ),
-         InkWell(
-           borderRadius: BorderRadius.circular(24),
-           child: Container(
-             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-             decoration: BoxDecoration(
-               color: AppColors.orange2,
-               borderRadius: BorderRadius.circular(24),
-             ),
-             child: Text(AppStrings.trackOrder, style: style(AppColors.primaryOrange)),
-           ),
-         ),
-       ],
-     );
+  @override
+  Widget build(BuildContext context) {
+    TextStyle style(Color c) => AppTextStyles.mediumText.copyWith(
+      color: c,
+      fontWeight: FontWeight.w600,
+    );
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        InkWell(
+          onTap: onReturnHome,
+          borderRadius: BorderRadius.circular(24),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: AppColors.primaryOrange),
+            ),
+            child: Text(
+              AppStrings.returnHome,
+              style: style(AppColors.primaryOrange),
+            ),
+          ),
+        ),
+        InkWell(
+          borderRadius: BorderRadius.circular(24),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+            decoration: BoxDecoration(
+              color: AppColors.orange2,
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Text(
+              AppStrings.trackOrder,
+              style: style(AppColors.primaryOrange),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }

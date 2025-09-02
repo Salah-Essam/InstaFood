@@ -10,6 +10,31 @@ class AppTheme {
     progressIndicatorTheme: ProgressIndicatorThemeData(
       color: AppColors.primaryOrange,
     ),
+    switchTheme: SwitchThemeData(
+      trackColor: WidgetStateColor.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return AppColors.primaryOrange; // activeTrackColor
+        }
+        return const Color.fromARGB(55, 233, 84, 34); // inactiveTrackColor
+      }),
+
+      // لون الدائرة (thumb) لما يكون ON / OFF
+      thumbColor: WidgetStateColor.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return AppColors.white; // activeColor
+        }
+        return AppColors.white; // inactiveThumbColor
+      }),
+
+      // نشيل البوردر حوالين التراك
+      trackOutlineColor: WidgetStateColor.fromMap({
+        WidgetState.any: Colors.transparent,
+      }),
+
+      // نخلي مساحة التتش صغيرة (مش يكبر السويتش)
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    ),
+
     inputDecorationTheme: InputDecorationTheme(
       fillColor: AppColors.lightYellow,
       filled: true,
@@ -47,7 +72,7 @@ class AppTheme {
     // ),
     sliderTheme: SliderThemeData(
       activeTrackColor: AppColors.primaryOrange,
-      inactiveTrackColor: AppColors.grey.withOpacity(0.3),
+      inactiveTrackColor: AppColors.grey.withAlpha(76),
       trackHeight: 7.75,
       // Thumb properties
       thumbColor: AppColors.primaryOrange,
@@ -66,7 +91,7 @@ class AppTheme {
 
       // For keypoints/divisions
       activeTickMarkColor: AppColors.primaryOrange,
-      inactiveTickMarkColor: AppColors.grey.withOpacity(0.5),
+      inactiveTickMarkColor: AppColors.grey.withAlpha(127),
       tickMarkShape: RoundSliderTickMarkShape(tickMarkRadius: 2.0),
 
       // Optional: Show always the value indicator
