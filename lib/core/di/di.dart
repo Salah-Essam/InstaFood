@@ -1,7 +1,6 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:hive/hive.dart';
 import 'package:insta_food/core/di/register_restaurants.dart';
 import 'package:insta_food/core/network/Firebase/firebase_auth_service.dart';
 import 'package:insta_food/core/network/Firebase/firebase_options.dart';
@@ -30,7 +29,10 @@ import 'package:insta_food/presentation/features/cart/data/repositories/cart_rep
 import 'package:insta_food/presentation/features/cart/logic/cart_cubit.dart';
 import 'package:insta_food/presentation/features/order/data/repos/orders_repository.dart';
 import 'package:insta_food/presentation/features/order/logic/orders_cubit.dart';
+import 'package:hive/hive.dart';
 import 'package:insta_food/presentation/features/favorites/data/favorites_repository_memory.dart';
+import 'package:insta_food/presentation/features/favorites/data/favorites_repository_hive.dart';
+import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_state.dart';
 import 'package:insta_food/presentation/features/favorites/domain/favorites_repository.dart';
 import 'package:insta_food/presentation/features/favorites/logic/favorites_cubit.dart';
 
@@ -111,7 +113,28 @@ Future<void> setupLocator() async {
   sl.registerFactory<OrdersCubit>(() => OrdersCubit(repo: sl<OrdersRepository>(), auth: sl<AuthCubit>()));
 
   // Favorites (session-scoped)
-  sl.registerLazySingleton<FavoritesRepository>(() => FavoritesRepositoryMemory());
+  sl.registerLazySingleton<FavoritesRepository>(() {
+    // Prefer Hive per-user cache; fall back to memory if box not available
+    try {
+      final box = Hive.box<ItemModel>(cacheFavoritesKey);
+      return FavoritesRepositoryHive(
+        box: box,
+        uidProvider: () {
+          // Try Auth first
+          final auth = sl<AuthCubit>().state;
+          String? uid;
+          if (auth is Authenticated) {
+            uid = auth.user.id;
+          } else {
+            uid = sl<SessionManager>().getUser()?.id;
+          }
+          return uid ?? 'guest';
+        },
+      );
+    } catch (_) {
+      return FavoritesRepositoryMemory();
+    }
+  });
   sl.registerFactory<FavoritesCubit>(() => FavoritesCubit(repo: sl<FavoritesRepository>()));
 
 
