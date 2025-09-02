@@ -9,9 +9,14 @@ import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/core/utils/app_strings.dart';
 import 'package:insta_food/presentation/features/filter/presentation/cubit/filter_cubit.dart';
 import 'package:insta_food/presentation/features/filter/presentation/widget/catagory_button_grid.dart';
-import 'package:insta_food/presentation/features/filter/presentation/widget/sub_category_button_grid.dart';
+
+import 'package:insta_food/presentation/features/filter/presentation/widget/subCategory_button_grid.dart';
+import 'package:insta_food/presentation/features/home/presentation/widget/home_button_grid.dart';
+import 'package:insta_food/presentation/features/search/presentation/search_page.dart';
+
 import 'package:insta_food/presentation/widgets/app_button_onb.dart';
 import 'package:insta_food/presentation/widgets/custom_appbar.dart';
+import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 
 class FilterPage extends StatelessWidget {
   const FilterPage({super.key});
@@ -49,6 +54,7 @@ class FilterPage extends StatelessWidget {
                     if (state is SetFilter) {
                       state.printFilterParams();
                     }
+
                     return ListView(
                       children: [
                         Text(
@@ -159,10 +165,19 @@ class FilterPage extends StatelessWidget {
                             return SizedBox.shrink();
                           },
                         ),
-                        Text(
-                          AppStrings.price,
-                          style: AppTextStyles.dialogGreetingDialogeOrange
-                              .copyWith(fontSize: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              AppStrings.price,
+                              style: AppTextStyles.dialogGreetingDialogeOrange
+                                  .copyWith(fontSize: 20),
+                            ),
+                            Text(
+                              'Show items under: \$${state is SetFilter ? (state.maxPrice!.toStringAsFixed(0)) : 40.0}',
+                              style: AppTextStyles.small,
+                            ),
+                          ],
                         ),
                         Padding(
                           padding: EdgeInsetsGeometry.symmetric(horizontal: 14),
@@ -177,16 +192,13 @@ class FilterPage extends StatelessWidget {
                                     v.toDouble(),
                                   );
                                 },
-                                //thumbColor: AppColors.primaryOrange,
                                 min: 40,
                                 max: 700,
                               ),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
-                                children: [40, 250, 500, 750, 1000].map((
-                                  value,
-                                ) {
+                                children: [40, 200, 370, 535, 700].map((value) {
                                   return Text(
                                     '\$$value',
                                     style: AppTextStyles.small,
@@ -200,7 +212,14 @@ class FilterPage extends StatelessWidget {
                         Align(
                           alignment: Alignment.bottomCenter,
                           child: AppButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              context.read<FilterCubit>().applyFilters();
+                              pushScreen(
+                                context,
+                                screen: SearchPage(),
+                                withNavBar: true,
+                              );
+                            },
                             borderRadius: 51,
                             label: AppStrings.apply,
                             height: 38,

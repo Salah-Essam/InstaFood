@@ -13,7 +13,6 @@ class ButtonGrid extends StatelessWidget {
   const ButtonGrid({super.key, this.pushPage = true});
   @override
   Widget build(BuildContext context) {
-
     return BlocBuilder<FilterCubit, FilterState>(
       builder: (context, state) {
         return SizedBox(
@@ -30,8 +29,9 @@ class ButtonGrid extends StatelessWidget {
               final category = FoodCategory.values[index];
 
               final isSelected =
-                  state is SetCatagoryFilter &&
-                  state.selectedCategory == category;
+                  (state is SetCatagoryFilter &&
+                      state.selectedCategory == category) ||
+                  (state is ApplyFilter && state.selectedCategory == category);
               return Padding(
                 padding: const EdgeInsets.only(right: 19, left: 1),
                 child: Column(
@@ -40,9 +40,9 @@ class ButtonGrid extends StatelessWidget {
                     AppButton(
                       onPressed: pushPage!
                           ? () {
-                              context.read<FilterCubit>().setCategoryFilter(
-                                category,
-                              );
+                              context.read<FilterCubit>()
+                                ..setCategoryFilter(category)
+                                ..applyFilters();
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -50,9 +50,12 @@ class ButtonGrid extends StatelessWidget {
                                 ),
                               );
                             }
-                          : () => context.read<FilterCubit>().setCategoryFilter(
-                              category,
-                            ),
+                          : () {
+                              context.read<FilterCubit>()
+                                ..setCategoryFilter(category)
+                                ..applyFilters();
+                            },
+
                       backgroundColor: isSelected
                           ? AppColors.primaryYellow
                           : AppColors.lightYellow,
@@ -80,7 +83,6 @@ class ButtonGrid extends StatelessWidget {
           ),
         );
       },
-
     );
   }
 }

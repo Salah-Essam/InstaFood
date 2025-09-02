@@ -62,7 +62,30 @@ final class SetFilter extends FilterState {
   }
 
   @override
-  List<Object?> get props => [selectedCategory, maxPrice, minRating];
+  List<Object?> get props => [
+    selectedCategory,
+    maxPrice,
+    minRating,
+    subCategory,
+  ];
 }
 
-final class ApplyFilter extends FilterState {}
+final class ApplyFilter extends FilterState {
+  final FoodCategory? selectedCategory;
+  final String? subCategory;
+  final double? maxPrice;
+  final int? minRating;
+  const ApplyFilter({
+    this.selectedCategory,
+    this.maxPrice,
+    this.minRating,
+    this.subCategory,
+  });
+  @override
+  List<Object?> get props => [
+    selectedCategory,
+    maxPrice,
+    minRating,
+    subCategory,
+  ];
+}
