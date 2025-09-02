@@ -4,6 +4,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:insta_food/core/theme/app_assets.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/presentation/features/drawer/presentation/cubit/drawer_cubit.dart';
+import 'package:go_router/go_router.dart';
+import 'package:insta_food/core/routes/router_constants.dart';
 import 'package:insta_food/presentation/features/drawer/presentation/view/app_drawer.dart';
 import 'package:insta_food/presentation/features/home/presentation/view/home_page.dart';
 import 'package:insta_food/presentation/features/order/presentation/view/my_orders_page.dart';
@@ -16,7 +18,7 @@ class BottomNavBar extends StatelessWidget {
   static final GlobalKey<ScaffoldState> _scaffoldKey =
       GlobalKey<ScaffoldState>();
 
-  List<PersistentTabConfig> _tabs() {
+  List<PersistentTabConfig> _tabs(BuildContext context) {
     return [
       PersistentTabConfig(
         screen: HomePage(),
@@ -29,7 +31,7 @@ class BottomNavBar extends StatelessWidget {
         ),
       ),
       PersistentTabConfig(
-        screen: Page(name: 'Menu', scaffoldKey: _scaffoldKey),
+        screen: Page(name: 'Menu', scaffoldKey: _scaffoldKey, onInit: () => context.go(RouterConstants.restaurants)),
         item: ItemConfig(
           icon: SvgPicture.asset(
             AppAssets.navBarMenu,
@@ -125,28 +127,38 @@ class BottomNavBar extends StatelessWidget {
   }
 }
 
-class Page extends StatelessWidget {
-  const Page({super.key, required this.name, this.scaffoldKey});
+class Page extends StatefulWidget {
+  const Page({super.key, required this.name, this.scaffoldKey, this.onInit});
   final GlobalKey<ScaffoldState>? scaffoldKey;
-
   final String name;
+  final VoidCallback? onInit;
+
+  @override
+  State<Page> createState() => _PageState();
+}
+
+class _PageState extends State<Page> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => widget.onInit?.call());
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // title: const Text('InstaFood'),
         actions: [
           IconButton(
             icon: const Icon(Icons.menu),
             iconSize: 24,
             onPressed: () {
-              scaffoldKey?.currentState?.openEndDrawer();
+              widget.scaffoldKey?.currentState?.openEndDrawer();
             },
           ),
         ],
       ),
-      body: Center(child: Text(name)),
+      body: Center(child: Text(widget.name)),
     );
   }
 }

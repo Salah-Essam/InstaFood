@@ -71,21 +71,21 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                     ),
                     SizedBox(width: 7),
-                    ?hideNotification
-                        ? null
-                        : GestureDetector(
-                            onTap: () {
-                              context.read<DrawerCubit>().openDrawer(
+                    if (!hideNotification) ...[
+                      GestureDetector(
+                        onTap: () {
+                          context.read<DrawerCubit>().openDrawer(
                                 DrawerType.notifications,
-                              );
-                            },
-                            child: SvgPicture.asset(
-                              AppAssets.notification,
-                              width: 26,
-                              height: 26,
-                            ),
-                          ),
-                    ?hideNotification ? null : SizedBox(width: 7),
+                          );
+                        },
+                        child: SvgPicture.asset(
+                          AppAssets.notification,
+                          width: 26,
+                          height: 26,
+                        ),
+                      ),
+                      const SizedBox(width: 7),
+                    ],
                     GestureDetector(
                       onTap: () {
                         context.read<DrawerCubit>().openDrawer(

@@ -3,17 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
-import 'package:insta_food/presentation/features/category/presentation/view/category_page.dart';
 import 'package:insta_food/presentation/features/filter/data/enum/catagories_enum.dart';
 import 'package:insta_food/presentation/features/filter/presentation/cubit/filter_cubit.dart';
 import 'package:insta_food/presentation/widgets/app_button_onb.dart';
 
-class ButtonGrid extends StatelessWidget {
-  final bool? pushPage;
-  const ButtonGrid({super.key, this.pushPage = true});
+class CatagoryButtonGrid extends StatelessWidget {
+  const CatagoryButtonGrid({super.key});
   @override
   Widget build(BuildContext context) {
-
     return BlocBuilder<FilterCubit, FilterState>(
       builder: (context, state) {
         return SizedBox(
@@ -30,29 +27,16 @@ class ButtonGrid extends StatelessWidget {
               final category = FoodCategory.values[index];
 
               final isSelected =
-                  state is SetCatagoryFilter &&
-                  state.selectedCategory == category;
+                  state is SetFilter && state.selectedCategory == category;
               return Padding(
                 padding: const EdgeInsets.only(right: 19, left: 1),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     AppButton(
-                      onPressed: pushPage!
-                          ? () {
-                              context.read<FilterCubit>().setCategoryFilter(
-                                category,
-                              );
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => CategoryPage(),
-                                ),
-                              );
-                            }
-                          : () => context.read<FilterCubit>().setCategoryFilter(
-                              category,
-                            ),
+                      onPressed: () {
+                        context.read<FilterCubit>().toggleCategory(category);
+                      },
                       backgroundColor: isSelected
                           ? AppColors.primaryYellow
                           : AppColors.lightYellow,
@@ -80,7 +64,6 @@ class ButtonGrid extends StatelessWidget {
           ),
         );
       },
-
     );
   }
 }

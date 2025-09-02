@@ -31,10 +31,7 @@ class ItemRepoImpl implements ItemRepository {
       }
     } else {
       final cachedData = await localDataSource.getCachedItems();
-      if (cachedData != null) {
-        return Right(cachedData);
-      }
-      return Left(CacheFailure("No internet & no cached data available."));
+      return Right(cachedData);
     }
   }
 
