@@ -8,5 +8,8 @@ class ApiKeys {
   static const String itemPrice = "itemPrice";
   static const String restaurantName = "restaurantName";
   static const String restaurantID = "restaurantID";
+  static const String menuID = "menuID";
+  static const String menuName = "menuName";
+  static const String menuDescription = "menuDescription";
   static const String imageUrl = "imageUrl";
 }

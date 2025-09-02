@@ -23,6 +23,9 @@ import 'package:insta_food/presentation/features/home/presentation/view/home_pag
 import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 import 'package:insta_food/presentation/features/items/presentation/view/item_page.dart';
 import 'package:insta_food/presentation/features/Restaurants/presentation/pages/restaurant_page.dart';
+import 'package:insta_food/presentation/features/menu/presentation/pages/menu_screen.dart';
+import 'package:insta_food/presentation/features/menu/presentation/cubit/menu_cubit.dart';
+import 'package:insta_food/presentation/features/Restaurants/data/model/restaurant_model.dart';
 import 'package:insta_food/presentation/features/Restaurants/presentation/cubit/restaurants_cubit.dart';
 
 import 'package:insta_food/presentation/features/auth/presentation/pages/login.dart';
@@ -199,6 +202,26 @@ final GoRouter appRouter = GoRouter(
       //   return true;
       // },
     ),
+  ),
+    GoRoute(
+      path: RouterConstants.menu,
+      builder: (context, state) {
+        final restaurant = state.extra as Restaurant?; // expected non-null
+        return BlocProvider(
+          create: (_) => sl<MenuCubit>()..load(restaurant),
+          child: MenuPage(restaurant: restaurant),
+        );
+      },
+    ),
+  GoRoute(
+    path: RouterConstants.categoryPage,
+    builder: (context, state) => CategoryPage(),
+    // onExit: (GoRouterState state) {
+    //   // Reset when leaving category page
+    //   sl<FilterCubit>().setCategoryFilter(null);
+    //   return true;
+    // },
+  ),
   ],
 );
 

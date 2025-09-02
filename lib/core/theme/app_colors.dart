@@ -43,4 +43,5 @@ class AppColors {
   // ================= Status =================
   static const Color error = Color(0xFFFF0000); // Bright red
   static const Color success = Color(0xFF00AA00); // Bright green
+  static const Color black = Color(0xFF000000); // Pure black
 }

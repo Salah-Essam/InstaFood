@@ -94,36 +94,37 @@ class BottomNavBar extends StatelessWidget {
             return AppDrawer();
           },
         ),
-        body:
-            // PopScope(
-            //   canPop: false,
-            //   onPopInvokedWithResult: (didPop, result) {
-            //     if (!didPop) {
-            //       if (BottomNavController.controller.index != 0) {
-            //         BottomNavController.switchTo(0);
-            //       }
-            //     }
-            //   },
-            //   child: )
-            PersistentTabView(
-              controller: BottomNavController.controller,
-              tabs: _tabs(context),
-              screenTransitionAnimation: ScreenTransitionAnimation(
-                curve: Curves.ease,
-                duration: Duration(milliseconds: 300),
-              ),
-              navBarBuilder: (p0) => NeumorphicBottomNavBar(
-                navBarConfig: p0,
-                navBarDecoration: NavBarDecoration(
-                  color: AppColors.primaryOrange,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(32),
-                    topRight: Radius.circular(32),
-                  ),
+        body: PopScope(
+          canPop: false,
+          onPopInvoked: (didPop) {
+            
+            if (!didPop) {
+              if (BottomNavController.controller.index != 0) {
+                BottomNavController.switchTo(0);
+              }
+            }
+          },
+          child: PersistentTabView(
+            controller: BottomNavController.controller,
+            tabs: _tabs(context),
+            screenTransitionAnimation: ScreenTransitionAnimation(
+              curve: Curves.ease,
+              duration: Duration(milliseconds: 300),
+            ),
+            navBarBuilder: (p0) => NeumorphicBottomNavBar(
+              navBarConfig: p0,
+              navBarDecoration: NavBarDecoration(
+                color: AppColors.primaryOrange,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(32),
+                  topRight: Radius.circular(32),
                 ),
               ),
             ),
+          ),
+        ),
       ),
     );
   }
 }
+

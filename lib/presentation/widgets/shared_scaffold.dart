@@ -9,13 +9,16 @@ class SharedScaffold extends StatelessWidget {
     required this.appBarTitle,
     required this.pageDetails,
     this.fullYellow = false,
+    this.contentPadding = const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+    this.headerAction,
     this.useSafeAreaAndPadding = true,
   });
 
   final String appBarTitle;
   final Widget pageDetails;
-  // When true, renders the entire page on a yellow background without the inner white rounded container.
   final bool fullYellow;
+  final EdgeInsets contentPadding;
+  final Widget? headerAction;
   final bool useSafeAreaAndPadding;
 
   @override
@@ -29,7 +32,7 @@ class SharedScaffold extends StatelessWidget {
             width: double.infinity,
             child: Center(
               child: Padding(
-                padding: const EdgeInsets.only(top: 48, left: 16, right: 64),
+                padding: const EdgeInsets.only(top: 48, left: 16, right: 16),
                 child: Row(
                   children: [
                     AppBackButton(),
@@ -43,6 +46,7 @@ class SharedScaffold extends StatelessWidget {
                         ),
                       ),
                     ),
+                    if (headerAction != null) headerAction!,
                   ],
                 ),
               ),
@@ -58,10 +62,7 @@ class SharedScaffold extends StatelessWidget {
                       right: false,
                       bottom: true,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 32,
-                          vertical: 16,
-                        ),
+                        padding: contentPadding,
                         child: pageDetails,
                       ),
                     )
@@ -80,10 +81,7 @@ class SharedScaffold extends StatelessWidget {
                               right: false,
                               bottom: true,
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 32,
-                                  vertical: 16,
-                                ),
+                                padding: contentPadding,
                                 child: pageDetails,
                               ),
                             )

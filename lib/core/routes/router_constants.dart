@@ -25,6 +25,7 @@ class RouterConstants {
   static const String itemPage = '/itemPage';
   static const String forgotPassword = '/set_password';
   static const String restaurants = '/restaurants';
+  static const String menu = '/menu';
   static const String categoryPage = '/categoryPage';
   static const String addNewPaymentPage = '/addNewPaymentPage';
   static const String passwordSetting = '/passwordSetting';

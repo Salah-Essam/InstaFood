@@ -2,6 +2,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:insta_food/core/di/register_restaurants.dart';
+import 'package:insta_food/core/di/register_menu.dart';
 import 'package:insta_food/core/network/Firebase/firebase_auth_service.dart';
 import 'package:insta_food/core/network/Firebase/firebase_options.dart';
 import 'package:get_it/get_it.dart';
@@ -161,4 +162,5 @@ Future<void> setupLocator() async {
 
   registerRestaurants();
   registerItems();
+  registerMenu();
 }
