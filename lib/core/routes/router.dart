@@ -202,26 +202,16 @@ final GoRouter appRouter = GoRouter(
       //   return true;
       // },
     ),
-  ),
     GoRoute(
       path: RouterConstants.menu,
       builder: (context, state) {
-        final restaurant = state.extra as Restaurant?; // expected non-null
+        final restaurant = state.extra as Restaurant?; // may be null if navigation incorrect
         return BlocProvider(
           create: (_) => sl<MenuCubit>()..load(restaurant),
           child: MenuPage(restaurant: restaurant),
         );
       },
     ),
-  GoRoute(
-    path: RouterConstants.categoryPage,
-    builder: (context, state) => CategoryPage(),
-    // onExit: (GoRouterState state) {
-    //   // Reset when leaving category page
-    //   sl<FilterCubit>().setCategoryFilter(null);
-    //   return true;
-    // },
-  ),
   ],
 );
 

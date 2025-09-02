@@ -81,7 +81,7 @@ class RestaurantFiltersState extends State<RestaurantFilters> {
         borderRadius: BorderRadius.circular(38),
         child: Container(
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.primaryOrange : AppColors.orange2,
+            color: isSelected ? AppColors.splashOrange : AppColors.white,
             borderRadius: BorderRadius.circular(38),
             border: Border.all(
               color: isSelected ? AppColors.primaryOrange : AppColors.border,

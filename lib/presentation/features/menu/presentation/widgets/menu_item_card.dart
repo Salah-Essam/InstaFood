@@ -25,7 +25,7 @@ class MenuItemCard extends StatelessWidget {
             width: double.infinity,
             height: 120,
             decoration: const BoxDecoration(
-              color: AppColors.orange2,
+              color: AppColors.splashOrange,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(12),
                 topRight: Radius.circular(12),
@@ -41,7 +41,7 @@ class MenuItemCard extends StatelessWidget {
                 fit: BoxFit.cover,
                 width: double.infinity,
                 errorBuilder: (context, error, stackTrace) => Container(
-                  color: AppColors.orange2,
+                  color: AppColors.splashOrange,
                   child: const Center(
                     child: Icon(Icons.image, color: AppColors.primaryOrange, size: 24),
                   ),

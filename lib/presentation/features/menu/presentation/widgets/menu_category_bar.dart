@@ -33,7 +33,7 @@ class MenuCategoryBar extends StatelessWidget {
       borderRadius: BorderRadius.circular(38),
       child: Container(
         decoration: BoxDecoration(
-          color: selected ? AppColors.primaryOrange : AppColors.orange2,
+          color: selected ? AppColors.splashOrange : AppColors.white,
           borderRadius: BorderRadius.circular(38),
           border: Border.all(color: selected ? AppColors.primaryOrange : AppColors.border, width: 1),
         ),
