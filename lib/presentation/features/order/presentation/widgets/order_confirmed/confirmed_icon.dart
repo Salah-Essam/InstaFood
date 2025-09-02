@@ -12,7 +12,7 @@ class ConfirmedIcon extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: AppColors.orange2.withOpacity(0.15),
+        color: AppColors.orange2.withAlpha(38),
         shape: BoxShape.circle,
         border: Border.all(color: AppColors.primaryOrange, width: 6),
       ),

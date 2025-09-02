@@ -334,7 +334,7 @@ class _Totals extends StatelessWidget {
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
       Text(l, style: style),
-      Text('\$' + r, style: style),
+      Text('\$$r', style: style),
     ],
   );
 }

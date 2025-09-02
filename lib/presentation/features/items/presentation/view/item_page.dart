@@ -191,6 +191,7 @@ class _ItemPageState extends State<ItemPage> {
                             context.read<CartCubit>().addOrUpdate(item).then((
                               _,
                             ) {
+                              if (!context.mounted) return;
                               if (isAuthed) {
                                 AppAlerts.showSuccessDialog(
                                   context,

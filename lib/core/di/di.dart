@@ -28,17 +28,14 @@ import 'package:insta_food/presentation/features/cart/data/datasources/cart_remo
 import 'package:insta_food/presentation/features/cart/data/repos/cart_repository_impl.dart';
 import 'package:insta_food/presentation/features/cart/data/repositories/cart_repository.dart';
 import 'package:insta_food/presentation/features/cart/logic/cart_cubit.dart';
-import 'package:insta_food/presentation/features/order/logic/order_cubit.dart';
 import 'package:insta_food/presentation/features/order/data/repos/orders_repository.dart';
 import 'package:insta_food/presentation/features/order/logic/orders_cubit.dart';
-
 
 final GetIt sl = GetIt.instance;
 
 Future<void> setupLocator() async {
   // Initialize Hive
   await HiveService.init();
-
 
   // Initialize Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -56,7 +53,7 @@ Future<void> setupLocator() async {
   sl.registerLazySingleton<FirebaseAuthService>(
     () => FirebaseAuthService(firebaseAuth: sl()),
   );
-  
+
   // Feature Firestore services
   sl.registerLazySingleton<CartFirestoreService>(
     () => CartFirestoreService(firestore: sl()),
@@ -71,12 +68,10 @@ Future<void> setupLocator() async {
     () => SessionManager(prefs: sharedPrefs),
   );
 
-
-  // Auth repository 
-  sl.registerLazySingleton<AuthRepository>(() => AuthRepository(
-        sl<FirebaseAuth>(),
-        sl<FirebaseFirestoreService>(),
-      ));
+  // Auth repository
+  sl.registerLazySingleton<AuthRepository>(
+    () => AuthRepository(sl<FirebaseAuth>(), sl<FirebaseFirestoreService>()),
+  );
 
   // Register cubits
   sl.registerFactory(() => AuthCubit(sl()));
@@ -86,28 +81,37 @@ Future<void> setupLocator() async {
 
   // Cart feature
   sl.registerLazySingleton<CartRemoteDataSource>(
-      () => CartRemoteDataSourceImpl(service: sl<CartFirestoreService>()));
+    () => CartRemoteDataSourceImpl(service: sl<CartFirestoreService>()),
+  );
 
   sl.registerLazySingleton<CartRepository>(
-      () => CartRepositoryImpl(remote: sl<CartRemoteDataSource>()));
+    () => CartRepositoryImpl(remote: sl<CartRemoteDataSource>()),
+  );
 
-  sl.registerFactory<CartCubit>(() => CartCubit(
-        repo: sl<CartRepository>(),
-        authCubit: sl<AuthCubit>(),
-        session: sl<SessionManager>(),
-      ));
+  sl.registerFactory<CartCubit>(
+    () => CartCubit(
+      repo: sl<CartRepository>(),
+      authCubit: sl<AuthCubit>(),
+      session: sl<SessionManager>(),
+    ),
+  );
 
   // Order cubit factory
-  sl.registerFactory<OrderCubit>(() => OrderCubit(
-        service: sl<OrderFirestoreService>(),
-        cartCubit: sl<CartCubit>(),
-        authCubit: sl<AuthCubit>(),
-      ));
+  sl.registerFactory<OrderCubit>(
+    () => OrderCubit(
+      service: sl<OrderFirestoreService>(),
+      cartCubit: sl<CartCubit>(),
+      authCubit: sl<AuthCubit>(),
+    ),
+  );
 
   // Orders (My Orders) repository and cubit
-  sl.registerLazySingleton<OrdersRepository>(() => OrdersRepositoryFs(sl<FirebaseFirestore>()));
-  sl.registerFactory<OrdersCubit>(() => OrdersCubit(repo: sl<OrdersRepository>(), auth: sl<AuthCubit>()));
-
+  sl.registerLazySingleton<OrdersRepository>(
+    () => OrdersRepositoryFs(sl<FirebaseFirestore>()),
+  );
+  sl.registerFactory<OrdersCubit>(
+    () => OrdersCubit(repo: sl<OrdersRepository>(), auth: sl<AuthCubit>()),
+  );
 
   // Register network services
   sl.registerLazySingleton<Connectivity>(() => Connectivity());
@@ -117,18 +121,16 @@ Future<void> setupLocator() async {
     () => NetworkInfo(connectivity: sl<Connectivity>()),
   );
 
- 
-sl.registerLazySingleton<Box<ItemModel>>(
-  () => Hive.box<ItemModel>(cacheItemsKey),
-  instanceName: cacheItemsKey,
-);
+  sl.registerLazySingleton<Box<ItemModel>>(
+    () => Hive.box<ItemModel>(cacheItemsKey),
+    instanceName: cacheItemsKey,
+  );
 
-sl.registerLazySingleton<Box<Restaurant>>(
-  () => Hive.box<Restaurant>(cacheRestaurantsKey),
-  instanceName: cacheRestaurantsKey,
-);
+  sl.registerLazySingleton<Box<Restaurant>>(
+    () => Hive.box<Restaurant>(cacheRestaurantsKey),
+    instanceName: cacheRestaurantsKey,
+  );
 
   registerRestaurants();
   registerItems();
 }
-  

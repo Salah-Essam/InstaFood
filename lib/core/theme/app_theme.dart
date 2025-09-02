@@ -47,7 +47,7 @@ class AppTheme {
     // ),
     sliderTheme: SliderThemeData(
       activeTrackColor: AppColors.primaryOrange,
-      inactiveTrackColor: AppColors.grey.withOpacity(0.3),
+      inactiveTrackColor: AppColors.grey.withAlpha(76),
       trackHeight: 7.75,
       // Thumb properties
       thumbColor: AppColors.primaryOrange,
@@ -66,7 +66,7 @@ class AppTheme {
 
       // For keypoints/divisions
       activeTickMarkColor: AppColors.primaryOrange,
-      inactiveTickMarkColor: AppColors.grey.withOpacity(0.5),
+      inactiveTickMarkColor: AppColors.grey.withAlpha(127),
       tickMarkShape: RoundSliderTickMarkShape(tickMarkRadius: 2.0),
 
       // Optional: Show always the value indicator

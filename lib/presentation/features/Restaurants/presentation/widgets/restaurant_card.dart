@@ -16,7 +16,7 @@ class RestaurantCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withAlpha(10),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -27,15 +27,26 @@ class RestaurantCard extends StatelessWidget {
         children: [
           Text(restaurant.restaurantName, style: AppTextStyles.mediumText),
           const SizedBox(height: 4),
-            Text(restaurant.type, style: AppTextStyles.small),
+          Text(restaurant.type, style: AppTextStyles.small),
           const SizedBox(height: 4),
           Row(
             children: [
-              Expanded(child: Text(restaurant.address, style: AppTextStyles.small, maxLines: 1, overflow: TextOverflow.ellipsis)),
+              Expanded(
+                child: Text(
+                  restaurant.address,
+                  style: AppTextStyles.small,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
               if (restaurant.parkingLot)
                 const Padding(
                   padding: EdgeInsets.only(left: 8.0),
-                  child: Icon(Icons.local_parking, size: 18, color: AppColors.primaryOrange),
+                  child: Icon(
+                    Icons.local_parking,
+                    size: 18,
+                    color: AppColors.primaryOrange,
+                  ),
                 ),
             ],
           ),
