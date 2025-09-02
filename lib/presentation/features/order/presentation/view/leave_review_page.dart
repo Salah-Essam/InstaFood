@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:insta_food/core/routes/router_constants.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/core/utils/app_strings.dart';
@@ -202,11 +203,19 @@ class _Buttons extends StatelessWidget {
         if (state.submitted) {
           showDialog(
             context: context,
-            builder: (_) => AlertDialog(
+            barrierDismissible: false,
+            builder: (dialogCtx) => AlertDialog(
               title: const Text('Thank you!'),
               content: const Text('Your review has been submitted.'),
               actions: [
-                TextButton(onPressed: () => Navigator.of(context)..pop()..pop(), child: const Text('OK')),
+                TextButton(
+                  onPressed: () {
+                    // Close the dialog first, then route to the main screen to avoid blank overlays.
+                    Navigator.of(dialogCtx).pop();
+                    context.go(RouterConstants.bottomNavBar);
+                  },
+                  child: const Text('OK'),
+                ),
               ],
             ),
           );
