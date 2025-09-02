@@ -3,7 +3,7 @@ import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/presentation/features/ContactUs%20&%20FAQs/presentation/pages/help_faqs_page.dart';
 import 'package:insta_food/presentation/features/Help/presentation/pages/support_page.dart';
-import 'package:insta_food/presentation/widgets/app_backbutton.dart';
+import 'package:insta_food/presentation/features/Help/presentation/widgets/help_item_widget.dart';
 import 'package:insta_food/presentation/widgets/shared_scaffold.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 
@@ -40,51 +40,6 @@ class HelpPage extends StatelessWidget {
             Divider(color: AppColors.lightOrange, thickness: 2),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class HelpItemWidget extends StatelessWidget {
-  const HelpItemWidget({
-    super.key,
-    required this.title,
-    required this.subTitle,
-    required this.onTap,
-  });
-
-  final String title;
-  final String subTitle;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Column(
-        children: [
-          Divider(color: AppColors.lightOrange, thickness: 2),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title, style: AppTextStyles.fontBlackLargeBold),
-                    Text(subTitle, style: AppTextStyles.fontBlackSmall),
-                  ],
-                ),
-                SizedBox(
-                  height: 25,
-                  width: 25,
-                  child: AppBackButton(isReversed: true, onTap: () {}),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
