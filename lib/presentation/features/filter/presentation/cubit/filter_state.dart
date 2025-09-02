@@ -71,11 +71,13 @@ final class SetFilter extends FilterState {
 }
 
 final class ApplyFilter extends FilterState {
+  final FilterState? previousState;
   final FoodCategory? selectedCategory;
   final String? subCategory;
   final double? maxPrice;
   final int? minRating;
   const ApplyFilter({
+    this.previousState,
     this.selectedCategory,
     this.maxPrice,
     this.minRating,
