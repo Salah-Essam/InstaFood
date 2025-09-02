@@ -10,6 +10,31 @@ class AppTheme {
     progressIndicatorTheme: ProgressIndicatorThemeData(
       color: AppColors.primaryOrange,
     ),
+    switchTheme: SwitchThemeData(
+      trackColor: WidgetStateColor.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return AppColors.primaryOrange; // activeTrackColor
+        }
+        return const Color.fromARGB(55, 233, 84, 34); // inactiveTrackColor
+      }),
+
+      // لون الدائرة (thumb) لما يكون ON / OFF
+      thumbColor: WidgetStateColor.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return AppColors.white; // activeColor
+        }
+        return AppColors.white; // inactiveThumbColor
+      }),
+
+      // نشيل البوردر حوالين التراك
+      trackOutlineColor: WidgetStateColor.fromMap({
+        WidgetState.any: Colors.transparent,
+      }),
+
+      // نخلي مساحة التتش صغيرة (مش يكبر السويتش)
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    ),
+
     inputDecorationTheme: InputDecorationTheme(
       fillColor: AppColors.lightYellow,
       filled: true,
