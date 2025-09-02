@@ -75,7 +75,7 @@ class CategoryPage extends StatelessWidget {
                                         child: Text('Error: ${state.message}'),
                                       );
                                     } else if (state is ItemLoaded) {
-                                      print(
+                                      debugPrint(
                                         "${state.activeFilters} : ${state.searchedItems}",
                                       );
                                       return ListView.builder(

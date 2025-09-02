@@ -17,6 +17,7 @@ class AppAssets {
   static const String navBarOrders = "assets/icons/navbar_order.svg";
   static const String filter = "assets/icons/filter.svg";
   static const String backArrow = "assets/icons/BackArrow.svg";
+  static const String reversbackArrow = "assets/icons/reversbackArrow.png";
   static const String desserts = "assets/icons/Desserts.svg";
   static const String meals = "assets/icons/Meals.svg";
   static const String snacks = "assets/icons/Snacks.svg";
@@ -28,7 +29,7 @@ class AppAssets {
   static const String nextArrow = "assets/icons/NextArrow.svg";
   static const String fav = "assets/icons/Favorites.svg";
   static const String rating = "assets/icons/rating.svg";
-    static const String smallMeals = "assets/icons/bot-small-Meals.png";
+  static const String smallMeals = "assets/icons/bot-small-Meals.png";
 
   static const String camera = "assets/icons/camera.svg";
   static const String deliveryNotification =

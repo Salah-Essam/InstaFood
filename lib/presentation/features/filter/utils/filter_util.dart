@@ -21,23 +21,20 @@ class ListFilter {
                 ) ??
                 false,
           );
-          dynamic hasExclusionMatch = null;
+          dynamic hasExclusionMatch;
 
-          if (category.exclusionKeywords != null) {
-            hasExclusionMatch = category.exclusionKeywords.any(
-              (keyword) =>
-                  item.itemDescription?.toLowerCase().contains(
-                    keyword.toLowerCase(),
-                  ) ??
-                  false,
-            );
-          }
+          hasExclusionMatch = category.exclusionKeywords.any(
+            (keyword) =>
+                item.itemDescription?.toLowerCase().contains(
+                  keyword.toLowerCase(),
+                ) ??
+                false,
+          );
           // Include if matches inclusion keywords BUT NOT exclusion keywords
           if (!hasMatchingSubCategory || hasExclusionMatch) {
             return false;
           }
-        } else if (subCategory != null &&
-            !item.itemDescription!.contains(subCategory)) {
+        } else if (!item.itemDescription!.contains(subCategory)) {
           return false;
         }
       }

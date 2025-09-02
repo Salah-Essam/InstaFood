@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:insta_food/core/theme/app_colors.dart';
+import 'package:insta_food/core/theme/app_assets.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
 
 class SettingsItemRow extends StatelessWidget {
@@ -25,11 +25,7 @@ class SettingsItemRow extends StatelessWidget {
           SizedBox(width: 16),
           Text(title, style: AppTextStyles.fontBlackMedBold),
           Spacer(),
-          Icon(
-            Icons.arrow_forward_ios_rounded,
-            color: AppColors.primaryOrange,
-            size: 20,
-          ),
+          Image.asset(AppAssets.reversbackArrow, scale: 3.5),
         ],
       ),
     );
