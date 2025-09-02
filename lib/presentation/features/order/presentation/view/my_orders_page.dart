@@ -8,6 +8,10 @@ import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/core/utils/app_strings.dart';
 import 'package:insta_food/presentation/features/order/data/models/order_model.dart';
+import 'package:insta_food/presentation/features/order/data/repos/orders_repository.dart';
+import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_cubit.dart';
+import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_state.dart';
+import 'package:insta_food/core/di/di.dart';
 import 'package:insta_food/presentation/features/order/logic/orders_cubit.dart';
 import 'package:insta_food/presentation/features/order/presentation/view/leave_review_page.dart';
 import 'package:insta_food/presentation/widgets/shared_scaffold.dart';
@@ -268,7 +272,7 @@ class _ActionRow extends StatelessWidget {
       textStyle: AppTextStyles.mediumText.copyWith(fontSize: 12, fontWeight: FontWeight.w600),
     );
 
-    if (order.isActive) {
+  if (order.isActive) {
   return Wrap(spacing: 12, runSpacing: 8, children: [
         OutlinedButton(
           style: btnStyle,
@@ -290,20 +294,53 @@ class _ActionRow extends StatelessWidget {
         ),
   ]);
     } else if (order.isCompleted) {
-      return Wrap(spacing: 12, runSpacing: 8, children: [
-        OutlinedButton(
-          style: btnStyle,
-          onPressed: () {
-            final first = order.items.isNotEmpty ? order.items.first : null;
-            if (first == null) return;
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => LeaveReviewPage(orderId: order.id, item: first),
+      // Show Leave a review only if first item not yet reviewed.
+      final first = order.items.isNotEmpty ? order.items.first : null;
+      if (first == null) {
+        return const SizedBox.shrink();
+      }
+      final authState = context.read<AuthCubit>().state;
+      final uid = authState is Authenticated ? (authState.user.id ?? '') : '';
+      return FutureBuilder<bool>(
+        future: uid.isEmpty
+            ? Future.value(false)
+            : sl<OrdersRepository>().hasReview(uid: uid, orderId: order.id, itemId: first.itemId),
+        builder: (context, snap) {
+          final reviewed = snap.data == true;
+          return Wrap(spacing: 12, runSpacing: 8, children: [
+            if (!reviewed)
+              OutlinedButton(
+                style: btnStyle,
+                onPressed: () async {
+                  final res = await Navigator.of(context).push<bool>(
+                    MaterialPageRoute(
+                      builder: (_) => LeaveReviewPage(orderId: order.id, item: first),
+                    ),
+                  );
+                  if (res == true) {
+                    // Trigger a light refresh so FutureBuilder reruns
+                    (context.read<OrdersCubit>()).init();
+                  }
+                },
+                child: const Text('Leave a review'),
+              )
+            else
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: const Color(0x1428A745), // light green tint
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: const Color(0xFF28A745)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.check_circle, size: 16, color: Colors.green.shade700),
+                    const SizedBox(width: 6),
+                    Text('Reviewed', style: AppTextStyles.mediumText.copyWith(fontSize: 12, color: Colors.green.shade700, fontWeight: FontWeight.w600)),
+                  ],
+                ),
               ),
-            );
-          },
-          child: const Text('Leave a review'),
-        ),
     TextButton(
           onPressed: () {/* TODO: order again */},
           style: TextButton.styleFrom(
@@ -318,6 +355,8 @@ class _ActionRow extends StatelessWidget {
           child: const Text('Order Again'),
         ),
   ]);
+        },
+      );
     } else {
       return const SizedBox.shrink();
     }

@@ -12,6 +12,11 @@ abstract class OrdersRepository {
     required int rating,
     String? comment,
   });
+  Future<bool> hasReview({
+    required String uid,
+    required String orderId,
+    required String itemId,
+  });
 }
 
 class OrdersRepositoryFs implements OrdersRepository {
@@ -63,5 +68,19 @@ class OrdersRepositoryFs implements OrdersRepository {
       if (comment != null && comment.isNotEmpty) 'comment': comment,
       'createdAt': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
+  }
+
+  @override
+  Future<bool> hasReview({
+    required String uid,
+    required String orderId,
+    required String itemId,
+  }) async {
+    final doc = await _ordersCol(uid)
+        .doc(orderId)
+        .collection('reviews')
+        .doc(itemId.trim())
+        .get();
+    return doc.exists;
   }
 }
