@@ -7,6 +7,7 @@ import 'package:insta_food/presentation/features/Restaurants/presentation/pages/
 import 'package:insta_food/presentation/features/drawer/presentation/cubit/drawer_cubit.dart';
 import 'package:insta_food/presentation/features/drawer/presentation/view/app_drawer.dart';
 import 'package:insta_food/presentation/features/home/presentation/view/home_page.dart';
+import 'package:insta_food/presentation/features/favorites/presentation/favorites_page.dart';
 import 'package:insta_food/presentation/features/order/presentation/view/my_orders_page.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 import 'package:insta_food/core/navigation/bottom_nav_controller.dart';
@@ -40,7 +41,7 @@ class BottomNavBar extends StatelessWidget {
         ),
       ),
       PersistentTabConfig(
-        screen: Page(name: 'Favorites', scaffoldKey: _scaffoldKey),
+        screen: FavoritesPage(),
         item: ItemConfig(
           icon: SvgPicture.asset(
             AppAssets.navBarFav,
@@ -95,6 +96,8 @@ class BottomNavBar extends StatelessWidget {
         body: PopScope(
           canPop: false,
           onPopInvokedWithResult: (didPop, result) {
+            // When back is pressed at tab-level pages, go to first tab instead of exiting.
+
             if (!didPop) {
               if (BottomNavController.controller.index != 0) {
                 BottomNavController.switchTo(0);

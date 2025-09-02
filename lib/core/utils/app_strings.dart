@@ -129,4 +129,7 @@ class AppStrings {
     static const String leaveAReviewTitle = 'Leave a Review';
     static const String reviewIntro = "We'd love to know what you think of your dish.";
     static const String leaveUsComment = 'Leave us your comment!';
+    
+    // ========================= Favorites =========================
+    static const String favoritesHeadline = "It's time to buy your favorite dish.";
 }

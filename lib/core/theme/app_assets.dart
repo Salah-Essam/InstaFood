@@ -28,6 +28,7 @@ class AppAssets {
   static const String nextArrow = "assets/icons/NextArrow.svg";
   static const String fav = "assets/icons/Favorites.svg";
   static const String rating = "assets/icons/rating.svg";
+    static const String smallMeals = "assets/icons/bot-small-Meals.png";
 
   static const String camera = "assets/icons/camera.svg";
   static const String deliveryNotification =
