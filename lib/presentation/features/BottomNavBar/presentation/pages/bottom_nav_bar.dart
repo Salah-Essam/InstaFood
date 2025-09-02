@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:insta_food/core/routes/router_constants.dart';
 import 'package:insta_food/presentation/features/drawer/presentation/view/app_drawer.dart';
 import 'package:insta_food/presentation/features/home/presentation/view/home_page.dart';
+import 'package:insta_food/presentation/features/favorites/presentation/favorites_page.dart';
 import 'package:insta_food/presentation/features/order/presentation/view/my_orders_page.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 import 'package:insta_food/core/navigation/bottom_nav_controller.dart';
@@ -41,7 +42,7 @@ class BottomNavBar extends StatelessWidget {
         ),
       ),
       PersistentTabConfig(
-        screen: Page(name: 'Favorites', scaffoldKey: _scaffoldKey),
+        screen: FavoritesPage(),
         item: ItemConfig(
           icon: SvgPicture.asset(
             AppAssets.navBarFav,

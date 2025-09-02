@@ -78,7 +78,7 @@ class ItemTile extends StatelessWidget {
               top: 10,
               child: Visibility(
                 visible: showButtons,
-                child: FavButton(width: 14, height: 14),
+                child: FavButton(width: 14, height: 14, item: item),
               ),
             ),
           ],
