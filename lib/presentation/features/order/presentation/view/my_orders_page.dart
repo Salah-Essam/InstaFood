@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:insta_food/core/routes/router_constants.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
@@ -60,35 +61,55 @@ class _Chips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget chip(String text, bool isSelected, VoidCallback onTap) {
-      return InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(20),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-          decoration: BoxDecoration(
-            color: isSelected ? AppColors.primaryOrange : AppColors.orange2,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Text(
-            text,
-            style: AppTextStyles.mediumText.copyWith(
-              color: isSelected ? Colors.white : AppColors.primaryOrange,
-              fontWeight: FontWeight.w600,
+    // Figma specs: target width 104, height 28. Use LayoutBuilder so all 3 chips fit without overflow.
+    Widget chip(String text, bool isSelected, VoidCallback onTap, double width) {
+      return SizedBox(
+        width: width,
+        height: 28,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(38),
+          child: Container(
+            decoration: BoxDecoration(
+              color: isSelected ? AppColors.primaryOrange : AppColors.orange2,
+              borderRadius: BorderRadius.circular(38),
+              border: Border.all(
+                color: isSelected ? AppColors.primaryOrange : AppColors.border,
+                width: 1,
+              ),
+            ),
+            alignment: Alignment.center,
+            padding: const EdgeInsetsDirectional.only(start: 12, end: 12, top: 2),
+            child: Text(
+              text,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: AppTextStyles.mediumText.copyWith(
+                fontSize: 12,
+                color: isSelected ? Colors.white : AppColors.primaryOrange,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ),
       );
     }
 
-    return Row(
-      children: [
-        chip('Active', selected == 0, () => onChanged(0)),
-        const SizedBox(width: 8),
-        chip('Completed', selected == 1, () => onChanged(1)),
-        const SizedBox(width: 8),
-        chip('Cancelled', selected == 2, () => onChanged(2)),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const gap = 12.0;
+        // Try to fit 3 chips and 2 gaps into available width
+        final per = ((constraints.maxWidth - (2 * gap)) / 3).clamp(84.0, 104.0);
+        return Row(
+          children: [
+            chip('Active', selected == 0, () => onChanged(0), per),
+            const SizedBox(width: gap),
+            chip('Completed', selected == 1, () => onChanged(1), per),
+            const SizedBox(width: gap),
+            chip('Cancelled', selected == 2, () => onChanged(2), per),
+          ],
+        );
+      },
     );
   }
 }
@@ -157,7 +178,11 @@ class _OrdersList extends StatelessWidget {
                     const SizedBox(height: 6),
                     Row(
                       children: [
-                        Icon(Icons.check_circle, color: Colors.green.shade600, size: 16),
+                        SvgPicture.asset(
+                          'assets/icons/right.svg',
+                          width: 16, height: 16,
+                          colorFilter: ColorFilter.mode(Colors.green.shade600, BlendMode.srcIn),
+                        ),
                         const SizedBox(width: 6),
                         Text('Order delivered', style: AppTextStyles.mediumText.copyWith(color: Colors.black54, fontSize: 12)),
                       ],
@@ -166,7 +191,11 @@ class _OrdersList extends StatelessWidget {
                     const SizedBox(height: 6),
                     Row(
                       children: [
-                        Icon(Icons.cancel, color: Colors.red.shade600, size: 16),
+                        SvgPicture.asset(
+                          'assets/icons/cancle.svg',
+                          width: 16, height: 16,
+                          colorFilter: ColorFilter.mode(Colors.red.shade600, BlendMode.srcIn),
+                        ),
                         const SizedBox(width: 6),
                         Text('Order cancelled', style: AppTextStyles.mediumText.copyWith(color: Colors.black54, fontSize: 12)),
                       ],
@@ -192,47 +221,54 @@ class _ActionRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final cubit = context.read<OrdersCubit>();
     final btnStyle = OutlinedButton.styleFrom(
-      side: BorderSide(color: AppColors.primaryOrange),
+      side: const BorderSide(color: AppColors.primaryOrange),
       foregroundColor: AppColors.primaryOrange,
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      minimumSize: const Size(0, 28),
+      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      visualDensity: const VisualDensity(horizontal: -2, vertical: -2),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      textStyle: AppTextStyles.mediumText.copyWith(fontWeight: FontWeight.w600),
+      textStyle: AppTextStyles.mediumText.copyWith(fontSize: 12, fontWeight: FontWeight.w600),
     );
 
     if (order.isActive) {
-      return Row(children: [
+  return Wrap(spacing: 12, runSpacing: 8, children: [
         OutlinedButton(
           style: btnStyle,
           onPressed: () => cubit.cancel(order.id),
           child: const Text('Cancel Order'),
         ),
-        const SizedBox(width: 8),
-        TextButton(
+    TextButton(
           onPressed: () { context.push(RouterConstants.deliveryTime); },
           style: TextButton.styleFrom(
             foregroundColor: AppColors.primaryOrange,
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+    minimumSize: const Size(0, 28),
+    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    visualDensity: const VisualDensity(horizontal: -2, vertical: -2),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            textStyle: AppTextStyles.mediumText.copyWith(fontWeight: FontWeight.w600),
+    textStyle: AppTextStyles.mediumText.copyWith(fontSize: 12, fontWeight: FontWeight.w600),
           ),
           child: const Text('Track Driver'),
         ),
-      ]);
+  ]);
     } else if (order.isCompleted) {
-      return Row(children: [
-        OutlinedButton(style: btnStyle, onPressed: () {/* TODO: review */}, child: const Text('Leave a review')),
-        const SizedBox(width: 8),
-        TextButton(
+  return Wrap(spacing: 12, runSpacing: 8, children: [
+    OutlinedButton(style: btnStyle, onPressed: () {/* TODO: review */}, child: const Text('Leave a review')),
+    TextButton(
           onPressed: () {/* TODO: order again */},
           style: TextButton.styleFrom(
             foregroundColor: AppColors.primaryOrange,
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+    minimumSize: const Size(0, 28),
+    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    visualDensity: const VisualDensity(horizontal: -2, vertical: -2),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            textStyle: AppTextStyles.mediumText.copyWith(fontWeight: FontWeight.w600),
+    textStyle: AppTextStyles.mediumText.copyWith(fontSize: 12, fontWeight: FontWeight.w600),
           ),
           child: const Text('Order Again'),
         ),
-      ]);
+  ]);
     } else {
       return const SizedBox.shrink();
     }
