@@ -11,6 +11,7 @@ import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_c
 import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_state.dart';
 import 'package:insta_food/presentation/features/drawer/presentation/cubit/drawer_cubit.dart';
 import 'package:insta_food/presentation/features/cart/logic/cart_cubit.dart';
+import 'package:insta_food/presentation/features/order/logic/orders_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,6 +28,10 @@ void main() async {
               authCubit: ctx.read<AuthCubit>(),
               session: sl(),
             )),
+        BlocProvider(create: (ctx) => OrdersCubit(
+              repo: sl(),
+              auth: ctx.read<AuthCubit>(),
+            )..init()),
       ],
       child: const InstaFood(),
     ),
@@ -61,6 +66,10 @@ class InstaFood extends StatelessWidget {
             return BlocListener<AuthCubit, AuthState>(
               listener: (context, state) {
                 if (state is Authenticated) {
+                  // Start/refresh orders streaming now that we have a uid
+                  if (context.mounted) {
+                    try { context.read<OrdersCubit>().init(); } catch (_) {}
+                  }
                   // User authenticated, go to home if not already there
                   final currentLocation = GoRouter.of(context).routerDelegate.currentConfiguration.fullPath;
                   if (currentLocation != RouterConstants.home) {

@@ -6,6 +6,7 @@ import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/presentation/features/drawer/presentation/cubit/drawer_cubit.dart';
 import 'package:insta_food/presentation/features/drawer/presentation/view/app_drawer.dart';
 import 'package:insta_food/presentation/features/home/presentation/view/home_page.dart';
+import 'package:insta_food/presentation/features/order/presentation/view/my_orders_page.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 
 class BottomNavBar extends StatelessWidget {
@@ -47,7 +48,7 @@ class BottomNavBar extends StatelessWidget {
         ),
       ),
       PersistentTabConfig(
-        screen: Page(name: 'Orders', scaffoldKey: _scaffoldKey),
+  screen: const MyOrdersPage(),
         item: ItemConfig(
           icon: SvgPicture.asset(
             AppAssets.navBarOrders,

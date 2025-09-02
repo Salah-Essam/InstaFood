@@ -24,6 +24,8 @@ import 'package:insta_food/presentation/features/cart/data/repos/cart_repository
 import 'package:insta_food/presentation/features/cart/data/repositories/cart_repository.dart';
 import 'package:insta_food/presentation/features/cart/logic/cart_cubit.dart';
 import 'package:insta_food/presentation/features/order/logic/order_cubit.dart';
+import 'package:insta_food/presentation/features/order/data/repos/orders_repository.dart';
+import 'package:insta_food/presentation/features/order/logic/orders_cubit.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -88,6 +90,10 @@ Future<void> setupLocator() async {
         cartCubit: sl<CartCubit>(),
         authCubit: sl<AuthCubit>(),
       ));
+
+  // Orders (My Orders) repository and cubit
+  sl.registerLazySingleton<OrdersRepository>(() => OrdersRepositoryFs(sl<FirebaseFirestore>()));
+  sl.registerFactory<OrdersCubit>(() => OrdersCubit(repo: sl<OrdersRepository>(), auth: sl<AuthCubit>()));
 
   // Register network services
   sl.registerLazySingleton<Connectivity>(() => Connectivity());

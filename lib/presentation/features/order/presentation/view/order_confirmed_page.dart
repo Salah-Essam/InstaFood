@@ -37,14 +37,14 @@ class _OrderConfirmedPageState extends State<OrderConfirmedPage> {
     // Receive orderId via GoRouter.extra
     _orderId ??= GoRouterState.of(context).extra as String?;
     if (_orderId != null) {
-      // Mark as completed and clear cart once (side-effect) without requiring OrderCubit
+  // Mark as paid (keep active) and clear cart once (side-effect) without requiring OrderCubit
       final auth = context.read<AuthCubit>().state;
       final cart = context.read<CartCubit>();
       if (auth is Authenticated && (auth.user.id ?? '').isNotEmpty) {
         final uid = auth.user.id!;
         // Fire-and-forget
-        sl<OrderFirestoreService>()
-            .markOrderCompleted(uid: uid, orderId: _orderId!)
+    sl<OrderFirestoreService>()
+      .markOrderPaid(uid: uid, orderId: _orderId!)
             .then((_) => cart.clear())
             .catchError((_) {});
       }

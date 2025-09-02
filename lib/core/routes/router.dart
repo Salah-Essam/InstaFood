@@ -127,14 +127,6 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const DeliveryTimePage(),
     ),
     GoRoute(
-      path: RouterConstants.orderConfirmed,
-      builder: (context, state) => const OrderConfirmedPage(),
-    ),
-    GoRoute(
-      path: RouterConstants.deliveryTime,
-      builder: (context, state) => const DeliveryTimePage(),
-    ),
-    GoRoute(
       path: RouterConstants.addNewPaymentPage,
       builder: (context, state) => AddCardPage(),
     ),

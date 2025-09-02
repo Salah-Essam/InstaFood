@@ -36,6 +36,19 @@ class OrderFirestoreService {
     });
   }
 
+  // Mark payment as paid but keep status (e.g., remain 'active')
+  Future<void> markOrderPaid({
+    required String uid,
+    required String orderId,
+    String? transactionId,
+  }) async {
+    await _userOrders(uid).doc(orderId).update({
+      '${OrderFs.fPayment}.status': 'paid',
+      if (transactionId != null) '${OrderFs.fPayment}.transactionId': transactionId,
+      OrderFs.fUpdatedAt: FieldValue.serverTimestamp(),
+    });
+  }
+
   // Cancel active order
   Future<void> cancelOrder({
     required String uid,
