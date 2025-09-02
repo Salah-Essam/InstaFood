@@ -10,7 +10,8 @@ import 'package:insta_food/presentation/widgets/app_button_onb.dart';
 
 class ButtonGrid extends StatelessWidget {
   final bool? pushPage;
-  const ButtonGrid({super.key, this.pushPage = true});
+  final bool? isselected;
+  const ButtonGrid({super.key, this.pushPage = true, this.isselected});
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<FilterCubit, FilterState>(
@@ -29,9 +30,11 @@ class ButtonGrid extends StatelessWidget {
               final category = FoodCategory.values[index];
 
               final isSelected =
+                  isselected ??
                   (state is SetCatagoryFilter &&
-                      state.selectedCategory == category) ||
-                  (state is ApplyFilter && state.selectedCategory == category);
+                          state.selectedCategory == category) ||
+                      (state is ApplyFilter &&
+                          state.selectedCategory == category);
               return Padding(
                 padding: const EdgeInsets.only(right: 19, left: 1),
                 child: Column(

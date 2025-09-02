@@ -34,7 +34,6 @@ class CategoryPage extends StatelessWidget {
               onPopInvokedWithResult: (didPop, result) {
                 if (didPop) {
                   // Reset category filter when popping
-                  context.read<FilterCubit>().setCategoryFilter(null);
                   context.read<FilterCubit>().resetFilter();
                 }
               },

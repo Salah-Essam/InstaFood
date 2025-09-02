@@ -67,7 +67,7 @@ class HomePage extends StatelessWidget {
                               MediaQuery.of(context).padding.bottom,
                             ),
                             children: [
-                              ButtonGrid(),
+                              ButtonGrid(isselected: false),
                               SizedBox(height: 5),
                               Container(
                                 color: AppColors.primaryOrange,

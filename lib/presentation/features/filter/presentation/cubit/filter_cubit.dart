@@ -119,6 +119,13 @@ class FilterCubit extends Cubit<FilterState> {
   }
 
   void resetFilter() {
-    emit(FilterInitial());
+    emit(
+      SetFilter(
+        selectedCategory: null,
+        subCategory: null,
+        minRating: null,
+        maxPrice: null,
+      ),
+    );
   }
 }

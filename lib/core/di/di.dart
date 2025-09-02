@@ -111,8 +111,12 @@ Future<void> setupLocator() async {
   );
 
   // Orders (My Orders) repository and cubit
-  sl.registerLazySingleton<OrdersRepository>(() => OrdersRepositoryFs(sl<FirebaseFirestore>()));
-  sl.registerFactory<OrdersCubit>(() => OrdersCubit(repo: sl<OrdersRepository>(), auth: sl<AuthCubit>()));
+  sl.registerLazySingleton<OrdersRepository>(
+    () => OrdersRepositoryFs(sl<FirebaseFirestore>()),
+  );
+  sl.registerFactory<OrdersCubit>(
+    () => OrdersCubit(repo: sl<OrdersRepository>(), auth: sl<AuthCubit>()),
+  );
 
   // Favorites (session-scoped)
   sl.registerLazySingleton<FavoritesRepository>(() {
@@ -137,9 +141,9 @@ Future<void> setupLocator() async {
       return FavoritesRepositoryMemory();
     }
   });
-  sl.registerFactory<FavoritesCubit>(() => FavoritesCubit(repo: sl<FavoritesRepository>()));
-
-
+  sl.registerFactory<FavoritesCubit>(
+    () => FavoritesCubit(repo: sl<FavoritesRepository>()),
+  );
 
   // Register network services
   sl.registerLazySingleton<Connectivity>(() => Connectivity());
