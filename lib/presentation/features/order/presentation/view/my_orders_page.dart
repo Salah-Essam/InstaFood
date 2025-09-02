@@ -86,7 +86,9 @@ class _Chips extends StatelessWidget {
           borderRadius: BorderRadius.circular(38),
           child: Container(
             decoration: BoxDecoration(
-              color: isSelected ? AppColors.primaryOrange : AppColors.orange2,
+              color: isSelected
+                  ? AppColors.primaryOrange
+                  : AppColors.lightOrange,
               borderRadius: BorderRadius.circular(38),
               border: Border.all(
                 color: isSelected ? AppColors.primaryOrange : AppColors.border,
@@ -159,7 +161,11 @@ class _OrdersList extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: first == null || first.imageUrl.isEmpty
-                  ? Container(width: 58, height: 58, color: AppColors.orange2)
+                  ? Container(
+                      width: 58,
+                      height: 58,
+                      color: AppColors.lightOrange,
+                    )
                   : Image.network(
                       first.imageUrl,
                       width: 58,
@@ -232,7 +238,7 @@ class _OrdersList extends StatelessWidget {
                                       ? Container(
                                           width: 40,
                                           height: 40,
-                                          color: AppColors.orange2,
+                                          color: AppColors.lightOrange,
                                         )
                                       : Image.network(
                                           it.imageUrl,

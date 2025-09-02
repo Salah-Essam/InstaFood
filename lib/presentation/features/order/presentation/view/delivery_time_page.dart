@@ -248,7 +248,7 @@ class _ActionPills extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
             decoration: BoxDecoration(
-              color: AppColors.orange2,
+              color: AppColors.lightOrange,
               borderRadius: BorderRadius.circular(24),
             ),
             child: Text(

@@ -43,6 +43,7 @@ void main() async {
             connectivity: Connectivity(),
           )..initialize(),
         ),
+        BlocProvider(create: (_) => sl<RestaurantsCubit>()),
       ],
       child: const InstaFood(),
     ),

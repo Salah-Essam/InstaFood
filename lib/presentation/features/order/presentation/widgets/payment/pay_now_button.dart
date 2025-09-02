@@ -11,9 +11,11 @@ class PayNowButton extends StatelessWidget {
         width: 220,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.orange2,
+            backgroundColor: AppColors.lightOrange,
             foregroundColor: AppColors.primaryOrange,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+            ),
             padding: const EdgeInsets.symmetric(vertical: 14),
           ),
           onPressed: onPressed,

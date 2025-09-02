@@ -59,4 +59,9 @@ class AppAssets {
       "assets/icons/Settings_Notification_Icon.svg";
   static const String settingsKeyIcon = "assets/icons/Settings_Key_Icon.svg";
   static const String settingsUserIcon = "assets/icons/Settings_User_Icon.svg";
+  static const String facebookoutline = "assets/icons/Facebook_outline.svg";
+  static const String website = "assets/icons/Global_icon.svg";
+  static const String customerService = "assets/icons/Headphones_icon.svg";
+  static const String instagram = "assets/icons/Instagram.png";
+  static const String whatApp = "assets/icons/WhatApp.png";
 }

@@ -75,7 +75,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       GestureDetector(
                         onTap: () {
                           context.read<DrawerCubit>().openDrawer(
-                                DrawerType.notifications,
+                            DrawerType.notifications,
                           );
                         },
                         child: SvgPicture.asset(

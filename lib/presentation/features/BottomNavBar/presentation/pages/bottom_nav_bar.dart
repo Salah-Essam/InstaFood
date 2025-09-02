@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:insta_food/core/theme/app_assets.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
+import 'package:insta_food/presentation/features/Help/presentation/pages/help_page.dart';
 import 'package:insta_food/presentation/features/Restaurants/presentation/pages/restaurant_page.dart';
 import 'package:insta_food/presentation/features/drawer/presentation/cubit/drawer_cubit.dart';
 import 'package:insta_food/presentation/features/drawer/presentation/view/app_drawer.dart';
@@ -60,7 +61,7 @@ class BottomNavBar extends StatelessWidget {
         ),
       ),
       PersistentTabConfig(
-        screen: Page(name: 'Help', scaffoldKey: _scaffoldKey),
+        screen: HelpPage(),
         item: ItemConfig(
           icon: SvgPicture.asset(
             AppAssets.navBarHelp,
@@ -92,34 +93,35 @@ class BottomNavBar extends StatelessWidget {
             return AppDrawer();
           },
         ),
-        body: PopScope(
-          canPop: false,
-          onPopInvokedWithResult: (didPop, result) {
-            if (!didPop) {
-              if (BottomNavController.controller.index != 0) {
-                BottomNavController.switchTo(0);
-              }
-            }
-          },
-          child: PersistentTabView(
-            controller: BottomNavController.controller,
-            tabs: _tabs(context),
-            screenTransitionAnimation: ScreenTransitionAnimation(
-              curve: Curves.ease,
-              duration: Duration(milliseconds: 300),
-            ),
-            navBarBuilder: (p0) => NeumorphicBottomNavBar(
-              navBarConfig: p0,
-              navBarDecoration: NavBarDecoration(
-                color: AppColors.primaryOrange,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(32),
-                  topRight: Radius.circular(32),
+        body:
+            // PopScope(
+            //   canPop: false,
+            //   onPopInvokedWithResult: (didPop, result) {
+            //     if (!didPop) {
+            //       if (BottomNavController.controller.index != 0) {
+            //         BottomNavController.switchTo(0);
+            //       }
+            //     }
+            //   },
+            //   child: )
+            PersistentTabView(
+              controller: BottomNavController.controller,
+              tabs: _tabs(context),
+              screenTransitionAnimation: ScreenTransitionAnimation(
+                curve: Curves.ease,
+                duration: Duration(milliseconds: 300),
+              ),
+              navBarBuilder: (p0) => NeumorphicBottomNavBar(
+                navBarConfig: p0,
+                navBarDecoration: NavBarDecoration(
+                  color: AppColors.primaryOrange,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(32),
+                    topRight: Radius.circular(32),
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
       ),
     );
   }

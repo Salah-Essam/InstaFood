@@ -71,6 +71,11 @@ class AppTextStyles {
     fontSize: 12,
     color: AppColors.textSecondary,
   );
+  static TextStyle searchSetting = TextStyle(
+    fontWeight: FontWeight.w300,
+    fontSize: 20,
+    color: AppColors.textSecondary,
+  );
 
   static TextStyle get small => TextStyle(
     fontWeight: FontWeight.w400,
@@ -131,32 +136,32 @@ class AppTextStyles {
 
   // ========================= Black Fonts =========================
 
-  static TextStyle get fontBlackSmall => TextStyle(
+  static final TextStyle fontBlackSmall = TextStyle(
     color: AppColors.textDarkBrown,
     fontSize: 12,
     fontWeight: FontWeight.w500,
   );
-  static TextStyle get fontBlackSmallBold => TextStyle(
+  static final TextStyle fontBlackSmallBold = TextStyle(
     color: AppColors.textDarkBrown,
     fontSize: 12,
     fontWeight: FontWeight.bold,
   );
-  static TextStyle get fontBlackMed => TextStyle(
+  static final TextStyle fontBlackMed = TextStyle(
     color: AppColors.textDarkBrown,
     fontSize: 16,
     fontWeight: FontWeight.w500,
   );
-  static TextStyle get fontBlackMedBold => TextStyle(
+  static final TextStyle fontBlackMedBold = TextStyle(
     color: AppColors.textDarkBrown,
     fontSize: 16,
     fontWeight: FontWeight.bold,
   );
-  static TextStyle get fontBlackLarge => TextStyle(
+  static final TextStyle fontBlackLarge = TextStyle(
     color: AppColors.textDarkBrown,
     fontSize: 24,
     fontWeight: FontWeight.w500,
   );
-  static TextStyle get fontBlackLargeBold => TextStyle(
+  static final TextStyle fontBlackLargeBold = TextStyle(
     color: AppColors.textDarkBrown,
     fontSize: 24,
     fontWeight: FontWeight.bold,
@@ -164,36 +169,47 @@ class AppTextStyles {
 
   // ========================= White Fonts =========================
 
-  static TextStyle get fontWhiteSmall => TextStyle(
+  static final TextStyle fontWhiteSmall = TextStyle(
     color: AppColors.textLight,
     fontSize: 12,
     fontWeight: FontWeight.w500,
   );
-  static TextStyle get fontWhiteSmallBold => TextStyle(
+  static final TextStyle fontWhiteSmallBold = TextStyle(
     color: AppColors.textLight,
     fontSize: 12,
     fontWeight: FontWeight.bold,
   );
-  static TextStyle get fontWhiteMed => TextStyle(
+  static final TextStyle fontWhiteMed = TextStyle(
     color: AppColors.textLight,
     fontSize: 16,
     fontWeight: FontWeight.w500,
   );
-  static TextStyle get fontWhiteMedBold => TextStyle(
+  static final TextStyle fontWhiteMedBold = TextStyle(
     color: AppColors.textLight,
     fontSize: 16,
     fontWeight: FontWeight.bold,
   );
-  static TextStyle get fontWhiteLarge => TextStyle(
+  static final TextStyle fontWhiteLarge = TextStyle(
     color: AppColors.textLight,
     fontSize: 24,
     fontWeight: FontWeight.w500,
   );
-  static TextStyle get fontWhiteLargeBold => TextStyle(
+  static final TextStyle fontWhiteLargeBold = TextStyle(
     color: AppColors.textLight,
     fontSize: 24,
     fontWeight: FontWeight.bold,
   );
 
   // ========================= AppColors Fonts =========================
+
+  static final TextStyle fontPrimarySmall = TextStyle(
+    color: AppColors.primaryOrange,
+    fontSize: 12,
+    fontWeight: FontWeight.w500,
+  );
+  static final TextStyle fontPrimarySmallBold = TextStyle(
+    color: AppColors.primaryOrange,
+    fontSize: 12,
+    fontWeight: FontWeight.bold,
+  );
 }

@@ -62,7 +62,7 @@ class OrderItemRow extends StatelessWidget {
                                 horizontal: 12,
                                 vertical: 6,
                               ),
-                              backgroundColor: AppColors.orange2,
+                              backgroundColor: AppColors.lightOrange,
                               foregroundColor: AppColors.primaryOrange,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20),
@@ -184,7 +184,7 @@ class OrderItemRow extends StatelessWidget {
         decoration: BoxDecoration(
           color: enabled
               ? AppColors.primaryOrange.withAlpha(25)
-              : AppColors.orange2,
+              : AppColors.lightOrange,
           borderRadius: BorderRadius.circular(16),
         ),
         child: Icon(

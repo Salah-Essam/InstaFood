@@ -6,7 +6,6 @@ import 'package:insta_food/core/routes/router_constants.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/storage/shared_prefrences/shared_prefs_service.dart';
 import 'package:insta_food/presentation/features/BottomNavBar/presentation/pages/bottom_nav_bar.dart';
-import 'package:insta_food/presentation/features/ContactUs%20&%20FAQs/presentation/pages/contact_us_page.dart';
 import 'package:insta_food/presentation/features/ContactUs%20&%20FAQs/presentation/pages/help_faqs_page.dart';
 import 'package:insta_food/presentation/features/DeliveryAddress/presentation/pages/add_new_address_page.dart';
 import 'package:insta_food/presentation/features/DeliveryAddress/presentation/pages/delivery_address_page.dart';
@@ -18,7 +17,6 @@ import 'package:insta_food/presentation/features/category/presentation/view/cate
 import 'package:insta_food/presentation/features/Settings/presentation/pages/notification_setting_page.dart';
 import 'package:insta_food/presentation/features/Settings/presentation/pages/passwrod_setting_page.dart';
 import 'package:insta_food/presentation/features/Settings/presentation/pages/settings_page.dart';
-
 
 import 'package:insta_food/presentation/features/filter/presentation/view/filter_page.dart';
 import 'package:insta_food/presentation/features/home/presentation/view/home_page.dart';
@@ -154,13 +152,14 @@ final GoRouter appRouter = GoRouter(
         child: const ConfirmOrderPage(),
       ),
     ),
+
     GoRoute(
-      path: RouterConstants.contactPage,
-      builder: (context, state) => ContactUsPage(),
+      path: RouterConstants.helpFAQsPage1,
+      builder: (context, state) => HelpFAQsPage(page: 1),
     ),
     GoRoute(
-      path: RouterConstants.helpFAQsPage,
-      builder: (context, state) => HelpFAQsPage(),
+      path: RouterConstants.helpFAQsPage2,
+      builder: (context, state) => HelpFAQsPage(page: 2),
     ),
     GoRoute(
       path: RouterConstants.settingsPage,
@@ -177,24 +176,24 @@ final GoRouter appRouter = GoRouter(
         return ItemPage(item: item);
       },
     ),
-  // LeaveReview uses a direct MaterialPageRoute push from the orders list.
 
-  GoRoute(
-    path: RouterConstants.restaurants,
-    builder: (context, state) => BlocProvider(
-      create: (_) => sl<RestaurantsCubit>(),
-      child: const RestaurantListPage(),
+    // LeaveReview uses a direct MaterialPageRoute push from the orders list.
+    GoRoute(
+      path: RouterConstants.restaurants,
+      builder: (context, state) => BlocProvider(
+        create: (_) => sl<RestaurantsCubit>(),
+        child: const RestaurantListPage(),
+      ),
     ),
-  ),
-  GoRoute(
-    path: RouterConstants.categoryPage,
-    builder: (context, state) => CategoryPage(),
-    // onExit: (GoRouterState state) {
-    //   // Reset when leaving category page
-    //   sl<FilterCubit>().setCategoryFilter(null);
-    //   return true;
-    // },
-  ),
+    GoRoute(
+      path: RouterConstants.categoryPage,
+      builder: (context, state) => CategoryPage(),
+      // onExit: (GoRouterState state) {
+      //   // Reset when leaving category page
+      //   sl<FilterCubit>().setCategoryFilter(null);
+      //   return true;
+      // },
+    ),
   ],
 );
 

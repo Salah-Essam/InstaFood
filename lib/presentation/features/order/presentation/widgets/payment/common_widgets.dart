@@ -5,7 +5,8 @@ import 'package:insta_food/core/theme/app_text_styles.dart';
 class LightDivider extends StatelessWidget {
   const LightDivider({super.key});
   @override
-  Widget build(BuildContext context) => const Divider(color: AppColors.orange2, height: 1, thickness: 1);
+  Widget build(BuildContext context) =>
+      const Divider(color: AppColors.lightOrange, height: 1, thickness: 1);
 }
 
 class EditPill extends StatelessWidget {
@@ -15,10 +16,16 @@ class EditPill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: AppColors.orange2,
+        color: AppColors.lightOrange,
         borderRadius: BorderRadius.circular(16),
       ),
-      child: Text('Edit', style: AppTextStyles.mediumText.copyWith(color: AppColors.primaryOrange, fontSize: 12)),
+      child: Text(
+        'Edit',
+        style: AppTextStyles.mediumText.copyWith(
+          color: AppColors.primaryOrange,
+          fontSize: 12,
+        ),
+      ),
     );
   }
 }
@@ -26,5 +33,6 @@ class EditPill extends StatelessWidget {
 class SmallPencilEdit extends StatelessWidget {
   const SmallPencilEdit({super.key});
   @override
-  Widget build(BuildContext context) => const Icon(Icons.edit_outlined, color: AppColors.lightOrange, size: 16);
+  Widget build(BuildContext context) =>
+      const Icon(Icons.edit_outlined, color: AppColors.lightOrange, size: 16);
 }
