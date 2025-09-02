@@ -67,6 +67,7 @@ class RestaurantCard extends StatelessWidget {
             ),
           ],
         ),
+
       ),
     );
   }

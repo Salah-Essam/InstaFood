@@ -18,7 +18,8 @@ class RouterConstants {
   static const String leaveReview = '/leaveReview';
   static const String confirmOrder = '/confirmOrder';
   static const String contactPage = '/contactPage';
-  static const String helpFAQsPage = '/helpPage';
+  static const String helpFAQsPage1 = '/helpPage1';
+  static const String helpFAQsPage2 = '/helpPage2';
   static const String settingsPage = '/settingsPage';
   static const String filterPage = '/filterPage';
   static const String itemPage = '/itemPage';
@@ -29,5 +30,4 @@ class RouterConstants {
   static const String addNewPaymentPage = '/addNewPaymentPage';
   static const String passwordSetting = '/passwordSetting';
   static const String notificationSetting = '/notificationSetting';
-
 }

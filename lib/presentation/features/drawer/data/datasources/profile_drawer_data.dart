@@ -28,12 +28,12 @@ class ProfileDrawerData {
     ProfileDawerItemModel(
       name: AppStrings.contactUs,
       icon: AppAssets.contactUs,
-      pagePath: RouterConstants.contactPage,
+      pagePath: RouterConstants.helpFAQsPage2,
     ),
     ProfileDawerItemModel(
       name: AppStrings.helpFAQs,
       icon: AppAssets.helpFAQs,
-      pagePath: RouterConstants.helpFAQsPage,
+      pagePath: RouterConstants.helpFAQsPage1,
     ),
     ProfileDawerItemModel(
       name: AppStrings.settings,

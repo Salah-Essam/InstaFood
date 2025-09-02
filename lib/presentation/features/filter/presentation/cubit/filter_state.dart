@@ -53,16 +53,39 @@ final class SetFilter extends FilterState {
 
   static const _noValue = Object();
   void printFilterParams() {
-    print('=== FILTER PARAMETERS ===');
-    print('Selected Category: ${selectedCategory?.name ?? "None"}');
-    print('Selected SubCategory: ${subCategory ?? "None"}');
-    print('Max Price: ${maxPrice ?? "No limit"}');
-    print('Min Rating: ${minRating ?? "No minimum"}');
-    print('=========================');
+    debugPrint('=== FILTER PARAMETERS ===');
+    debugPrint('Selected Category: ${selectedCategory?.name ?? "None"}');
+    debugPrint('Selected SubCategory: ${subCategory ?? "None"}');
+    debugPrint('Max Price: ${maxPrice ?? "No limit"}');
+    debugPrint('Min Rating: ${minRating ?? "No minimum"}');
+    debugPrint('=========================');
   }
 
   @override
-  List<Object?> get props => [selectedCategory, maxPrice, minRating];
+  List<Object?> get props => [
+    selectedCategory,
+    maxPrice,
+    minRating,
+    subCategory,
+  ];
 }
 
-final class ApplyFilter extends FilterState {}
+final class ApplyFilter extends FilterState {
+  final FoodCategory? selectedCategory;
+  final String? subCategory;
+  final double? maxPrice;
+  final int? minRating;
+  const ApplyFilter({
+    this.selectedCategory,
+    this.maxPrice,
+    this.minRating,
+    this.subCategory,
+  });
+  @override
+  List<Object?> get props => [
+    selectedCategory,
+    maxPrice,
+    minRating,
+    subCategory,
+  ];
+}

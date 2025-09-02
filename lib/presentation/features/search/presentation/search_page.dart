@@ -4,6 +4,7 @@ import 'package:insta_food/core/di/di.dart';
 import 'package:insta_food/core/network/network_info.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
+import 'package:insta_food/core/utils/app_strings.dart';
 import 'package:insta_food/presentation/features/home/presentation/widget/item_tile.dart';
 import 'package:insta_food/presentation/features/items/presentation/cubit/item_cubit.dart';
 import 'package:insta_food/presentation/widgets/custom_appbar.dart';
@@ -14,7 +15,7 @@ class SearchPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => sl<ItemCubit>()..searchItem(""),
+      create: (context) => sl<ItemCubit>()..getallItems(),
       child: Scaffold(
         backgroundColor: AppColors.primaryYellow,
         appBar: CustomAppBar(inableSearch: true, leading: true),
@@ -41,7 +42,7 @@ class SearchPage extends StatelessWidget {
                       if (snapshot.hasError || snapshot.data == false) {
                         return Center(
                           child: Text(
-                            'No internet connection. Please check your connectivity.',
+                            AppStrings.disconnect,
                             style: AppTextStyles.header,
                             textAlign: TextAlign.center,
                           ),

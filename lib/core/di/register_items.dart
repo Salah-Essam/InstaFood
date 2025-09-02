@@ -2,6 +2,7 @@ import 'package:hive/hive.dart';
 import 'package:insta_food/core/di/di.dart';
 import 'package:insta_food/core/network/APIs/api_service.dart';
 import 'package:insta_food/core/network/network_info.dart';
+import 'package:insta_food/presentation/features/filter/presentation/cubit/filter_cubit.dart';
 import 'package:insta_food/presentation/features/items/data/data%20sources/local_data_source.dart';
 import 'package:insta_food/presentation/features/items/data/data%20sources/remote_data_source.dart';
 import 'package:insta_food/presentation/features/items/data/repositories/item_repository.impl.dart';
@@ -26,6 +27,9 @@ void registerItems() {
     ),
   );
   sl.registerFactory<ItemCubit>(
-    () => ItemCubit(itemRepository: sl<ItemRepository>()),
+    () => ItemCubit(
+      itemRepository: sl<ItemRepository>(),
+      filterCubit: sl<FilterCubit>(),
+    ),
   );
 }

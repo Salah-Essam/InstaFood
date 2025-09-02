@@ -10,17 +10,16 @@ class SharedScaffold extends StatelessWidget {
     required this.pageDetails,
     this.fullYellow = false,
     this.contentPadding = const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-  this.headerAction,
+    this.headerAction,
+    this.useSafeAreaAndPadding = true,
   });
 
   final String appBarTitle;
   final Widget pageDetails;
-  // When true, renders the entire page on a yellow background without the inner white rounded container.
   final bool fullYellow;
-  // Configurable padding applied inside the (white) content container or fullYellow area.
   final EdgeInsets contentPadding;
-  // Optional action widget (e.g., filter icon) displayed at right side of yellow header.
   final Widget? headerAction;
+  final bool useSafeAreaAndPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +32,7 @@ class SharedScaffold extends StatelessWidget {
             width: double.infinity,
             child: Center(
               child: Padding(
-        padding: const EdgeInsets.only(top: 48, left: 16, right: 16),
+                padding: const EdgeInsets.only(top: 48, left: 16, right: 16),
                 child: Row(
                   children: [
                     AppBackButton(),
@@ -47,7 +46,7 @@ class SharedScaffold extends StatelessWidget {
                         ),
                       ),
                     ),
-          if (headerAction != null) headerAction!,
+                    if (headerAction != null) headerAction!,
                   ],
                 ),
               ),
@@ -69,22 +68,24 @@ class SharedScaffold extends StatelessWidget {
                     )
                   : DecoratedBox(
                       decoration: BoxDecoration(
-                        color: AppColors.white,
+                        color: AppColors.scaffoldBackgournd,
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(32),
                           topRight: Radius.circular(32),
                         ),
                       ),
-                      child: SafeArea(
-                        top: false,
-                        left: false,
-                        right: false,
-                        bottom: true,
-                        child: Padding(
-                          padding: contentPadding,
-                          child: pageDetails,
-                        ),
-                      ),
+                      child: useSafeAreaAndPadding
+                          ? SafeArea(
+                              top: false,
+                              left: false,
+                              right: false,
+                              bottom: true,
+                              child: Padding(
+                                padding: contentPadding,
+                                child: pageDetails,
+                              ),
+                            )
+                          : pageDetails,
                     ),
             ),
           ),

@@ -3,11 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:insta_food/core/theme/app_assets.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
+import 'package:insta_food/presentation/features/Help/presentation/pages/help_page.dart';
+import 'package:insta_food/presentation/features/Restaurants/presentation/pages/restaurant_page.dart';
 import 'package:insta_food/presentation/features/drawer/presentation/cubit/drawer_cubit.dart';
-import 'package:go_router/go_router.dart';
-import 'package:insta_food/core/routes/router_constants.dart';
 import 'package:insta_food/presentation/features/drawer/presentation/view/app_drawer.dart';
 import 'package:insta_food/presentation/features/home/presentation/view/home_page.dart';
+import 'package:insta_food/presentation/features/favorites/presentation/favorites_page.dart';
 import 'package:insta_food/presentation/features/order/presentation/view/my_orders_page.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 import 'package:insta_food/core/navigation/bottom_nav_controller.dart';
@@ -31,7 +32,7 @@ class BottomNavBar extends StatelessWidget {
         ),
       ),
       PersistentTabConfig(
-        screen: Page(name: 'Menu', scaffoldKey: _scaffoldKey, onInit: () => context.go(RouterConstants.restaurants)),
+        screen: RestaurantListPage(),
         item: ItemConfig(
           icon: SvgPicture.asset(
             AppAssets.navBarMenu,
@@ -41,7 +42,7 @@ class BottomNavBar extends StatelessWidget {
         ),
       ),
       PersistentTabConfig(
-        screen: Page(name: 'Favorites', scaffoldKey: _scaffoldKey),
+        screen: FavoritesPage(),
         item: ItemConfig(
           icon: SvgPicture.asset(
             AppAssets.navBarFav,
@@ -51,7 +52,7 @@ class BottomNavBar extends StatelessWidget {
         ),
       ),
       PersistentTabConfig(
-  screen: const MyOrdersPage(),
+        screen: const MyOrdersPage(),
         item: ItemConfig(
           icon: SvgPicture.asset(
             AppAssets.navBarOrders,
@@ -61,7 +62,7 @@ class BottomNavBar extends StatelessWidget {
         ),
       ),
       PersistentTabConfig(
-        screen: Page(name: 'Help', scaffoldKey: _scaffoldKey),
+        screen: HelpPage(),
         item: ItemConfig(
           icon: SvgPicture.asset(
             AppAssets.navBarHelp,
@@ -96,7 +97,7 @@ class BottomNavBar extends StatelessWidget {
         body: PopScope(
           canPop: false,
           onPopInvoked: (didPop) {
-            // When back is pressed at tab-level pages, go to first tab instead of exiting.
+            
             if (!didPop) {
               if (BottomNavController.controller.index != 0) {
                 BottomNavController.switchTo(0);
@@ -127,38 +128,3 @@ class BottomNavBar extends StatelessWidget {
   }
 }
 
-class Page extends StatefulWidget {
-  const Page({super.key, required this.name, this.scaffoldKey, this.onInit});
-  final GlobalKey<ScaffoldState>? scaffoldKey;
-  final String name;
-  final VoidCallback? onInit;
-
-  @override
-  State<Page> createState() => _PageState();
-}
-
-class _PageState extends State<Page> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => widget.onInit?.call());
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.menu),
-            iconSize: 24,
-            onPressed: () {
-              widget.scaffoldKey?.currentState?.openEndDrawer();
-            },
-          ),
-        ],
-      ),
-      body: Center(child: Text(widget.name)),
-    );
-  }
-}

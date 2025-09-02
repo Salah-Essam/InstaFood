@@ -14,9 +14,11 @@ class PlaceOrderButton extends StatelessWidget {
       width: double.infinity,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.orange2,
+          backgroundColor: AppColors.lightOrange,
           foregroundColor: AppColors.primaryOrange,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
         ),
         onPressed: disabled
             ? null

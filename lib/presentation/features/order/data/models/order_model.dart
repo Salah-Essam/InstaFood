@@ -45,7 +45,7 @@ class OrderModel {
         .map((e) => OrderItemModel.fromMap(Map<String, dynamic>.from(e as Map)))
         .toList();
 
-    DateTime? _toDt(dynamic v) {
+    DateTime? toDt(dynamic v) {
       if (v is Timestamp) return v.toDate();
       if (v is DateTime) return v;
       return null;
@@ -55,19 +55,29 @@ class OrderModel {
       id: doc.id,
       status: (data[OrderFs.fStatus] ?? 'active').toString(),
       items: items,
-      subtotal: (data[OrderFs.fSubtotal] is num) ? (data[OrderFs.fSubtotal] as num).toDouble() : 0.0,
-      tax: (data[OrderFs.fTax] is num) ? (data[OrderFs.fTax] as num).toDouble() : 0.0,
-      deliveryFee: (data[OrderFs.fDeliveryFee] is num) ? (data[OrderFs.fDeliveryFee] as num).toDouble() : 0.0,
-      total: (data[OrderFs.fTotal] is num) ? (data[OrderFs.fTotal] as num).toDouble() : 0.0,
+      subtotal: (data[OrderFs.fSubtotal] is num)
+          ? (data[OrderFs.fSubtotal] as num).toDouble()
+          : 0.0,
+      tax: (data[OrderFs.fTax] is num)
+          ? (data[OrderFs.fTax] as num).toDouble()
+          : 0.0,
+      deliveryFee: (data[OrderFs.fDeliveryFee] is num)
+          ? (data[OrderFs.fDeliveryFee] as num).toDouble()
+          : 0.0,
+      total: (data[OrderFs.fTotal] is num)
+          ? (data[OrderFs.fTotal] as num).toDouble()
+          : 0.0,
       shippingAddress: (data[OrderFs.fShippingAddress] ?? '').toString(),
-      payment: Map<String, dynamic>.from((data[OrderFs.fPayment] as Map?) ?? const {}),
+      payment: Map<String, dynamic>.from(
+        (data[OrderFs.fPayment] as Map?) ?? const {},
+      ),
       delivery: data[OrderFs.fDeliveryInfo] == null
           ? null
           : Map<String, dynamic>.from(data[OrderFs.fDeliveryInfo] as Map),
-      createdAt: _toDt(data[OrderFs.fCreatedAt]),
-      updatedAt: _toDt(data[OrderFs.fUpdatedAt]),
-      completedAt: _toDt(data[OrderFs.fCompletedAt]),
-      canceledAt: _toDt(data[OrderFs.fCanceledAt]),
+      createdAt: toDt(data[OrderFs.fCreatedAt]),
+      updatedAt: toDt(data[OrderFs.fUpdatedAt]),
+      completedAt: toDt(data[OrderFs.fCompletedAt]),
+      canceledAt: toDt(data[OrderFs.fCanceledAt]),
     );
   }
 }

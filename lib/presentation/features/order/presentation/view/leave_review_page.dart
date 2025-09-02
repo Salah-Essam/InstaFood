@@ -25,11 +25,18 @@ class LeaveReviewPage extends StatefulWidget {
 class _LeaveReviewPageState extends State<LeaveReviewPage> {
   final _controller = TextEditingController();
   @override
-  void dispose() { _controller.dispose(); super.dispose(); }
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => LeaveReviewCubit(repo: sl<OrdersRepository>(), auth: context.read<AuthCubit>()),
+      create: (context) => LeaveReviewCubit(
+        repo: sl<OrdersRepository>(),
+        auth: context.read<AuthCubit>(),
+      ),
       child: SharedScaffold(
         appBarTitle: AppStrings.leaveAReviewTitle,
         pageDetails: SingleChildScrollView(
@@ -49,7 +56,11 @@ class _LeaveReviewPageState extends State<LeaveReviewPage> {
               const SizedBox(height: 12),
               _CommentBox(controller: _controller),
               const SizedBox(height: 16),
-              _Buttons(orderId: widget.orderId, itemId: widget.item.itemId, controller: _controller),
+              _Buttons(
+                orderId: widget.orderId,
+                itemId: widget.item.itemId,
+                controller: _controller,
+              ),
               const SizedBox(height: 8),
             ],
           ),
@@ -86,7 +97,10 @@ class _ProductName extends StatelessWidget {
         textAlign: TextAlign.center,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
-        style: AppTextStyles.mediumText.copyWith(fontWeight: FontWeight.w700, color: AppColors.textDarkBrown),
+        style: AppTextStyles.mediumText.copyWith(
+          fontWeight: FontWeight.w700,
+          color: AppColors.textDarkBrown,
+        ),
       ),
     );
   }
@@ -131,7 +145,9 @@ class _Stars extends StatelessWidget {
                     child: SvgPicture.asset(
                       'assets/icons/bot-star.svg',
                       colorFilter: ColorFilter.mode(
-                        selected ? AppColors.primaryOrange : AppColors.primaryOrange.withOpacity(0.4),
+                        selected
+                            ? AppColors.primaryOrange
+                            : AppColors.primaryOrange.withAlpha(102),
                         BlendMode.srcIn,
                       ),
                     ),
@@ -191,7 +207,11 @@ class _CommentBox extends StatelessWidget {
 }
 
 class _Buttons extends StatelessWidget {
-  const _Buttons({required this.orderId, required this.itemId, required this.controller});
+  const _Buttons({
+    required this.orderId,
+    required this.itemId,
+    required this.controller,
+  });
   final String orderId;
   final String itemId;
   final TextEditingController controller;
@@ -200,7 +220,7 @@ class _Buttons extends StatelessWidget {
     return BlocConsumer<LeaveReviewCubit, LeaveReviewState>(
       listenWhen: (p, n) => p.submitted != n.submitted || p.error != n.error,
       listener: (context, state) {
-  if (state.submitted) {
+        if (state.submitted) {
           showDialog(
             context: context,
             barrierDismissible: false,
@@ -211,9 +231,9 @@ class _Buttons extends StatelessWidget {
                 TextButton(
                   onPressed: () {
                     // Close the dialog first, then route to the main screen to avoid blank overlays.
-        Navigator.of(dialogCtx).pop();
-        // Pop this page and return success to the caller (My Orders tab retains its stack).
-        Navigator.of(context).pop(true);
+                    Navigator.of(dialogCtx).pop();
+                    // Pop this page and return success to the caller (My Orders tab retains its stack).
+                    Navigator.of(context).pop(true);
                   },
                   child: const Text('OK'),
                 ),
@@ -222,14 +242,23 @@ class _Buttons extends StatelessWidget {
           );
         }
         if (state.error == 'rating_required') {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please select a rating.')));
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please select a rating.')),
+          );
         } else if (state.error == 'submit_failed') {
           showDialog(
             context: context,
             builder: (_) => AlertDialog(
               title: const Text('Something went wrong'),
-              content: const Text('Could not submit your review. Please try again.'),
-              actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('OK'))],
+              content: const Text(
+                'Could not submit your review. Please try again.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('OK'),
+                ),
+              ],
             ),
           );
         }
@@ -245,9 +274,17 @@ class _Buttons extends StatelessWidget {
                     foregroundColor: AppColors.primaryOrange,
                     side: const BorderSide(color: AppColors.border),
                     minimumSize: const Size(0, 30),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50.21)),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10.57),
-                    textStyle: AppTextStyles.mediumText.copyWith(fontSize: 12, fontWeight: FontWeight.w600),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50.21),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10.57,
+                    ),
+                    textStyle: AppTextStyles.mediumText.copyWith(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   onPressed: () => context.pop(),
                   child: Text(AppStrings.cancel),
@@ -260,17 +297,35 @@ class _Buttons extends StatelessWidget {
                     backgroundColor: AppColors.primaryOrange,
                     foregroundColor: Colors.white,
                     minimumSize: const Size(0, 30),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50.21)),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10.57),
-                    textStyle: AppTextStyles.mediumText.copyWith(fontSize: 12, fontWeight: FontWeight.w700),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50.21),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10.57,
+                    ),
+                    textStyle: AppTextStyles.mediumText.copyWith(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   onPressed: state.isSubmitting
                       ? null
                       : () async {
-                          await context.read<LeaveReviewCubit>().submit(orderId: orderId, itemId: itemId);
+                          await context.read<LeaveReviewCubit>().submit(
+                            orderId: orderId,
+                            itemId: itemId,
+                          );
                         },
                   child: state.isSubmitting
-                      ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
                       : const Text('Submit'),
                 ),
               ),

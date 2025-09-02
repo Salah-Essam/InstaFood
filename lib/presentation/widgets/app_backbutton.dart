@@ -6,32 +6,39 @@ import 'package:insta_food/core/theme/app_assets.dart';
 import 'package:insta_food/core/navigation/bottom_nav_controller.dart';
 
 class AppBackButton extends StatelessWidget {
-  const AppBackButton({super.key});
+  const AppBackButton({super.key, this.isReversed = false, this.onTap});
+
+  final bool isReversed;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        // Prefer router-aware back; fallback to home to avoid black screen
-        final router = GoRouter.of(context);
-        if (router.canPop()) {
-          router.pop();
-        } else {
-          // If inside bottom nav, go to the first tab; otherwise go to bottom nav
-          if (BottomNavController.controller.index != 0) {
-            BottomNavController.switchTo(0);
-          } else {
-            router.go(RouterConstants.bottomNavBar);
-          }
-        }
-      },
+      onTap: (onTap != null)
+          ? onTap
+          : () {
+              // Prefer router-aware back; fallback to home to avoid black screen
+              final router = GoRouter.of(context);
+              if (router.canPop()) {
+                router.pop();
+              } else {
+                // If inside bottom nav, go to the first tab; otherwise go to bottom nav
+                if (BottomNavController.controller.index != 0) {
+                  BottomNavController.switchTo(0);
+                } else {
+                  router.go(RouterConstants.bottomNavBar);
+                }
+              }
+            },
       borderRadius: BorderRadius.circular(24),
       child: SizedBox(
         width: 35,
         height: 35,
         child: Padding(
           padding: const EdgeInsets.all(4),
-          child: SvgPicture.asset(AppAssets.backArrow, fit: BoxFit.contain),
+          child: isReversed
+              ? Image.asset(AppAssets.reversbackArrow, fit: BoxFit.contain)
+              : SvgPicture.asset(AppAssets.backArrow, fit: BoxFit.contain),
         ),
       ),
     );
