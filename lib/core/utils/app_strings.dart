@@ -119,4 +119,9 @@ class AppStrings {
     static const String enableLocationBody = 'We need your GPS to track your order in real time.';
     static const String notNow = 'Not now';
     static const String allow = 'Allow';
+
+    // ========================= Reviews =========================
+    static const String leaveAReviewTitle = 'Leave a Review';
+    static const String reviewIntro = "We'd love to know what you think of your dish.";
+    static const String leaveUsComment = 'Leave us your comment!';
 }

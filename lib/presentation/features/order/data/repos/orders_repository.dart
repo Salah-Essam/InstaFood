@@ -5,6 +5,13 @@ abstract class OrdersRepository {
   Stream<List<OrderModel>> watchAll(String uid);
   Stream<List<OrderModel>> watchByStatus(String uid, String status);
   Future<void> cancel(String uid, String orderId, {String? reason});
+  Future<void> addReview({
+    required String uid,
+    required String orderId,
+    required String itemId,
+    required int rating,
+    String? comment,
+  });
 }
 
 class OrdersRepositoryFs implements OrdersRepository {
@@ -38,5 +45,23 @@ class OrdersRepositoryFs implements OrdersRepository {
       'updatedAt': FieldValue.serverTimestamp(),
       if (reason != null) 'cancelReason': reason,
     });
+  }
+
+  @override
+  Future<void> addReview({
+    required String uid,
+    required String orderId,
+    required String itemId,
+    required int rating,
+    String? comment,
+  }) async {
+  final reviews = _ordersCol(uid).doc(orderId).collection('reviews');
+  final trimmed = itemId.trim();
+  final ref = trimmed.isEmpty ? reviews.doc() : reviews.doc(trimmed);
+  await ref.set({
+      'rating': rating,
+      if (comment != null && comment.isNotEmpty) 'comment': comment,
+      'createdAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
   }
 }

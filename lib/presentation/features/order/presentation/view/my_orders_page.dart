@@ -9,6 +9,7 @@ import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/core/utils/app_strings.dart';
 import 'package:insta_food/presentation/features/order/data/models/order_model.dart';
 import 'package:insta_food/presentation/features/order/logic/orders_cubit.dart';
+import 'package:insta_food/presentation/features/order/presentation/view/leave_review_page.dart';
 import 'package:insta_food/presentation/widgets/shared_scaffold.dart';
 
 class MyOrdersPage extends StatefulWidget {
@@ -253,8 +254,20 @@ class _ActionRow extends StatelessWidget {
         ),
   ]);
     } else if (order.isCompleted) {
-  return Wrap(spacing: 12, runSpacing: 8, children: [
-    OutlinedButton(style: btnStyle, onPressed: () {/* TODO: review */}, child: const Text('Leave a review')),
+      return Wrap(spacing: 12, runSpacing: 8, children: [
+        OutlinedButton(
+          style: btnStyle,
+          onPressed: () {
+            final first = order.items.isNotEmpty ? order.items.first : null;
+            if (first == null) return;
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => LeaveReviewPage(orderId: order.id, item: first),
+              ),
+            );
+          },
+          child: const Text('Leave a review'),
+        ),
     TextButton(
           onPressed: () {/* TODO: order again */},
           style: TextButton.styleFrom(

@@ -172,6 +172,7 @@ final GoRouter appRouter = GoRouter(
         return ItemPage(item: item);
       },
     ),
+  // LeaveReview uses a direct MaterialPageRoute push from the orders list.
   ],
 );
 
