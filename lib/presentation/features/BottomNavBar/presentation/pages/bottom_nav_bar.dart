@@ -8,6 +8,7 @@ import 'package:insta_food/presentation/features/drawer/presentation/view/app_dr
 import 'package:insta_food/presentation/features/home/presentation/view/home_page.dart';
 import 'package:insta_food/presentation/features/order/presentation/view/my_orders_page.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
+import 'package:insta_food/core/navigation/bottom_nav_controller.dart';
 
 class BottomNavBar extends StatelessWidget {
   const BottomNavBar({super.key});
@@ -90,20 +91,31 @@ class BottomNavBar extends StatelessWidget {
             return AppDrawer();
           },
         ),
-        body: PersistentTabView(
-          tabs: _tabs(),
-          screenTransitionAnimation: ScreenTransitionAnimation(
-            curve: Curves.ease,
-            duration: Duration(milliseconds: 300),
-          ),
-          navBarBuilder: (p0) => NeumorphicBottomNavBar(
-            navBarConfig: p0,
-
-            navBarDecoration: NavBarDecoration(
-              color: AppColors.primaryOrange,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(32),
-                topRight: Radius.circular(32),
+        body: PopScope(
+          canPop: false,
+          onPopInvoked: (didPop) {
+            // When back is pressed at tab-level pages, go to first tab instead of exiting.
+            if (!didPop) {
+              if (BottomNavController.controller.index != 0) {
+                BottomNavController.switchTo(0);
+              }
+            }
+          },
+          child: PersistentTabView(
+            controller: BottomNavController.controller,
+            tabs: _tabs(),
+            screenTransitionAnimation: ScreenTransitionAnimation(
+              curve: Curves.ease,
+              duration: Duration(milliseconds: 300),
+            ),
+            navBarBuilder: (p0) => NeumorphicBottomNavBar(
+              navBarConfig: p0,
+              navBarDecoration: NavBarDecoration(
+                color: AppColors.primaryOrange,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(32),
+                  topRight: Radius.circular(32),
+                ),
               ),
             ),
           ),

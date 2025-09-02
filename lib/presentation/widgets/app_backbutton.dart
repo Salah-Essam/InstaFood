@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:insta_food/core/routes/router_constants.dart';
 import 'package:insta_food/core/theme/app_assets.dart';
+import 'package:insta_food/core/navigation/bottom_nav_controller.dart';
 
 class AppBackButton extends StatelessWidget {
   const AppBackButton({super.key});
@@ -16,7 +17,12 @@ class AppBackButton extends StatelessWidget {
         if (router.canPop()) {
           router.pop();
         } else {
-          router.go(RouterConstants.bottomNavBar);
+          // If inside bottom nav, go to the first tab; otherwise go to bottom nav
+          if (BottomNavController.controller.index != 0) {
+            BottomNavController.switchTo(0);
+          } else {
+            router.go(RouterConstants.bottomNavBar);
+          }
         }
       },
       borderRadius: BorderRadius.circular(24),
