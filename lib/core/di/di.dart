@@ -52,9 +52,6 @@ Future<void> setupLocator() async {
   sl.registerLazySingleton<FirebaseAuthService>(
     () => FirebaseAuthService(firebaseAuth: sl()),
   );
-  sl.registerLazySingleton<FirebaseFirestoreService>(
-    () => FirebaseFirestoreService(firestore: sl()),
-  );
   
   // Feature Firestore services
   sl.registerLazySingleton<CartFirestoreService>(
@@ -71,19 +68,11 @@ Future<void> setupLocator() async {
   );
 
 
-  // Auth repository (no local Hive caching)
+  // Auth repository 
   sl.registerLazySingleton<AuthRepository>(() => AuthRepository(
         sl<FirebaseAuth>(),
         sl<FirebaseFirestoreService>(),
       ));
-
-  // Auth repository (constructor: FirebaseAuth, FirebaseFirestoreService, userBox)
-  sl.registerLazySingleton<AuthRepository>(
-    () => AuthRepository(
-      sl<FirebaseAuth>(),
-      sl<FirebaseFirestoreService>(),
-    ),
-  );
 
   // Register cubits
   sl.registerFactory(() => AuthCubit(sl()));
