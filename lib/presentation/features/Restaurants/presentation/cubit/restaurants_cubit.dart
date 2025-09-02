@@ -9,7 +9,9 @@ import 'package:insta_food/presentation/features/Restaurants/presentation/widget
 class RestaurantsCubit extends Cubit<RestaurantsState> {
   final RestaurantsRepository repository;
   final Connectivity connectivity;
-  List<Restaurant> _all = [];
+
+  List<Restaurant> _full = [];
+  List<Restaurant> _current = [];
   StreamSubscription<List<ConnectivityResult>>? _connSub;
   bool _wasOffline = false;
 
@@ -39,9 +41,10 @@ class RestaurantsCubit extends Cubit<RestaurantsState> {
   Future<void> fetchAll({bool initial = false, bool refresh = false}) async {
     if (initial) emit(RestaurantsLoading());
     try {
-      final list = await repository.fetchAll();
-      _all = list;
-      emit(RestaurantsLoaded(restaurants: list));
+  final list = await repository.fetchAll();
+  _full = list;
+  _current = list;
+  emit(RestaurantsLoaded(restaurants: _current));
     } catch (_) {
       // fallback to cache already attempted in repository
       if (state is! RestaurantsLoaded) {
@@ -52,7 +55,8 @@ class RestaurantsCubit extends Cubit<RestaurantsState> {
 
   Future<void> applyFilter({required RestaurantFilterType filterType, String? query}) async {
     if (filterType == RestaurantFilterType.all || (query == null || query.isEmpty)) {
-      emit(RestaurantsLoaded(restaurants: List.unmodifiable(_all)));
+      _current = List.unmodifiable(_full);
+      emit(RestaurantsLoaded(restaurants: _current));
       return;
     }
     final q = query.trim();
@@ -68,11 +72,12 @@ class RestaurantsCubit extends Cubit<RestaurantsState> {
         list = await repository.filterByCuisine(q);
         break;
       case RestaurantFilterType.all:
-        list = _all;
+        list = _full;
         break;
     }
-    _all = list; // keep newest baseline after online fetches
-    emit(RestaurantsLoaded(restaurants: list));
+
+    _current = list;
+    emit(RestaurantsLoaded(restaurants: _current));
   }
 
   @override

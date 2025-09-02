@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:hive/hive.dart';
 import 'package:insta_food/core/di/register_restaurants.dart';
+import 'package:insta_food/core/di/register_menu.dart';
 import 'package:insta_food/core/network/Firebase/firebase_auth_service.dart';
 import 'package:insta_food/core/network/Firebase/firebase_options.dart';
 import 'package:get_it/get_it.dart';
@@ -28,7 +29,6 @@ import 'package:insta_food/presentation/features/cart/data/datasources/cart_remo
 import 'package:insta_food/presentation/features/cart/data/repos/cart_repository_impl.dart';
 import 'package:insta_food/presentation/features/cart/data/repositories/cart_repository.dart';
 import 'package:insta_food/presentation/features/cart/logic/cart_cubit.dart';
-import 'package:insta_food/presentation/features/order/logic/order_cubit.dart';
 import 'package:insta_food/presentation/features/order/data/repos/orders_repository.dart';
 import 'package:insta_food/presentation/features/order/logic/orders_cubit.dart';
 
@@ -130,5 +130,6 @@ sl.registerLazySingleton<Box<Restaurant>>(
 
   registerRestaurants();
   registerItems();
+  registerMenu();
 }
   

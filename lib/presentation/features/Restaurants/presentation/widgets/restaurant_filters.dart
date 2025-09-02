@@ -9,43 +9,52 @@ class RestaurantFilters extends StatefulWidget {
   const RestaurantFilters({super.key, required this.onFilterChanged});
 
   @override
-  State<RestaurantFilters> createState() => _RestaurantFiltersState();
+  State<RestaurantFilters> createState() => RestaurantFiltersState();
 }
 
-class _RestaurantFiltersState extends State<RestaurantFilters> {
+class RestaurantFiltersState extends State<RestaurantFilters> {
   RestaurantFilterType active = RestaurantFilterType.all;
-  final TextEditingController _controller = TextEditingController();
+  final TextEditingController controller = TextEditingController();
 
-  void _emit() {
-    widget.onFilterChanged(active, active == RestaurantFilterType.all ? null : _controller.text.trim());
+  void emit() {
+    widget.onFilterChanged(active, active == RestaurantFilterType.all ? null : controller.text.trim());
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+      padding: const EdgeInsets.fromLTRB(0, 8, 0, 4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              _chip(RestaurantFilterType.all, 'All'),
-              _chip(RestaurantFilterType.address, 'Address'),
-              _chip(RestaurantFilterType.name, 'Name'),
-              _chip(RestaurantFilterType.cuisine, 'Cuisine'),
-            ],
+          LayoutBuilder(
+            builder: (context, constraints) {
+              const gap = 8.0;
+              final per = ((constraints.maxWidth - (3 * gap)) / 4).clamp(70.0, double.infinity);
+              return Row(
+                children: [
+                  seg('All', RestaurantFilterType.all, per),
+                  const SizedBox(width: gap),
+                  seg('Address', RestaurantFilterType.address, per),
+                  const SizedBox(width: gap),
+                  seg('Name', RestaurantFilterType.name, per),
+                  const SizedBox(width: gap),
+                  seg('Cuisine', RestaurantFilterType.cuisine, per),
+                ],
+              );
+            },
           ),
           if (active != RestaurantFilterType.all)
             Padding(
-              padding: const EdgeInsets.only(top: 8.0),
+              padding: const EdgeInsets.only(top: 10.0),
               child: TextField(
-                controller: _controller,
-                onChanged: (_) => _emit(),
+                controller: controller,
+                onChanged: (_) => emit(),
                 decoration: InputDecoration(
                   hintText: 'Enter ${active.name}...',
                   isDense: true,
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 ),
@@ -56,19 +65,42 @@ class _RestaurantFiltersState extends State<RestaurantFilters> {
     );
   }
 
-  Widget _chip(RestaurantFilterType type, String label) {
-    final selected = active == type;
-    return Padding(
-      padding: const EdgeInsets.only(right: 8.0),
-      child: ChoiceChip(
-        label: Text(label, style: AppTextStyles.small.copyWith(color: selected ? AppColors.white : AppColors.textDarkBrown)),
-        selected: selected,
-        onSelected: (_) {
-          setState(() { active = type; });
-          _emit();
+  Widget seg(String text, RestaurantFilterType type, double width) {
+    final isSelected = active == type;
+    return SizedBox(
+      width: width,
+      height: 32,
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            active = type;
+            controller.clear();
+          });
+          emit();
         },
-        selectedColor: AppColors.primaryOrange,
-        backgroundColor: AppColors.lightOrange,
+        borderRadius: BorderRadius.circular(38),
+        child: Container(
+          decoration: BoxDecoration(
+            color: isSelected ? AppColors.primaryOrange : AppColors.orange2,
+            borderRadius: BorderRadius.circular(38),
+            border: Border.all(
+              color: isSelected ? AppColors.primaryOrange : AppColors.border,
+              width: 1,
+            ),
+          ),
+          alignment: Alignment.center,
+          padding: const EdgeInsetsDirectional.only(start: 8, end: 8, top: 2),
+          child: Text(
+            text,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: AppTextStyles.mediumText.copyWith(
+              fontSize: 12,
+              color: isSelected ? Colors.white : AppColors.primaryOrange,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
       ),
     );
   }

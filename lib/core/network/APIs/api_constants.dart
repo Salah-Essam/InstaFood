@@ -3,6 +3,8 @@ class ApiConstants {
   static const String restaurant = "/Restaurant";
   static const String category = '$restaurant?category=';
   static const String addressandname = '$restaurant?address={address}&name={name}';
+  static String menu(int id) => '$restaurant/$id/menu';
+  static String menuSort(int id) => '$restaurant/$id/menu?sortbyprice={sortbyprice}';
   static const String user = "/User";
   static const String items = "/Restaurant/items";
   static const String itemsearch = "/Restaurant/items?ItemName=";
