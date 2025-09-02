@@ -76,7 +76,7 @@ class _ItemPageState extends State<ItemPage> {
                 Text(widget.item.itemName, style: AppTextStyles.header),
 
                 Spacer(),
-                FavButton(),
+                FavButton(item: widget.item),
                 const SizedBox(width: 12),
                 GestureDetector(
                   onTap: () =>

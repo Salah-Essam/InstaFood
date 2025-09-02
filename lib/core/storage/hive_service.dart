@@ -4,6 +4,7 @@ import 'package:insta_food/presentation/features/Restaurants/data/model/restaura
 
 const String cacheItemsKey = "cacheItems";
 const String cacheRestaurantsKey = "cacheRestaurants";
+const String cacheFavoritesKey = "cacheFavorites";
 
 class HiveService {
   static Future<void> init() async {
@@ -16,6 +17,7 @@ class HiveService {
     // Open boxes
   await Hive.openBox<ItemModel>(cacheItemsKey);
   await Hive.openBox<Restaurant>(cacheRestaurantsKey);
+  await Hive.openBox<ItemModel>(cacheFavoritesKey);
 
   }
 }

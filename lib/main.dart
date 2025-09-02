@@ -15,6 +15,7 @@ import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_s
 import 'package:insta_food/presentation/features/drawer/presentation/cubit/drawer_cubit.dart';
 import 'package:insta_food/presentation/features/cart/logic/cart_cubit.dart';
 import 'package:insta_food/presentation/features/order/logic/orders_cubit.dart';
+import 'package:insta_food/presentation/features/favorites/logic/favorites_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,6 +27,9 @@ void main() async {
         BlocProvider<AuthCubit>(
           create: (_) => sl<AuthCubit>()..checkAuthStatus(),
         ),
+
+        BlocProvider(create: (_) => sl<FavoritesCubit>()..init()),
+
         BlocProvider(
           create: (ctx) => CartCubit(
             repo: sl(),
