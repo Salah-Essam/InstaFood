@@ -8,7 +8,7 @@ class LightDivider extends StatelessWidget {
     return SizedBox(
       width: 323,
       child: const Divider(
-        color: AppColors.orange2,
+        color: AppColors.lightOrange,
         height: 1,
         thickness: 1,
       ),
@@ -20,10 +20,6 @@ class DividerWithSpacing extends StatelessWidget {
   const DividerWithSpacing({super.key});
   @override
   Widget build(BuildContext context) => const Column(
-        children: [
-          SizedBox(height: 6),
-          LightDivider(),
-          SizedBox(height: 6),
-        ],
-      );
+    children: [SizedBox(height: 6), LightDivider(), SizedBox(height: 6)],
+  );
 }

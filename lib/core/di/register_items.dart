@@ -8,10 +8,12 @@ import 'package:insta_food/presentation/features/items/data/data%20sources/remot
 import 'package:insta_food/presentation/features/items/data/repositories/item_repository.impl.dart';
 import 'package:insta_food/presentation/features/items/data/repositories/item_repository.dart';
 import 'package:insta_food/presentation/features/items/presentation/cubit/item_cubit.dart';
+import 'package:insta_food/core/storage/hive_service.dart';
+import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 
 void registerItems() {
   sl.registerLazySingleton<ItemsLocalDataSource>(
-    () => ProductLocalDataSourceImpl(box: sl<Box>()),
+    () => ProductLocalDataSourceImpl(box: sl<Box<ItemModel>>(instanceName: cacheItemsKey)),
   );
   sl.registerLazySingleton<ItemsRemoteDataSource>(
     () => ItemsRemoteDataSourceImpl(apiService: sl<ApiService>()),

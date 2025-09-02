@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:insta_food/core/di/di.dart';
-import 'package:insta_food/core/theme/app_assets.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
-import 'package:insta_food/core/utils/app_strings.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/presentation/features/category/presentation/view/category_page.dart';
 import 'package:insta_food/presentation/features/filter/data/enum/catagories_enum.dart';
 import 'package:insta_food/presentation/features/filter/presentation/cubit/filter_cubit.dart';
-import 'package:insta_food/presentation/features/filter/presentation/view/filter_page.dart';
 import 'package:insta_food/presentation/widgets/app_button_onb.dart';
 
 class ButtonGrid extends StatelessWidget {
   final bool? pushPage;
-  ButtonGrid({super.key, this.pushPage = true});
+  const ButtonGrid({super.key, this.pushPage = true});
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<FilterCubit, FilterState>(

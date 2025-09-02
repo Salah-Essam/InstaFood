@@ -30,11 +30,11 @@ class AppColors {
 
   // ================= Neutrals =================
   static const Color white = Colors.white;
+  static const Color scaffoldBackgournd = Color(0xFFF8F8F8);
   static const Color grey = Color(0xFF4E5457);
 
   // ================= Legacy / Extra =================
   static const Color lightOrange = Color(0xFFFFDECF); // Pale orange (dividers)
-  static const Color orange2 = Color(0xFFFFD8C7); // Softer orange for backgrounds/dividers
   static const Color lightYellow = Color(0xFFF3E9B5); // Soft yellow
   static const Color border = Color(0xFFF1CCBC); // Light brown border
   static const Color deepBrown = Color(0xFF391713); // Very dark brown

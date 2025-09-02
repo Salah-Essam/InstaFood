@@ -6,7 +6,6 @@ import 'package:insta_food/core/routes/router_constants.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/storage/shared_prefrences/shared_prefs_service.dart';
 import 'package:insta_food/presentation/features/BottomNavBar/presentation/pages/bottom_nav_bar.dart';
-import 'package:insta_food/presentation/features/ContactUs%20&%20FAQs/presentation/pages/contact_us_page.dart';
 import 'package:insta_food/presentation/features/ContactUs%20&%20FAQs/presentation/pages/help_faqs_page.dart';
 import 'package:insta_food/presentation/features/DeliveryAddress/presentation/pages/add_new_address_page.dart';
 import 'package:insta_food/presentation/features/DeliveryAddress/presentation/pages/delivery_address_page.dart';
@@ -15,33 +14,34 @@ import 'package:insta_food/presentation/features/PaymentMethods/presentation/pag
 import 'package:insta_food/presentation/features/Profile/presentation/pages/profile_page.dart';
 
 import 'package:insta_food/presentation/features/category/presentation/view/category_page.dart';
-import 'package:insta_food/presentation/features/filter/presentation/cubit/filter_cubit.dart';
-
 import 'package:insta_food/presentation/features/Settings/presentation/pages/notification_setting_page.dart';
 import 'package:insta_food/presentation/features/Settings/presentation/pages/passwrod_setting_page.dart';
 import 'package:insta_food/presentation/features/Settings/presentation/pages/settings_page.dart';
-
 
 import 'package:insta_food/presentation/features/filter/presentation/view/filter_page.dart';
 import 'package:insta_food/presentation/features/home/presentation/view/home_page.dart';
 import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 import 'package:insta_food/presentation/features/items/presentation/view/item_page.dart';
+import 'package:insta_food/presentation/features/Restaurants/presentation/pages/restaurant_page.dart';
+import 'package:insta_food/presentation/features/Restaurants/presentation/cubit/restaurants_cubit.dart';
 
 import 'package:insta_food/presentation/features/auth/presentation/pages/login.dart';
 import 'package:insta_food/presentation/features/auth/presentation/pages/set_password.dart';
 import 'package:insta_food/presentation/features/auth/presentation/pages/signup.dart';
 
 import 'package:insta_food/presentation/features/onboarding/onboarding.dart';
+import 'package:insta_food/presentation/features/order/presentation/view/my_orders_page.dart';
 import 'package:insta_food/presentation/features/search/presentation/search_page.dart';
 import 'package:insta_food/presentation/features/splash/view/second_splash_screen.dart';
 import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_state.dart';
 import 'package:insta_food/presentation/features/order/presentation/view/confirm_order_page.dart';
 import 'package:insta_food/presentation/features/order/logic/order_cubit.dart';
-import 'package:insta_food/core/di/di.dart';
 import 'package:insta_food/presentation/features/order/firestore/order_firestore_services.dart';
 import 'package:insta_food/presentation/features/cart/logic/cart_cubit.dart';
 import 'package:insta_food/presentation/features/order/presentation/view/payment_page.dart';
+import 'package:insta_food/presentation/features/order/presentation/view/order_confirmed_page.dart';
+import 'package:insta_food/presentation/features/order/presentation/view/delivery_time_page.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: RouterConstants.splash,
@@ -106,11 +106,37 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: RouterConstants.payment,
-      builder: (context, state) => const PaymentPage(),
+      builder: (context, state) => BlocProvider(
+        create: (_) => OrderCubit(
+          service: sl<OrderFirestoreService>(),
+          cartCubit: context.read<CartCubit>(),
+          authCubit: context.read<AuthCubit>(),
+        ),
+        child: const PaymentPage(),
+      ),
+    ),
+    GoRoute(
+      path: RouterConstants.orderConfirmed,
+      builder: (context, state) => BlocProvider(
+        create: (_) => OrderCubit(
+          service: sl<OrderFirestoreService>(),
+          cartCubit: context.read<CartCubit>(),
+          authCubit: context.read<AuthCubit>(),
+        ),
+        child: const OrderConfirmedPage(),
+      ),
+    ),
+    GoRoute(
+      path: RouterConstants.deliveryTime,
+      builder: (context, state) => const DeliveryTimePage(),
     ),
     GoRoute(
       path: RouterConstants.addNewPaymentPage,
       builder: (context, state) => AddCardPage(),
+    ),
+    GoRoute(
+      path: RouterConstants.orderPage,
+      builder: (context, state) => MyOrdersPage(),
     ),
     GoRoute(
       path: RouterConstants.notificationSetting,
@@ -131,13 +157,14 @@ final GoRouter appRouter = GoRouter(
         child: const ConfirmOrderPage(),
       ),
     ),
+
     GoRoute(
-      path: RouterConstants.contactPage,
-      builder: (context, state) => ContactUsPage(),
+      path: RouterConstants.helpFAQsPage1,
+      builder: (context, state) => HelpFAQsPage(page: 1),
     ),
     GoRoute(
-      path: RouterConstants.helpFAQsPage,
-      builder: (context, state) => HelpFAQsPage(),
+      path: RouterConstants.helpFAQsPage2,
+      builder: (context, state) => HelpFAQsPage(page: 2),
     ),
     GoRoute(
       path: RouterConstants.settingsPage,
@@ -153,6 +180,15 @@ final GoRouter appRouter = GoRouter(
         final ItemModel item = state.extra as ItemModel;
         return ItemPage(item: item);
       },
+    ),
+
+    // LeaveReview uses a direct MaterialPageRoute push from the orders list.
+    GoRoute(
+      path: RouterConstants.restaurants,
+      builder: (context, state) => BlocProvider(
+        create: (_) => sl<RestaurantsCubit>(),
+        child: const RestaurantListPage(),
+      ),
     ),
     GoRoute(
       path: RouterConstants.categoryPage,

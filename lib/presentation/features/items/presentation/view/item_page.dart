@@ -76,7 +76,7 @@ class _ItemPageState extends State<ItemPage> {
                 Text(widget.item.itemName, style: AppTextStyles.header),
 
                 Spacer(),
-                FavButton(),
+                FavButton(item: widget.item),
                 const SizedBox(width: 12),
                 GestureDetector(
                   onTap: () =>
@@ -191,6 +191,7 @@ class _ItemPageState extends State<ItemPage> {
                             context.read<CartCubit>().addOrUpdate(item).then((
                               _,
                             ) {
+                              if (!context.mounted) return;
                               if (isAuthed) {
                                 AppAlerts.showSuccessDialog(
                                   context,

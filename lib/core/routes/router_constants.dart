@@ -13,18 +13,20 @@ class RouterConstants {
   static const String addNewAddressPage = '/addNewAddressPage';
   static const String paymentPage = '/paymentPage';
   static const String payment = '/payment';
+  static const String orderConfirmed = '/orderConfirmed';
+  static const String deliveryTime = '/deliveryTime';
+  static const String leaveReview = '/leaveReview';
   static const String confirmOrder = '/confirmOrder';
   static const String contactPage = '/contactPage';
-  static const String helpFAQsPage = '/helpPage';
+  static const String helpFAQsPage1 = '/helpPage1';
+  static const String helpFAQsPage2 = '/helpPage2';
   static const String settingsPage = '/settingsPage';
   static const String filterPage = '/filterPage';
   static const String itemPage = '/itemPage';
   static const String forgotPassword = '/set_password';
-
+  static const String restaurants = '/restaurants';
   static const String categoryPage = '/categoryPage';
-
   static const String addNewPaymentPage = '/addNewPaymentPage';
   static const String passwordSetting = '/passwordSetting';
   static const String notificationSetting = '/notificationSetting';
-
 }

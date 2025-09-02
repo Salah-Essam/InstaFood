@@ -1,47 +1,44 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'user_model.dart';
+part of 'restaurant_model.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class UserModelAdapter extends TypeAdapter<UserModel> {
+class RestaurantAdapter extends TypeAdapter<Restaurant> {
   @override
   final int typeId = 1;
 
   @override
-  UserModel read(BinaryReader reader) {
+  Restaurant read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return UserModel(
-      id: fields[0] as String?,
-      fullName: fields[1] as String,
-      email: fields[2] as String,
-      password: fields[3] as String,
-      phone: fields[4] as String,
-      dateOfBirth: fields[5] as String,
+    return Restaurant(
+      restaurantID: fields[0] as int,
+      restaurantName: fields[1] as String,
+      address: fields[2] as String,
+      type: fields[3] as String,
+      parkingLot: fields[4] as bool,
     );
   }
 
   @override
-  void write(BinaryWriter writer, UserModel obj) {
+  void write(BinaryWriter writer, Restaurant obj) {
     writer
-      ..writeByte(6)
-      ..writeByte(0)
-      ..write(obj.id)
-      ..writeByte(1)
-      ..write(obj.fullName)
-      ..writeByte(2)
-      ..write(obj.email)
-      ..writeByte(3)
-      ..write(obj.password)
-      ..writeByte(4)
-      ..write(obj.phone)
       ..writeByte(5)
-      ..write(obj.dateOfBirth);
+      ..writeByte(0)
+      ..write(obj.restaurantID)
+      ..writeByte(1)
+      ..write(obj.restaurantName)
+      ..writeByte(2)
+      ..write(obj.address)
+      ..writeByte(3)
+      ..write(obj.type)
+      ..writeByte(4)
+      ..write(obj.parkingLot);
   }
 
   @override
@@ -50,7 +47,7 @@ class UserModelAdapter extends TypeAdapter<UserModel> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is UserModelAdapter &&
+      other is RestaurantAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

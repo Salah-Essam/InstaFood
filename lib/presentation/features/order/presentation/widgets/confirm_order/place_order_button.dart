@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:insta_food/core/routes/router_constants.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 
 class PlaceOrderButton extends StatelessWidget {
@@ -13,14 +14,16 @@ class PlaceOrderButton extends StatelessWidget {
       width: double.infinity,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.orange2,
+          backgroundColor: AppColors.lightOrange,
           foregroundColor: AppColors.primaryOrange,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
         ),
         onPressed: disabled
             ? null
             : () {
-                context.pushNamed('payment');
+                context.push(RouterConstants.payment);
               },
         child: const Padding(
           padding: EdgeInsets.symmetric(vertical: 12.0),

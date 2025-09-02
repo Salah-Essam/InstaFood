@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:insta_food/core/di/di.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
@@ -8,7 +7,6 @@ import 'package:insta_food/presentation/features/home/presentation/widget/home_b
 import 'package:insta_food/presentation/features/home/presentation/widget/item_tile.dart';
 import 'package:insta_food/presentation/features/items/presentation/cubit/item_cubit.dart';
 import 'package:insta_food/presentation/widgets/custom_appbar.dart';
-import 'package:insta_food/presentation/widgets/shared_scaffold.dart';
 
 class CategoryPage extends StatelessWidget {
   const CategoryPage({super.key});

@@ -24,7 +24,13 @@ class SessionManager {
     if (jsonString == null) return null;
     try {
       final map = jsonDecode(jsonString) as Map<String, dynamic>;
-      return UserModel.fromMap(map);
+      return UserModel(
+        id: (map['uid'] ?? map['id']) as String?,
+        fullName: (map['full_name'] ?? '') as String,
+        email: (map['email'] ?? '') as String,
+        phone: (map['phone'] ?? '') as String,
+        dateOfBirth: (map['date_of_birth'] ?? '') as String,
+      );
     } catch (_) {
       return null;
     }

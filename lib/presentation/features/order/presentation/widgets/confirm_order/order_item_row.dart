@@ -20,7 +20,12 @@ class OrderItemRow extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
-            child: Image.network(it.imageUrl, width: 44, height: 44, fit: BoxFit.cover),
+            child: Image.network(
+              it.imageUrl,
+              width: 44,
+              height: 44,
+              fit: BoxFit.cover,
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -35,22 +40,36 @@ class OrderItemRow extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(it.itemName, style: AppTextStyles.mediumText.copyWith(color: Colors.black)),
+                          Text(
+                            it.itemName,
+                            style: AppTextStyles.mediumText.copyWith(
+                              color: Colors.black,
+                            ),
+                          ),
                           // date-time placed instantly below the name (no SizedBox in between)
                           Text(
                             _formatDate(it.addedAt ?? it.updatedAt),
-                            style: AppTextStyles.mediumText.copyWith(fontSize: 12, color: Colors.black54),
+                            style: AppTextStyles.mediumText.copyWith(
+                              fontSize: 12,
+                              color: Colors.black54,
+                            ),
                           ),
                           const SizedBox(height: 6),
                           // Cancel Order directly below date/time
                           TextButton(
                             style: TextButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                              backgroundColor: AppColors.orange2,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              backgroundColor: AppColors.lightOrange,
                               foregroundColor: AppColors.primaryOrange,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                             ),
-                            onPressed: () => context.read<CartCubit>().remove(it.cartItemId),
+                            onPressed: () =>
+                                context.read<CartCubit>().remove(it.cartItemId),
                             child: const Text('Cancel Order'),
                           ),
                         ],
@@ -61,28 +80,55 @@ class OrderItemRow extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         IconButton(
-                          onPressed: () => context.read<CartCubit>().remove(it.cartItemId),
+                          onPressed: () =>
+                              context.read<CartCubit>().remove(it.cartItemId),
                           padding: EdgeInsets.zero,
                           constraints: const BoxConstraints(),
-                          icon: const Icon(Icons.delete_outline, color: AppColors.primaryOrange, size: 18),
+                          icon: const Icon(
+                            Icons.delete_outline,
+                            color: AppColors.primaryOrange,
+                            size: 18,
+                          ),
                         ),
                         const SizedBox(height: 6),
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            _iconPill(Icons.remove, enabled: it.quantity > 1, onTap: it.quantity > 1
-                                ? () {
-                                    context.read<CartCubit>().addOrUpdate(it.copyWith(quantity: it.quantity - 1));
-                                  }
-                                : null),
+                            _iconPill(
+                              Icons.remove,
+                              enabled: it.quantity > 1,
+                              onTap: it.quantity > 1
+                                  ? () {
+                                      context.read<CartCubit>().addOrUpdate(
+                                        it.copyWith(quantity: it.quantity - 1),
+                                      );
+                                    }
+                                  : null,
+                            ),
                             const SizedBox(width: 6),
-                            Text('${it.quantity}', style: AppTextStyles.mediumText.copyWith(color: Colors.black)),
+                            Text(
+                              '${it.quantity}',
+                              style: AppTextStyles.mediumText.copyWith(
+                                color: Colors.black,
+                              ),
+                            ),
                             const SizedBox(width: 6),
-                            _iconPill(Icons.add, enabled: true, onTap: () {
-                              context.read<CartCubit>().addOrUpdate(it.copyWith(quantity: it.quantity + 1));
-                            }),
+                            _iconPill(
+                              Icons.add,
+                              enabled: true,
+                              onTap: () {
+                                context.read<CartCubit>().addOrUpdate(
+                                  it.copyWith(quantity: it.quantity + 1),
+                                );
+                              },
+                            ),
                             const SizedBox(width: 12),
-                            Text('\$${it.unitPrice.toStringAsFixed(2)}', style: AppTextStyles.mediumText.copyWith(color: AppColors.primaryOrange)),
+                            Text(
+                              '\$${it.unitPrice.toStringAsFixed(2)}',
+                              style: AppTextStyles.mediumText.copyWith(
+                                color: AppColors.primaryOrange,
+                              ),
+                            ),
                           ],
                         ),
                       ],
@@ -100,17 +146,35 @@ class OrderItemRow extends StatelessWidget {
 
   String _formatDate(DateTime? dt) {
     dt ??= DateTime.now();
-    final months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    final months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
     final d = dt.day.toString().padLeft(2, '0');
     final m = months[dt.month - 1];
     int hour = dt.hour;
     final ampm = hour >= 12 ? 'pm' : 'am';
-    hour = hour % 12; if (hour == 0) hour = 12;
+    hour = hour % 12;
+    if (hour == 0) hour = 12;
     final minute = dt.minute.toString().padLeft(2, '0');
     return '$d $m, $hour:$minute $ampm';
   }
 
-  Widget _iconPill(IconData icon, {required bool enabled, VoidCallback? onTap}) {
+  Widget _iconPill(
+    IconData icon, {
+    required bool enabled,
+    VoidCallback? onTap,
+  }) {
     return InkWell(
       onTap: enabled ? onTap : null,
       borderRadius: BorderRadius.circular(16),
@@ -118,10 +182,18 @@ class OrderItemRow extends StatelessWidget {
         width: 28,
         height: 28,
         decoration: BoxDecoration(
-          color: enabled ? AppColors.primaryOrange.withOpacity(0.1) : AppColors.orange2,
+          color: enabled
+              ? AppColors.primaryOrange.withAlpha(25)
+              : AppColors.lightOrange,
           borderRadius: BorderRadius.circular(16),
         ),
-        child: Icon(icon, size: 16, color: enabled ? AppColors.primaryOrange : AppColors.primaryOrange.withOpacity(0.6)),
+        child: Icon(
+          icon,
+          size: 16,
+          color: enabled
+              ? AppColors.primaryOrange
+              : AppColors.primaryOrange.withAlpha(150),
+        ),
       ),
     );
   }

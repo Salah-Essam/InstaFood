@@ -10,13 +10,15 @@ import 'package:insta_food/presentation/features/items/presentation/cubit/item_c
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 
 class AppSearchBar extends StatelessWidget {
-  const AppSearchBar({super.key, required this.isEnabled});
+  const AppSearchBar({super.key, required this.isEnabled, this.height});
   final bool isEnabled;
+  final double? height;
   @override
   Widget build(BuildContext context) {
+    bool noHeight = height == null;
     return Container(
       width: double.infinity,
-      height: 26,
+      height: height ?? 26,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(30)),
         color: AppColors.white,
@@ -31,13 +33,15 @@ class AppSearchBar extends StatelessWidget {
                 onChanged: (v) {
                   context.read<ItemCubit>().searchItem(v);
                 },
-                cursorHeight: 14,
+                cursorHeight: (height ?? 26) - 12,
                 cursorColor: AppColors.primaryOrange,
                 decoration: InputDecoration(
                   fillColor: AppColors.white,
                   border: InputBorder.none,
                   hintText: AppStrings.search,
-                  hintStyle: AppTextStyles.search,
+                  hintStyle: noHeight
+                      ? AppTextStyles.search
+                      : AppTextStyles.searchSetting,
                   contentPadding: EdgeInsets.symmetric(
                     vertical: 5,
                     horizontal: 16,

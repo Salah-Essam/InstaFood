@@ -1,17 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hive/hive.dart';
 import 'package:insta_food/presentation/features/auth/data/model/user_model.dart';
 import 'package:insta_food/core/network/Firebase/firebase_firestore_service.dart';
 
 class AuthRepository {
   final FirebaseAuth _firebaseAuth;
   final FirebaseFirestoreService _firestoreService;
-  final Box _userBox;
 
   AuthRepository(
     this._firebaseAuth,
     this._firestoreService,
-    this._userBox,
   );
 
   Future<UserModel> signUp({
@@ -30,7 +27,6 @@ class AuthRepository {
       id: userCredential.user!.uid,
       fullName: fullName,
       email: email,
-      password: password,
       dateOfBirth: dateOfBirth,
       phone: phone,
     );
@@ -38,9 +34,7 @@ class AuthRepository {
     // Store ONLY public profile in Firestore (no password)
     await _firestoreService.addUser(profile);
 
-  // Do NOT keep user signed in after sign up; end session and ensure no local cached session
-  await _firebaseAuth.signOut();
-  await _userBox.delete('currentUser');
+  // Optionally sign out after sign up (keep as-is or remove based on UX). Removing auto sign-out now.
 
   return profile;
   }
@@ -53,41 +47,19 @@ class AuthRepository {
       if (uid == null) return null;
       // Fetch profile from Firestore
       var profile = await _firestoreService.getUserById(uid) ?? await _firestoreService.getUserByEmail(email);
-      // If Firestore profile is missing (legacy accounts), create a minimal one
       if (profile == null) {
         final minimal = UserModel(
           id: uid,
           fullName: _firebaseAuth.currentUser?.displayName ?? '',
           email: _firebaseAuth.currentUser?.email ?? email,
-          password: password,
           dateOfBirth: '',
           phone: _firebaseAuth.currentUser?.phoneNumber ?? '',
         );
         await _firestoreService.addUser(minimal);
         profile = minimal;
       }
-  // touch last login timestamp
-  await _firestoreService.touchLastLogin(uid);
-      // Merge local password (we only have the input password)
-      final merged = UserModel(
-        id: profile.id,
-        fullName: profile.fullName,
-        email: profile.email,
-        password: password,
-        dateOfBirth: profile.dateOfBirth,
-        phone: profile.phone,
-      );
-      await _userBox.put('currentUser', merged.toMap());
-      return merged;
+      return profile;
     } catch (_) {
-      // If no internet → check Hive
-      final cachedUser = _userBox.get("currentUser");
-      if (cachedUser != null) {
-        final user = UserModel.fromMap(Map<String, dynamic>.from(cachedUser));
-        if (user.email == email && user.password == password) {
-          return user;
-        }
-      }
     }
     return null;
   }
@@ -112,14 +84,17 @@ class AuthRepository {
 
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
-    await _userBox.delete("currentUser");
   }
 
   UserModel? getCurrentUser() {
-    final cachedUser = _userBox.get("currentUser");
-    if (cachedUser != null) {
-      return UserModel.fromMap(Map<String, dynamic>.from(cachedUser));
-    }
-    return null;
+    final u = _firebaseAuth.currentUser;
+    if (u == null) return null;
+    return UserModel(
+      id: u.uid,
+      fullName: u.displayName ?? '',
+      email: u.email ?? '',
+      phone: u.phoneNumber ?? '',
+      dateOfBirth: '',
+    );
   }
 }
