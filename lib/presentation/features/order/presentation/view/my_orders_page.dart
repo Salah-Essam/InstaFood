@@ -175,6 +175,42 @@ class _OrdersList extends StatelessWidget {
                           style: AppTextStyles.mediumText.copyWith(color: Colors.black54, fontSize: 12)),
                     ],
                   ),
+                  if (o.items.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    Column(
+                      children: [
+                        for (final it in o.items)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 6),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: it.imageUrl.isEmpty
+                                      ? Container(width: 40, height: 40, color: AppColors.orange2)
+                                      : Image.network(it.imageUrl, width: 40, height: 40, fit: BoxFit.cover),
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Text(
+                                    '${it.itemName} • x${it.quantity}',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: AppTextStyles.mediumText.copyWith(fontSize: 13, color: Colors.black87),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  '\$${(it.unitPrice * it.quantity).toStringAsFixed(2)}',
+                                  style: AppTextStyles.mediumText.copyWith(fontSize: 13, color: AppColors.primaryOrange, fontWeight: FontWeight.w700),
+                                ),
+                              ],
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
                   if (o.isCompleted) ...[
                     const SizedBox(height: 6),
                     Row(
