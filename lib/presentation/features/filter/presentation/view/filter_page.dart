@@ -163,10 +163,19 @@ class FilterPage extends StatelessWidget {
                             return SizedBox.shrink();
                           },
                         ),
-                        Text(
-                          AppStrings.price,
-                          style: AppTextStyles.dialogGreetingDialogeOrange
-                              .copyWith(fontSize: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              AppStrings.price,
+                              style: AppTextStyles.dialogGreetingDialogeOrange
+                                  .copyWith(fontSize: 20),
+                            ),
+                            Text(
+                              'Show items under: \$${state is SetFilter ? (state.maxPrice!.toStringAsFixed(0)) : 40.0}',
+                              style: AppTextStyles.small,
+                            ),
+                          ],
                         ),
                         Padding(
                           padding: EdgeInsetsGeometry.symmetric(horizontal: 14),

@@ -22,6 +22,7 @@ class ListFilter {
                 false,
           );
           dynamic hasExclusionMatch = null;
+
           if (category.exclusionKeywords != null) {
             hasExclusionMatch = category.exclusionKeywords.any(
               (keyword) =>

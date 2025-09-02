@@ -17,12 +17,12 @@ enum FoodCategory {
   meals(
     name: AppStrings.meals,
     icon: AppAssets.meals,
-    keywords: ['curry', 'biryani', 'grilled', 'cooked', 'rice', 'naan'],
+    keywords: ['curry', 'biryani', 'grilled', 'cooked'],
   ),
   vegan(
     name: AppStrings.vegan,
     icon: AppAssets.vegan,
-    keywords: ['coconut milk', 'vegetables', 'pizza'],
+    keywords: ['mango', 'vegetables', 'pizza', 'green'],
     exclusionKeywords: [
       'meat',
       'chicken',
@@ -33,12 +33,22 @@ enum FoodCategory {
       'butter',
       'yogurt',
       'milk',
+      'Prawn',
+      'lamb',
     ],
   ),
   desserts(
     name: AppStrings.desserts,
     icon: AppAssets.desserts,
-    keywords: ['sweet', 'syrup', 'sugar', 'pudding', 'vermicelli'],
+    keywords: [
+      'sweet',
+      'syrup',
+      'sugar',
+      'pudding',
+      'vermicelli',
+      'mango',
+      'fruits',
+    ],
     exclusionKeywords: ["sweet churma", "drink"],
   ),
   drinks(

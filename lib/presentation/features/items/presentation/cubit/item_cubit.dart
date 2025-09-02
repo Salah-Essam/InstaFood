@@ -67,6 +67,7 @@ class ItemCubit extends Cubit<ItemState> {
         items: items,
         category: filterState.selectedCategory,
         subCategory: filterState.subCategory,
+        maxPrice: filterState.maxPrice,
       ); // Return all items if no filters applied
     }
     return items;
