@@ -47,6 +47,7 @@ class AppAssets {
   static const String star = "assets/icons/star.svg";
   static const String ratingStar = "assets/icons/bot-star.svg";
   static const String ratingStarOutlined = "assets/icons/bot-star-outlined.svg";
+  static const String banner = "assets/icons/banner.svg";
 
   static const String backarrow = "assets/icons/BackArrow.svg";
   static const String facebook = "assets/icons/Facebook_Icon.svg";

@@ -44,6 +44,7 @@ class AdvertismentCard extends StatelessWidget {
                           Text(
                             AppStrings.advertisment,
                             style: AppTextStyles.ad,
+                            textAlign: TextAlign.center,
                           ),
                           Text(AppStrings.ad2, style: AppTextStyles.ad),
                           Text(

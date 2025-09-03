@@ -38,6 +38,8 @@ class AppStrings {
       'No internet connection. Please check your connectivity.';
   static const String noLimit = "No limit";
   static const String bestSellerDialoge = "Discover our most popular dishes!";
+  static const String discover = "Discover the dishes";
+  static const String byChef = " recommended by the chef.";
   //=====================================================================================
   static const String signup = "Sign Up";
   static const String login = "Login";
@@ -94,6 +96,8 @@ class AppStrings {
   static const String filter = "Filter";
   static const String portions = "Portion Size";
   static const String addToCart = "Add to Cart";
+  static const String recommendations = "Recommendations";
+  static const String newProduct = "New Product";
   // Cart
   static const String yourCartIsEmpty = "Your cart is empty";
   static const String wantToAddSomething = "Want To Add Something?";

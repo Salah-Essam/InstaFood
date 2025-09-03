@@ -12,6 +12,11 @@ import 'package:insta_food/presentation/features/filter/presentation/cubit/filte
 import 'package:insta_food/presentation/features/home/presentation/widget/ad_slider.dart';
 import 'package:insta_food/presentation/features/home/presentation/widget/app_greeting.dart';
 import 'package:insta_food/presentation/features/home/presentation/widget/bestseller_row.dart';
+
+import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
+import 'package:insta_food/presentation/features/recommended/presentation/cubit/recommendations_cubit.dart';
+import 'package:insta_food/presentation/features/recommended/presentation/view/recomendation_page.dart';
+
 import 'package:insta_food/presentation/widgets/button_grid.dart';
 import 'package:insta_food/presentation/features/home/presentation/widget/item_tile.dart';
 import 'package:insta_food/presentation/features/items/presentation/cubit/item_cubit.dart';
@@ -29,6 +34,10 @@ class HomePage extends StatelessWidget {
         BlocProvider(create: (context) => sl<FilterCubit>()),
         BlocProvider(
           create: (context) => sl<BestSellersCubit>()..getBestSellers(),
+        ),
+        BlocProvider(
+          create: (context) =>
+              sl<RecommendationsCubit>()..loadRecommendations(),
         ),
       ],
 
@@ -124,39 +133,70 @@ class HomePage extends StatelessWidget {
                               SizedBox(height: 20),
                               AdSlider(featuredItems: state.featuredItems!),
                               SizedBox(height: 21),
-                              Align(
-                                alignment: Alignment.topLeft,
-                                child: Text(
-                                  AppStrings.recommend,
-                                  style: AppTextStyles.header,
-                                ),
-                              ),
-                              LayoutBuilder(
-                                builder: (context, constraints) {
-                                  const gap = 7.0;
-                                  final double tileWidth =
-                                      (constraints.maxWidth - gap) / 2;
-                                  return Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      ItemTile(
-                                        height: 140,
-                                        width: tileWidth,
-                                        showButtons: true,
-                                        item: state.itemList[10],
-                                      ),
-                                      const SizedBox(width: gap),
-                                      ItemTile(
-                                        height: 140,
-                                        width: tileWidth,
-                                        showButtons: true,
-                                        item: state.itemList[4],
-                                      ),
-                                    ],
+                              InkWell(
+                                onTap: () {
+                                  pushScreen(
+                                    context,
+                                    screen: RecommendationPage(),
+                                    withNavBar: true,
                                   );
                                 },
+                                child: Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                    AppStrings.recommend,
+                                    style: AppTextStyles.header,
+                                  ),
+                                ),
                               ),
+                              BlocBuilder<
+                                RecommendationsCubit,
+                                RecommendationsState
+                              >(
+                                builder: (context, state) {
+                                  if (state is RecommendationsLoaded) {
+                                    return LayoutBuilder(
+                                      builder: (context, constraints) {
+                                        return GridView.builder(
+                                          gridDelegate:
+                                              SliverGridDelegateWithFixedCrossAxisCount(
+                                                crossAxisCount: 2,
+                                                childAspectRatio: 159 / 140,
+                                                mainAxisSpacing: 16,
+                                                crossAxisSpacing: 16,
+                                              ),
+                                          itemCount: state.featuredItems.length,
+                                          shrinkWrap: true,
+                                          scrollDirection: Axis.vertical,
+                                          physics:
+                                              const BouncingScrollPhysics(),
+                                          padding: const EdgeInsets.only(
+                                            left: 8,
+                                            right: 8,
+                                          ),
+                                          itemBuilder: (context, index) {
+                                            return ItemTile(
+                                              showButtons: true,
+                                              item: state.featuredItems[index],
+                                              height: 140,
+                                              width: 159,
+                                            );
+                                          },
+                                        );
+                                      },
+                                    );
+                                  } else if (state is RecommendationsLoading) {
+                                    return Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  } else if (state is RecommendationsFailure) {
+                                    return Center(child: Text(state.message));
+                                  } else {
+                                    return SizedBox.shrink(); // or a placeholder for initial state
+                                  }
+                                },
+                              ),
+
                               const SizedBox(height: 12),
                             ],
                           );
