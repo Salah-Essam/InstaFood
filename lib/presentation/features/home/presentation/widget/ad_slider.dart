@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/presentation/features/home/presentation/widget/home_advertisment_card.dart';
 import 'package:insta_food/presentation/features/items/data/model/discounted_item.dart';
-import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 
 class AdSlider extends StatefulWidget {
   final List<DiscountedItem> featuredItems;

@@ -41,15 +41,15 @@ class AppTheme {
       contentPadding: const EdgeInsets.symmetric(horizontal: 16),
       hintStyle: AppTextStyles.header,
       enabledBorder: OutlineInputBorder(
-        borderSide: const BorderSide(color: AppColors.lightYellow),
+        borderSide: const BorderSide(width: 0, color: Colors.transparent),
         borderRadius: BorderRadius.circular(16),
       ),
       disabledBorder: OutlineInputBorder(
-        borderSide: const BorderSide(color: AppColors.lightYellow),
+        borderSide: const BorderSide(width: 0, color: Colors.transparent),
         borderRadius: BorderRadius.circular(16),
       ),
       focusedBorder: OutlineInputBorder(
-        borderSide: const BorderSide(color: AppColors.lightYellow),
+        borderSide: const BorderSide(width: 0, color: Colors.transparent),
         borderRadius: BorderRadius.circular(16),
       ),
       errorBorder: const OutlineInputBorder(

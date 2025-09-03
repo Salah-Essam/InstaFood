@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:insta_food/core/routes/router_constants.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/utils/app_strings.dart';
-import 'package:insta_food/core/theme/app_text_fields.dart';
+import 'package:insta_food/core/theme/app_text_field.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/core/validators/app_validator_types/email_validator.dart';
 import 'package:insta_food/core/validators/app_validator_types/password_validator.dart';
@@ -185,8 +185,10 @@ class LoginScreenState extends State<LoginScreen> {
                                                 context
                                                     .read<AuthCubit>()
                                                     .signIn(
-                                                      emailController.text.trim(),
-                                                      passwordController.text.trim(),
+                                                      emailController.text
+                                                          .trim(),
+                                                      passwordController.text
+                                                          .trim(),
                                                     );
                                               }
                                             }

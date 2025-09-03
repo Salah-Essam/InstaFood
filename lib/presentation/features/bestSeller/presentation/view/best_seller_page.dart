@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:insta_food/core/di/di.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/core/utils/app_strings.dart';
 import 'package:insta_food/presentation/features/bestSeller/presentation/cubit/best_sellers_cubit.dart';
 import 'package:insta_food/presentation/features/bestSeller/presentation/widgets/best_seller_tile.dart';
-import 'package:insta_food/presentation/features/home/presentation/widget/item_tile.dart';
 import 'package:insta_food/presentation/widgets/app_backbutton.dart';
 import 'package:insta_food/presentation/widgets/shared_scaffold.dart';
 

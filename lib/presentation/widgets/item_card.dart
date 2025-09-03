@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
@@ -38,6 +37,7 @@ class ItemCard extends StatelessWidget {
                     child: CachedImage(width: 323, height: 174, item: item),
                   ),
 
+
                   Container(
                     width: 323,
                     child: Row(
@@ -50,6 +50,7 @@ class ItemCard extends StatelessWidget {
                           backgroundColor: AppColors.primaryOrange,
                         ),
                         RatingContainer(padding: EdgeInsets.all(1)),
+
 
                         Expanded(
                           child: Align(
