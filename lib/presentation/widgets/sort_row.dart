@@ -24,16 +24,11 @@ class SortRow extends StatelessWidget {
               child: Text("asc", style: AppTextStyles.fontPrimarySmall),
             ),
             Spacer(),
-            InkWell(
-              onTap: () {
-                context.read<FilterCubit>().resetFilter();
-              },
-              child: SvgPicture.asset(
-                AppAssets.filter,
-                height: 20,
-                width: 20,
-                fit: BoxFit.cover,
-              ),
+            SvgPicture.asset(
+              AppAssets.filter,
+              height: 20,
+              width: 20,
+              fit: BoxFit.cover,
             ),
           ],
         );
