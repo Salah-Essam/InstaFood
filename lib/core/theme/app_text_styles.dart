@@ -191,7 +191,7 @@ class AppTextStyles {
   );
   static final TextStyle fontWhiteMediumBold = TextStyle(
     color: AppColors.textLight,
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: FontWeight.w700,
   );
   static final TextStyle fontWhiteLarge = TextStyle(
