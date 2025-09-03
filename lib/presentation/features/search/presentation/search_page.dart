@@ -10,6 +10,7 @@ import 'package:insta_food/presentation/features/home/presentation/widget/item_t
 import 'package:insta_food/presentation/features/items/presentation/cubit/item_cubit.dart';
 import 'package:insta_food/presentation/widgets/custom_appbar.dart';
 import 'package:insta_food/presentation/widgets/item_card.dart';
+import 'package:insta_food/presentation/widgets/sort_row.dart';
 
 class SearchPage extends StatelessWidget {
   const SearchPage({super.key});
@@ -62,15 +63,20 @@ class SearchPage extends StatelessWidget {
                                 child: Text('Error: ${state.message}'),
                               );
                             } else if (state is ItemLoaded) {
-                              return ListView.builder(
-                                shrinkWrap: true,
-                                scrollDirection: Axis.vertical,
-                                physics: ScrollPhysics(),
-                                itemCount: state.searchedItems.length,
-                                itemBuilder: (context, index) {
-                                  final item = state.searchedItems[index];
-                                  return ItemCard(item: item);
-                                },
+                              return ListView(
+                                children: [
+                                  SortRow(),
+                                  ListView.builder(
+                                    shrinkWrap: true,
+                                    scrollDirection: Axis.vertical,
+                                    physics: ScrollPhysics(),
+                                    itemCount: state.searchedItems.length,
+                                    itemBuilder: (context, index) {
+                                      final item = state.searchedItems[index];
+                                      return ItemCard(item: item);
+                                    },
+                                  ),
+                                ],
                               );
                             } else {
                               return SizedBox.shrink();

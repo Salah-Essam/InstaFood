@@ -12,16 +12,17 @@ class ListFilter {
       // Category filter
 
       if (category != null) {
+        dynamic hasExclusionMatch;
+        dynamic hasMatchingSubCategory;
         // Check if item description contains ANY of the category's keywords (subcategories)
         if (subCategory == null) {
-          final hasMatchingSubCategory = category.keywords.any(
+          hasMatchingSubCategory = category.keywords.any(
             (subCategory) =>
                 item.itemDescription?.toLowerCase().contains(
                   subCategory.toLowerCase(),
                 ) ??
                 false,
           );
-          dynamic hasExclusionMatch;
 
           hasExclusionMatch = category.exclusionKeywords.any(
             (keyword) =>
@@ -34,8 +35,27 @@ class ListFilter {
           if (!hasMatchingSubCategory || hasExclusionMatch) {
             return false;
           }
-        } else if (!item.itemDescription!.contains(subCategory)) {
-          return false;
+        } else {
+          // Check for SPECIFIC subcategory match
+          hasMatchingSubCategory =
+              item.itemDescription?.toLowerCase().contains(
+                subCategory.toLowerCase(),
+              ) ??
+              false;
+
+          // Check for ANY exclusion keyword match
+          hasExclusionMatch = category.exclusionKeywords.any(
+            (keyword) =>
+                item.itemDescription?.toLowerCase().contains(
+                  keyword.toLowerCase(),
+                ) ??
+                false,
+          );
+
+          // Use your exact structure: return false if doesn't match subcategory OR has exclusion
+          if (!hasMatchingSubCategory || hasExclusionMatch) {
+            return false;
+          }
         }
       }
       //Price Filter

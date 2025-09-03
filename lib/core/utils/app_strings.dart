@@ -37,6 +37,7 @@ class AppStrings {
   static const String disconnect =
       'No internet connection. Please check your connectivity.';
   static const String noLimit = "No limit";
+  static const String bestSellerDialoge = "Discover our most popular dishes!";
   //=====================================================================================
   static const String signup = "Sign Up";
   static const String login = "Login";

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -6,14 +7,18 @@ import 'package:insta_food/core/theme/app_assets.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/core/utils/app_strings.dart';
+import 'package:insta_food/presentation/features/bestSeller/presentation/cubit/best_sellers_cubit.dart';
+import 'package:insta_food/presentation/features/bestSeller/presentation/view/best_seller_page.dart';
 import 'package:insta_food/presentation/features/filter/presentation/cubit/filter_cubit.dart';
 import 'package:insta_food/presentation/features/home/presentation/widget/ad_slider.dart';
 import 'package:insta_food/presentation/features/home/presentation/widget/app_greeting.dart';
 import 'package:insta_food/presentation/features/home/presentation/widget/bestseller_row.dart';
+import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 import 'package:insta_food/presentation/widgets/button_grid.dart';
 import 'package:insta_food/presentation/features/home/presentation/widget/item_tile.dart';
 import 'package:insta_food/presentation/features/items/presentation/cubit/item_cubit.dart';
 import 'package:insta_food/presentation/widgets/custom_appbar.dart';
+import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -24,6 +29,9 @@ class HomePage extends StatelessWidget {
       providers: [
         BlocProvider(create: (context) => sl<ItemCubit>()..getallItems()),
         BlocProvider(create: (context) => sl<FilterCubit>()),
+        BlocProvider(
+          create: (context) => sl<BestSellersCubit>()..getBestSellers(),
+        ),
       ],
 
       child: Scaffold(
@@ -86,7 +94,13 @@ class HomePage extends StatelessWidget {
                                     ),
                                   ),
                                   InkWell(
-                                    onTap: () {},
+                                    onTap: () {
+                                      pushScreen(
+                                        context,
+                                        screen: BestSellerPage(),
+                                        withNavBar: true,
+                                      );
+                                    },
                                     child: Row(
                                       children: [
                                         Text(
@@ -99,8 +113,15 @@ class HomePage extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              BestSellerRow(
-                                featuredItems: state.featuredItems!,
+                              BlocBuilder<BestSellersCubit, BestSellersState>(
+                                builder: (context, state) {
+                                  if (state is BestSellersLoaded) {
+                                    return BestSellerRow(
+                                      featuredItems: state.featuredBestSellers,
+                                    );
+                                  }
+                                  return SizedBox.shrink();
+                                },
                               ),
                               SizedBox(height: 20),
                               AdSlider(featuredItems: state.featuredItems!),

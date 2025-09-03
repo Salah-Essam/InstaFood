@@ -8,6 +8,7 @@ import 'package:insta_food/presentation/features/home/presentation/widget/item_t
 import 'package:insta_food/presentation/features/items/presentation/cubit/item_cubit.dart';
 import 'package:insta_food/presentation/widgets/custom_appbar.dart';
 import 'package:insta_food/presentation/widgets/item_card.dart';
+import 'package:insta_food/presentation/widgets/sort_row.dart';
 
 class CategoryPage extends StatelessWidget {
   const CategoryPage({super.key});
@@ -86,6 +87,7 @@ class CategoryPage extends StatelessWidget {
                                       MediaQuery.of(context).padding.bottom,
                                     ),
                                     children: [
+                                      SortRow(),
                                       Builder(
                                         builder: (context) {
                                           if (state is ItemLoading) {
