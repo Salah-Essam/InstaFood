@@ -67,4 +67,7 @@ class AppAssets {
   static const String customerService = "assets/icons/Headphones_icon.svg";
   static const String instagram = "assets/icons/Instagram.png";
   static const String whatApp = "assets/icons/WhatApp.png";
+  static const String microphoneIcon = "assets/icons/Microphone_Icon.svg";
+  static const String sendIcon = "assets/icons/Send_Icon.svg";
+  static const String attachIcon = "assets/icons/Attach_Icon.svg";
 }

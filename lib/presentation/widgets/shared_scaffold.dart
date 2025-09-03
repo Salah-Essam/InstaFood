@@ -42,12 +42,15 @@ class SharedScaffold extends StatelessWidget {
                   children: [
                     leading ?? AppBackButton(),
                     Expanded(
-                      child: Center(
-                        child: Text(
-                          appBarTitle,
-                          style: AppTextStyles.fontWhiteLargeBold,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 32),
+                        child: Center(
+                          child: Text(
+                            appBarTitle,
+                            style: AppTextStyles.fontWhiteLargeBold,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ),
                     ),

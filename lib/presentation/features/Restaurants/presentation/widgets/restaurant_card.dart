@@ -14,7 +14,7 @@ class RestaurantCard extends StatelessWidget {
     return InkWell(
       onTap: () {
         _openMenu(context);
-      }, 
+      },
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
@@ -23,7 +23,7 @@ class RestaurantCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: AppColors.black.withOpacity(0.04),
+              color: AppColors.black.withAlpha(10),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -36,7 +36,10 @@ class RestaurantCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(restaurant.restaurantName, style: AppTextStyles.mediumText),
+                  Text(
+                    restaurant.restaurantName,
+                    style: AppTextStyles.mediumText,
+                  ),
                   const SizedBox(height: 4),
                   Text(restaurant.type, style: AppTextStyles.small),
                   const SizedBox(height: 4),
@@ -53,7 +56,11 @@ class RestaurantCard extends StatelessWidget {
                       if (restaurant.parkingLot)
                         const Padding(
                           padding: EdgeInsets.only(left: 8.0),
-                          child: Icon(Icons.local_parking, size: 16, color: AppColors.primaryOrange),
+                          child: Icon(
+                            Icons.local_parking,
+                            size: 16,
+                            color: AppColors.primaryOrange,
+                          ),
                         ),
                     ],
                   ),
@@ -63,11 +70,14 @@ class RestaurantCard extends StatelessWidget {
             const SizedBox(width: 8),
             GestureDetector(
               onTap: () => _openMenu(context),
-              child: const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.primaryOrange),
+              child: const Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: AppColors.primaryOrange,
+              ),
             ),
           ],
         ),
-
       ),
     );
   }

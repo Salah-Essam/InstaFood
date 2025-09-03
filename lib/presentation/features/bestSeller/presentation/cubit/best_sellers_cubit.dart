@@ -1,7 +1,7 @@
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:insta_food/presentation/features/bestSeller/data/model/best_seller_item_model.dart';
-import 'package:insta_food/presentation/features/bestSeller/data/repos/Best_seller_repository.dart';
+import 'package:insta_food/presentation/features/bestSeller/data/repos/best_seller_repository.dart';
 
 part 'best_sellers_state.dart';
 

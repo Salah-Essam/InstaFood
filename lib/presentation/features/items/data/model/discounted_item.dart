@@ -7,24 +7,16 @@ class DiscountedItem extends ItemModel {
   final double discountedPrice;
 
   DiscountedItem._({
-    required int itemID,
-    required int restaurantID,
-    required String imageUrl,
-    required double itemPrice,
-    required String itemName,
-    String? itemDescription,
-    required String restaurantName,
+    required super.itemID,
+    required super.restaurantID,
+    required super.imageUrl,
+    required super.itemPrice,
+    required super.itemName,
+    super.itemDescription,
+    required super.restaurantName,
     required this.discountPercentage,
     required this.discountedPrice,
-  }) : super(
-         itemID: itemID,
-         restaurantID: restaurantID,
-         imageUrl: imageUrl,
-         itemPrice: itemPrice,
-         itemName: itemName,
-         itemDescription: itemDescription,
-         restaurantName: restaurantName,
-       );
+  });
   static int _generateRandomDiscount([double min = 10.0, double max = 70.0]) {
     final random = Random();
     // Generate multiples of 5 within the range

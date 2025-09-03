@@ -5,7 +5,6 @@ import 'package:insta_food/core/theme/app_assets.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/core/utils/app_alerts.dart';
-import 'package:insta_food/core/utils/app_strings.dart';
 import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_state.dart';
 import 'package:insta_food/presentation/features/bestSeller/data/model/best_seller_item_model.dart';

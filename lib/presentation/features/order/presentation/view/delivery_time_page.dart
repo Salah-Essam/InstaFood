@@ -72,90 +72,93 @@ class _DeliveryTimePageState extends State<DeliveryTimePage> {
   Widget build(BuildContext context) {
     return SharedScaffold(
       appBarTitle: AppStrings.deliveryTime,
-      pageDetails: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            AppStrings.shippingAddress,
-            style: AppTextStyles.greeting.copyWith(color: Colors.black),
-          ),
-          const SizedBox(height: 8),
-          const AddressPillCurrent(),
-          const SizedBox(height: 12),
-          SizedBox(height: 180, child: _buildMap()),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Text(
-                AppStrings.deliveryTime,
-                style: AppTextStyles.mediumText.copyWith(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const Spacer(),
-              Text(
-                _etaMin != null ? '${_etaMin!.toStringAsFixed(0)} mins' : '—',
-                style: AppTextStyles.mediumText.copyWith(
-                  color: AppColors.primaryOrange,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
-          ),
-          if (_distanceKm != null)
+      pageDetails: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
             Text(
-              'Distance ~ ${_distanceKm!.toStringAsFixed(2)} km',
-              style: AppTextStyles.mediumText.copyWith(
-                color: Colors.black54,
-                fontSize: 12,
+              AppStrings.shippingAddress,
+              style: AppTextStyles.greeting.copyWith(color: Colors.black),
+            ),
+            const SizedBox(height: 8),
+            const AddressPillCurrent(),
+            const SizedBox(height: 12),
+            SizedBox(height: 180, child: _buildMap()),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Text(
+                  AppStrings.deliveryTime,
+                  style: AppTextStyles.mediumText.copyWith(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const Spacer(),
+                Text(
+                  _etaMin != null ? '${_etaMin!.toStringAsFixed(0)} mins' : '—',
+                  style: AppTextStyles.mediumText.copyWith(
+                    color: AppColors.primaryOrange,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+            if (_distanceKm != null)
+              Text(
+                'Distance ~ ${_distanceKm!.toStringAsFixed(2)} km',
+                style: AppTextStyles.mediumText.copyWith(
+                  color: Colors.black54,
+                  fontSize: 12,
+                ),
+              ),
+            const SizedBox(height: 4),
+            Text(
+              AppStrings.estimatedDelivery,
+              style: AppTextStyles.mediumText.copyWith(color: Colors.black54),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withAlpha(13),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  TimelineRow(
+                    title: 'Your order has been accepted',
+                    time: '2 min',
+                  ),
+                  TimelineRow(
+                    title: 'The restaurant is preparing your order',
+                    time: '5 min',
+                  ),
+                  TimelineRow(
+                    title: 'The delivery is on his way',
+                    time: '10 min',
+                  ),
+                  TimelineRow(
+                    title: 'Your order has been delivered',
+                    time: '8 min',
+                  ),
+                  const SizedBox(height: 8),
+                  _ActionPills(
+                    onReturnHome: () =>
+                        context.go(RouterConstants.bottomNavBar),
+                  ),
+                ],
               ),
             ),
-          const SizedBox(height: 4),
-          Text(
-            AppStrings.estimatedDelivery,
-            style: AppTextStyles.mediumText.copyWith(color: Colors.black54),
-          ),
-          const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withAlpha(13),
-                  blurRadius: 6,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                TimelineRow(
-                  title: 'Your order has been accepted',
-                  time: '2 min',
-                ),
-                TimelineRow(
-                  title: 'The restaurant is preparing your order',
-                  time: '5 min',
-                ),
-                TimelineRow(
-                  title: 'The delivery is on his way',
-                  time: '10 min',
-                ),
-                TimelineRow(
-                  title: 'Your order has been delivered',
-                  time: '8 min',
-                ),
-                const SizedBox(height: 8),
-                _ActionPills(
-                  onReturnHome: () => context.go(RouterConstants.bottomNavBar),
-                ),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

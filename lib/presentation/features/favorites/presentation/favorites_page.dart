@@ -29,7 +29,9 @@ class FavoritesPage extends StatelessWidget {
                   const SizedBox(height: 16),
                   Text(
                     AppStrings.favoritesHeadline,
-                    style: AppTextStyles.header.copyWith(color: AppColors.primaryOrange),
+                    style: AppTextStyles.header.copyWith(
+                      color: AppColors.primaryOrange,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -42,7 +44,8 @@ class FavoritesPage extends StatelessWidget {
               // Simple responsive 2-column grid
               final crossAxisCount = 2;
               final spacing = 16.0;
-              final tileWidth = (constraints.maxWidth - spacing) / crossAxisCount;
+              final tileWidth =
+                  (constraints.maxWidth - spacing) / crossAxisCount;
               const imageHeight = 140.0;
 
               return GridView.builder(
@@ -52,7 +55,7 @@ class FavoritesPage extends StatelessWidget {
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
                   // Enough vertical space for image + texts
-                  childAspectRatio: tileWidth / (imageHeight + 80),
+                  childAspectRatio: tileWidth / (imageHeight + 100),
                 ),
                 itemCount: items.length,
                 itemBuilder: (context, index) {
@@ -82,11 +85,7 @@ class FavoritesPage extends StatelessWidget {
                           Positioned(
                             right: 10,
                             top: 10,
-                            child: FavButton(
-                              width: 26,
-                              height: 26,
-                              item: item,
-                            ),
+                            child: FavButton(width: 26, height: 26, item: item),
                           ),
                         ],
                       ),
@@ -94,7 +93,9 @@ class FavoritesPage extends StatelessWidget {
                       Center(
                         child: Text(
                           item.itemName,
-                          style: AppTextStyles.header.copyWith(color: AppColors.primaryOrange),
+                          style: AppTextStyles.header.copyWith(
+                            color: AppColors.primaryOrange,
+                          ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.center,
@@ -103,12 +104,16 @@ class FavoritesPage extends StatelessWidget {
                       if (item.itemDescription != null) ...[
                         const SizedBox(height: 4),
                         Center(
-                          child: Text(
-                            item.itemDescription!,
-                            style: AppTextStyles.small.copyWith(color: AppColors.textSecondary),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
+                          child: SizedBox(
+                            child: Text(
+                              item.itemDescription!,
+                              style: AppTextStyles.small.copyWith(
+                                color: AppColors.textSecondary,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         ),
                       ],
