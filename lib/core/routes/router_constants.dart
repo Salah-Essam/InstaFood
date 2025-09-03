@@ -30,4 +30,5 @@ class RouterConstants {
   static const String addNewPaymentPage = '/addNewPaymentPage';
   static const String passwordSetting = '/passwordSetting';
   static const String notificationSetting = '/notificationSetting';
+  static const String bestSeller = '/bestSeller';
 }

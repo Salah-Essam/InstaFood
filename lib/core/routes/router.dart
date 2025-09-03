@@ -12,6 +12,7 @@ import 'package:insta_food/presentation/features/DeliveryAddress/presentation/pa
 import 'package:insta_food/presentation/features/PaymentMethods/presentation/pages/add_card_page.dart';
 import 'package:insta_food/presentation/features/PaymentMethods/presentation/pages/payment_methods_page.dart';
 import 'package:insta_food/presentation/features/Profile/presentation/pages/profile_page.dart';
+import 'package:insta_food/presentation/features/bestSeller/presentation/view/best_seller_page.dart';
 
 import 'package:insta_food/presentation/features/category/presentation/view/category_page.dart';
 import 'package:insta_food/presentation/features/Settings/presentation/pages/notification_setting_page.dart';
@@ -196,16 +197,16 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: RouterConstants.categoryPage,
       builder: (context, state) => CategoryPage(),
-      // onExit: (GoRouterState state) {
-      //   // Reset when leaving category page
-      //   sl<FilterCubit>().setCategoryFilter(null);
-      //   return true;
-      // },
+    ),
+    GoRoute(
+      path: RouterConstants.bestSeller,
+      builder: (context, state) => BestSellerPage(),
     ),
     GoRoute(
       path: RouterConstants.menu,
       builder: (context, state) {
-        final restaurant = state.extra as Restaurant?; // may be null if navigation incorrect
+        final restaurant =
+            state.extra as Restaurant?; // may be null if navigation incorrect
         return BlocProvider(
           create: (_) => sl<MenuCubit>()..load(restaurant),
           child: MenuPage(restaurant: restaurant),

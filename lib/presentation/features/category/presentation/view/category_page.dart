@@ -102,17 +102,19 @@ class CategoryPage extends StatelessWidget {
                                               ),
                                             );
                                           } else if (state is ItemLoaded) {
-                                            return ListView.builder(
-                                              shrinkWrap: true,
-                                              scrollDirection: Axis.vertical,
-                                              physics: ScrollPhysics(),
-                                              itemCount:
-                                                  state.searchedItems.length,
-                                              itemBuilder: (context, index) {
-                                                final item =
-                                                    state.searchedItems[index];
-                                                return ItemCard(item: item);
-                                              },
+                                            return Center(
+                                              child: ListView.builder(
+                                                shrinkWrap: true,
+                                                scrollDirection: Axis.vertical,
+                                                physics: ScrollPhysics(),
+                                                itemCount:
+                                                    state.searchedItems.length,
+                                                itemBuilder: (context, index) {
+                                                  final item = state
+                                                      .searchedItems[index];
+                                                  return ItemCard(item: item);
+                                                },
+                                              ),
                                             );
                                           } else {
                                             return SizedBox.shrink();

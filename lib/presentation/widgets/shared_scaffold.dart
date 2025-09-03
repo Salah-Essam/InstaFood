@@ -9,13 +9,18 @@ class SharedScaffold extends StatelessWidget {
     required this.appBarTitle,
     required this.pageDetails,
     this.fullYellow = false,
-    this.contentPadding = const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+    this.contentPadding = const EdgeInsets.symmetric(
+      horizontal: 32,
+      vertical: 16,
+    ),
     this.headerAction,
     this.useSafeAreaAndPadding = true,
+    this.leading,
   });
 
   final String appBarTitle;
   final Widget pageDetails;
+  final Widget? leading;
   final bool fullYellow;
   final EdgeInsets contentPadding;
   final Widget? headerAction;
@@ -35,7 +40,7 @@ class SharedScaffold extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 48, left: 16, right: 16),
                 child: Row(
                   children: [
-                    AppBackButton(),
+                    leading ?? AppBackButton(),
                     Expanded(
                       child: Center(
                         child: Text(

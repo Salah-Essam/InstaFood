@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:insta_food/core/di/di.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/core/utils/app_strings.dart';
 import 'package:insta_food/presentation/features/bestSeller/presentation/cubit/best_sellers_cubit.dart';
 import 'package:insta_food/presentation/features/bestSeller/presentation/widgets/best_seller_tile.dart';
 import 'package:insta_food/presentation/features/home/presentation/widget/item_tile.dart';
+import 'package:insta_food/presentation/widgets/app_backbutton.dart';
 import 'package:insta_food/presentation/widgets/shared_scaffold.dart';
 
 class BestSellerPage extends StatelessWidget {
@@ -18,6 +20,7 @@ class BestSellerPage extends StatelessWidget {
       create: (context) => sl<BestSellersCubit>()..getBestSellers(),
       child: SharedScaffold(
         appBarTitle: AppStrings.bestseller,
+        leading: AppBackButton(onTap: () => Navigator.pop(context)),
         pageDetails: BlocBuilder<BestSellersCubit, BestSellersState>(
           builder: (context, state) {
             if (state is BestSellersloading) {
@@ -34,25 +37,23 @@ class BestSellerPage extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 24),
-                  GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio:
-                          0.7, // Adjust this ratio based on your tile's aspect ratio
-                      mainAxisSpacing: 16, // Add spacing between rows
-                      crossAxisSpacing: 16,
+                  Center(
+                    child: GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 0.7,
+                        mainAxisSpacing: 16,
+                        crossAxisSpacing: 16,
+                      ),
+                      itemCount: state.bestSellers.length,
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      physics: const BouncingScrollPhysics(),
+                      padding: const EdgeInsets.only(left: 8, right: 8),
+                      itemBuilder: (context, index) {
+                        return BestSellerTile(item: state.bestSellers[index]);
+                      },
                     ),
-                    itemCount: state.bestSellers.length,
-                    shrinkWrap: true,
-                    scrollDirection: Axis.vertical,
-                    physics: const BouncingScrollPhysics(),
-                    padding: const EdgeInsets.only(left: 8, right: 8),
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 10),
-                        child: BestSellerTile(item: state.bestSellers[index]),
-                      );
-                    },
                   ),
                 ],
               );

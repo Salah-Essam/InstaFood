@@ -4,6 +4,7 @@ import 'package:flutter/material.dart' show immutable;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:insta_food/presentation/features/filter/presentation/cubit/filter_cubit.dart';
 import 'package:insta_food/presentation/features/filter/utils/filter_util.dart';
+import 'package:insta_food/presentation/features/items/data/model/discounted_item.dart';
 import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 import 'package:insta_food/presentation/features/items/data/repositories/item_repository.dart';
 
@@ -52,10 +53,31 @@ class ItemCubit extends Cubit<ItemState> {
     );
   }
 
-  List<ItemModel> _getFeaturedItems(List<ItemModel> allItems, {int count = 5}) {
+  List<DiscountedItem> _getFeaturedItems(
+    List<ItemModel> allItems, {
+    int count = 5,
+  }) {
+    // if (allItems.isEmpty) return [];
+    // final shuffled = List<ItemModel>.from(allItems)..shuffle();
+    // return shuffled.take(count).toList();
     if (allItems.isEmpty) return [];
+
     final shuffled = List<ItemModel>.from(allItems)..shuffle();
-    return shuffled.take(count).toList();
+    final featuredItems = shuffled.take(count).toList();
+
+    return featuredItems
+        .map(
+          (item) => DiscountedItem(
+            itemID: item.itemID,
+            restaurantID: item.restaurantID,
+            imageUrl: item.imageUrl,
+            itemPrice: item.itemPrice,
+            itemName: item.itemName,
+            itemDescription: item.itemDescription,
+            restaurantName: item.restaurantName,
+          ),
+        )
+        .toList();
   }
 
   List<ItemModel> _applyFilters(

@@ -25,7 +25,7 @@ class AppStrings {
   static const String snacks = 'Snacks';
   static const String advertisment = "Experience our ";
   static const String ad2 = "delicious new dish";
-  static const String ad3 = "30% OFF";
+  static const String off = "% OFF";
   static const String bestseller = "Best Seller";
   static const String recommend = "Recommend";
   static const String viewAll = "View All";
