@@ -189,6 +189,11 @@ class AppTextStyles {
     fontSize: 16,
     fontWeight: FontWeight.bold,
   );
+  static final TextStyle fontWhiteMediumBold = TextStyle(
+    color: AppColors.textLight,
+    fontSize: 20,
+    fontWeight: FontWeight.w700,
+  );
   static final TextStyle fontWhiteLarge = TextStyle(
     color: AppColors.textLight,
     fontSize: 24,
@@ -221,5 +226,13 @@ class AppTextStyles {
     color: AppColors.primaryOrange,
     fontSize: 20,
     fontWeight: FontWeight.w500,
+  );
+  static final TextStyle fontSecondarysmallCrossed = TextStyle(
+    color: AppColors.primaryYellow,
+    fontSize: 15,
+    fontWeight: FontWeight.w500,
+    decoration: TextDecoration.lineThrough,
+    decorationColor: AppColors.primaryOrange,
+    decorationThickness: 2.0,
   );
 }

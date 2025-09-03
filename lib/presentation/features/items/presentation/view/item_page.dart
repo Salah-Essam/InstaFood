@@ -6,6 +6,7 @@ import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/core/utils/app_strings.dart';
 import 'package:insta_food/core/utils/app_alerts.dart';
+import 'package:insta_food/presentation/features/items/data/model/discounted_item.dart';
 import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 import 'package:insta_food/presentation/features/items/data/model/item_size.dart';
 import 'package:insta_food/presentation/features/items/presentation/widgets/app_counter.dart';
@@ -24,7 +25,10 @@ import 'package:insta_food/presentation/features/drawer/presentation/view/app_dr
 
 class ItemPage extends StatefulWidget {
   final ItemModel item;
+
   const ItemPage({super.key, required this.item});
+  // Discounted constructor
+  const ItemPage.discounted({super.key, required DiscountedItem this.item});
 
   @override
   State<ItemPage> createState() => _ItemPageState();
@@ -35,6 +39,9 @@ class _ItemPageState extends State<ItemPage> {
     ItemSize.medium,
   );
   int _qty = 1;
+  bool get isDiscounted => widget.item is DiscountedItem;
+  DiscountedItem? get discountedItem =>
+      widget.item is DiscountedItem ? widget.item as DiscountedItem : null;
 
   @override
   Widget build(BuildContext context) {
@@ -104,120 +111,185 @@ class _ItemPageState extends State<ItemPage> {
                       topRight: Radius.circular(32),
                     ),
                   ),
-                  child: ListView(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 35,
-                      vertical: 33,
-                    ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(36),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(36),
-                          child: CachedImage(
-                            item: widget.item,
-                            width: 323,
-                            height: 223,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.symmetric(
-                            horizontal: BorderSide(
-                              color: AppColors.border,
-                              width: 0.5,
+                      Stack(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 33),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(36),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(36),
+                                child: CachedImage(
+                                  item: widget.item,
+                                  width: 323,
+                                  height: 223,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              ValueListenableBuilder<ItemSize>(
-                                valueListenable: _size,
-                                builder: (_, size, __) {
-                                  final price =
-                                      (widget.item.itemPrice +
-                                          size.priceModifier) *
-                                      _qty;
-                                  return Text(
-                                    "\$${price.toStringAsFixed(2)}",
-                                    style: AppTextStyles.itemPagePrice,
+                          Visibility(
+                            visible: isDiscounted,
+                            child: Positioned(
+                              bottom: 175,
+                              right: -5,
+                              child: Container(
+                                width: 71,
+                                height: 71,
+                                decoration: ShapeDecoration(
+                                  color: AppColors.primaryOrange,
+                                  shape: StarBorder(
+                                    points: 16,
+                                    rotation: 0.00,
+                                    innerRadiusRatio: 0.75,
+                                    valleyRounding: 0.00,
+                                    squash: 0.06,
+                                  ),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "-${discountedItem?.discountPercentage ?? ""}%",
+                                    style: AppTextStyles.fontWhiteMediumBold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Expanded(
+                        child: ListView(
+                          padding: EdgeInsets.symmetric(horizontal: 35),
+                          children: [
+                            const SizedBox(height: 12),
+                            Container(
+                              decoration: BoxDecoration(
+                                border: Border.symmetric(
+                                  horizontal: BorderSide(
+                                    color: AppColors.border,
+                                    width: 0.5,
+                                  ),
+                                ),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    ValueListenableBuilder<ItemSize>(
+                                      valueListenable: _size,
+                                      builder: (_, size, __) {
+                                        final price = isDiscounted
+                                            ? (discountedItem!.discountedPrice +
+                                                      size.priceModifier) *
+                                                  _qty
+                                            : (widget.item.itemPrice +
+                                                      size.priceModifier) *
+                                                  _qty;
+                                        return Row(
+                                          spacing: 7,
+                                          children: [
+                                            Text(
+                                              "\$${price.toStringAsFixed(2)}",
+                                              style:
+                                                  AppTextStyles.itemPagePrice,
+                                            ),
+                                            isDiscounted
+                                                ? Text(
+                                                    "\$${(discountedItem!.itemPrice + size.priceModifier) * _qty}",
+                                                    style: AppTextStyles
+                                                        .fontSecondarysmallCrossed,
+                                                  )
+                                                : SizedBox(),
+                                          ],
+                                        );
+                                      },
+                                    ),
+                                    Counter(
+                                      initNumber: _qty,
+                                      counterCallback: (v) =>
+                                          setState(() => _qty = v),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 18),
+                            Text(
+                              widget.item.itemName,
+                              style: AppTextStyles.header,
+                            ),
+                            Text(
+                              widget.item.itemDescription!,
+                              style: AppTextStyles.mediumText,
+                            ),
+                            SizedBox(height: 29),
+                            Text(
+                              AppStrings.portions,
+                              style: AppTextStyles.header,
+                            ),
+                            RadioButtonCollection(controller: _size),
+                            BlocListener<CartCubit, CartState>(
+                              listenWhen: (p, n) => n is CartActionBlocked,
+                              listener: (context, state) {
+                                if (state is CartActionBlocked &&
+                                    state.reason == 'login_required') {
+                                  AppAlerts.showLoginRequiredDialog(context);
+                                }
+                              },
+                              child: AppButton(
+                                width: 180,
+                                onPressed: () {
+                                  final item = CartItemModel.fromItem(
+                                    item: widget.item,
+                                    size: _size.value,
+                                    quantity: _qty,
                                   );
+                                  final isAuthed =
+                                      context.read<AuthCubit>().state
+                                          is! Unauthenticated;
+                                  context
+                                      .read<CartCubit>()
+                                      .addOrUpdate(item)
+                                      .then((_) {
+                                        if (!context.mounted) return;
+                                        if (isAuthed) {
+                                          AppAlerts.showSuccessDialog(
+                                            context,
+                                            title:
+                                                'Added to cart successfully!',
+                                            imageAsset:
+                                                'assets/images/greencheckmark.jpg',
+                                          );
+                                        }
+                                      });
                                 },
+                                borderRadius: 44.79,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    SvgPicture.asset(
+                                      AppAssets.orderBag,
+                                      fit: BoxFit.fitHeight,
+                                    ),
+                                    SizedBox(width: 14),
+                                    Text(
+                                      AppStrings.addToCart,
+                                      style: AppTextStyles.button,
+                                    ),
+                                  ],
+                                ),
                               ),
-                              Counter(
-                                initNumber: _qty,
-                                counterCallback: (v) =>
-                                    setState(() => _qty = v),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 18),
-                      Text(widget.item.itemName, style: AppTextStyles.header),
-                      Text(
-                        widget.item.itemDescription!,
-                        style: AppTextStyles.mediumText,
-                      ),
-                      SizedBox(height: 29),
-                      Text(AppStrings.portions, style: AppTextStyles.header),
-                      RadioButtonCollection(controller: _size),
-                      BlocListener<CartCubit, CartState>(
-                        listenWhen: (p, n) => n is CartActionBlocked,
-                        listener: (context, state) {
-                          if (state is CartActionBlocked &&
-                              state.reason == 'login_required') {
-                            AppAlerts.showLoginRequiredDialog(context);
-                          }
-                        },
-                        child: AppButton(
-                          width: 180,
-                          onPressed: () {
-                            final item = CartItemModel.fromItem(
-                              item: widget.item,
-                              size: _size.value,
-                              quantity: _qty,
-                            );
-                            final isAuthed =
-                                context.read<AuthCubit>().state
-                                    is! Unauthenticated;
-                            context.read<CartCubit>().addOrUpdate(item).then((
-                              _,
-                            ) {
-                              if (!context.mounted) return;
-                              if (isAuthed) {
-                                AppAlerts.showSuccessDialog(
-                                  context,
-                                  title: 'Added to cart successfully!',
-                                  imageAsset:
-                                      'assets/images/greencheckmark.jpg',
-                                );
-                              }
-                            });
-                          },
-                          borderRadius: 44.79,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SvgPicture.asset(
-                                AppAssets.orderBag,
-                                fit: BoxFit.fitHeight,
-                              ),
-                              SizedBox(width: 14),
-                              Text(
-                                AppStrings.addToCart,
-                                style: AppTextStyles.button,
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
