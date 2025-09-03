@@ -71,11 +71,13 @@ final class SetFilter extends FilterState {
 }
 
 final class ApplyFilter extends FilterState {
+  final FilterState? previousState;
   final FoodCategory? selectedCategory;
   final String? subCategory;
   final double? maxPrice;
   final int? minRating;
   const ApplyFilter({
+    this.previousState,
     this.selectedCategory,
     this.maxPrice,
     this.minRating,
@@ -89,3 +91,26 @@ final class ApplyFilter extends FilterState {
     subCategory,
   ];
 }
+
+// final class SetSortFilter extends FilterState {
+//   final SortOption? sortOption;
+//   final bool isAscending;
+
+//   const SetSortFilter({
+//     this.sortOption,
+//     this.isAscending = true,
+//   });
+
+//   SetSortFilter copyWith({
+//     SortOption? sortOption,
+//     bool? isAscending,
+//   }) {
+//     return SetSortFilter(
+//       sortOption: sortOption ?? this.sortOption,
+//       isAscending: isAscending ?? this.isAscending,
+//     );
+//   }
+
+//   @override
+//   List<Object?> get props => [sortOption, isAscending];
+// }

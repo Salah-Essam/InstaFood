@@ -11,7 +11,7 @@ import 'package:insta_food/presentation/features/items/data/model/item_size.dart
 import 'package:insta_food/presentation/features/items/presentation/widgets/app_counter.dart';
 import 'package:insta_food/presentation/features/items/presentation/widgets/fav_button.dart';
 import 'package:insta_food/presentation/features/items/presentation/widgets/radio_button_collection.dart';
-import 'package:insta_food/presentation/features/items/presentation/widgets/rating_container.dart';
+import 'package:insta_food/presentation/widgets/rating_container.dart';
 import 'package:insta_food/presentation/widgets/app_button_onb.dart';
 import 'package:insta_food/presentation/widgets/cached_image.dart';
 import 'package:insta_food/presentation/features/cart/data/models/cart_item_model.dart';

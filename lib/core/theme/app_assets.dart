@@ -30,6 +30,7 @@ class AppAssets {
   static const String fav = "assets/icons/Favorites.svg";
   static const String rating = "assets/icons/rating.svg";
   static const String smallMeals = "assets/icons/bot-small-Meals.png";
+  static const String cartOrange = "assets/icons/cartOrange.svg";
 
   static const String camera = "assets/icons/camera.svg";
   static const String deliveryNotification =

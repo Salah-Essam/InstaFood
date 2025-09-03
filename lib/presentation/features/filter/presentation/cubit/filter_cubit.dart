@@ -111,7 +111,12 @@ class FilterCubit extends Cubit<FilterState> {
         ),
       );
     } else if (currentState is SetCatagoryFilter) {
-      emit(ApplyFilter(selectedCategory: currentState.selectedCategory));
+      emit(
+        ApplyFilter(
+          selectedCategory: currentState.selectedCategory,
+          previousState: currentState,
+        ),
+      );
     } else if (currentState is ApplyFilter) {
       // Already applied, do nothing or re-emit
       emit(currentState);
@@ -119,6 +124,29 @@ class FilterCubit extends Cubit<FilterState> {
   }
 
   void resetFilter() {
-    emit(FilterInitial());
+    emit(
+      SetFilter(
+        selectedCategory: null,
+        subCategory: null,
+        minRating: null,
+        maxPrice: null,
+      ),
+    );
+  }
+
+  void resetCategoryFilter() {
+    final currentState = state;
+
+    if (currentState is ApplyFilter &&
+        currentState.previousState is SetCatagoryFilter) {
+      emit(
+        SetFilter(
+          selectedCategory: null,
+          subCategory: null,
+          minRating: null,
+          maxPrice: null,
+        ),
+      );
+    }
   }
 }

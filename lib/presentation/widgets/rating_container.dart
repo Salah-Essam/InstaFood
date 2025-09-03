@@ -9,12 +9,20 @@ class RatingContainer extends StatelessWidget {
   final Color? color;
   final String? rating;
   final TextStyle? style;
-  const RatingContainer({super.key, this.color, this.rating, this.style});
+  final EdgeInsets? padding;
+  const RatingContainer({
+    super.key,
+    this.color,
+    this.rating,
+    this.style,
+    this.padding,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 57, vertical: 6),
+      padding:
+          padding ?? const EdgeInsets.symmetric(horizontal: 57, vertical: 6),
       child: Container(
         width: 34,
         height: 14,

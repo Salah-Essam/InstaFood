@@ -12,12 +12,13 @@ enum FoodCategory {
       'wrapped',
       'street food',
       'skewers',
+      'tandoor',
     ],
   ),
   meals(
     name: AppStrings.meals,
     icon: AppAssets.meals,
-    keywords: ['curry', 'biryani', 'grilled', 'cooked'],
+    keywords: ['curry', 'biryani', 'grilled', 'cooked', 'seafood'],
   ),
   vegan(
     name: AppStrings.vegan,
@@ -69,4 +70,10 @@ enum FoodCategory {
     required this.keywords,
     this.exclusionKeywords = const [],
   });
+  static FoodCategory fromString(String value) {
+    return FoodCategory.values.firstWhere(
+      (e) => e.name.toLowerCase() == value.toLowerCase(),
+      orElse: () => FoodCategory.meals,
+    );
+  }
 }

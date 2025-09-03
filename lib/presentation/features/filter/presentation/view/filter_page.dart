@@ -21,7 +21,7 @@ class FilterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
-      value: sl<FilterCubit>(),
+      value: sl<FilterCubit>()..resetFilter(),
       child: Scaffold(
         backgroundColor: AppColors.primaryYellow,
         appBar: CustomAppBar(
@@ -48,10 +48,6 @@ class FilterPage extends StatelessWidget {
                 ),
                 child: BlocBuilder<FilterCubit, FilterState>(
                   builder: (context, state) {
-                    if (state is SetFilter) {
-                      state.printFilterParams();
-                    }
-
                     return ListView(
                       children: [
                         Text(
@@ -171,7 +167,7 @@ class FilterPage extends StatelessWidget {
                                   .copyWith(fontSize: 20),
                             ),
                             Text(
-                              'Show items under: \$${state is SetFilter ? (state.maxPrice!.toStringAsFixed(0)) : 40.0}',
+                              'Show items under: \$${state is SetFilter ? (state.maxPrice?.toStringAsFixed(0) ?? AppStrings.noLimit) : 40.0}',
                               style: AppTextStyles.small,
                             ),
                           ],

@@ -4,7 +4,7 @@ import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 import 'package:insta_food/presentation/features/items/presentation/view/item_page.dart';
 import 'package:insta_food/presentation/features/items/presentation/widgets/fav_button.dart';
-import 'package:insta_food/presentation/features/items/presentation/widgets/rating_container.dart';
+import 'package:insta_food/presentation/widgets/rating_container.dart';
 import 'package:insta_food/presentation/widgets/cached_image.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 

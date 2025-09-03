@@ -1,6 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:insta_food/core/di/register_restaurants.dart';
 import 'package:insta_food/core/di/register_menu.dart';
 import 'package:insta_food/core/network/Firebase/firebase_auth_service.dart';
@@ -13,6 +14,9 @@ import 'package:insta_food/core/storage/hive_service.dart';
 import 'package:insta_food/presentation/features/Restaurants/data/model/restaurant_model.dart';
 import 'package:insta_food/presentation/features/auth/data/repository/auth_repository.dart';
 import 'package:insta_food/core/network/Firebase/firebase_firestore_service.dart';
+import 'package:insta_food/presentation/features/bestSeller/data/repos/Best_seller_repository.dart';
+import 'package:insta_food/presentation/features/bestSeller/data/source/Remote_data_source.dart';
+import 'package:insta_food/presentation/features/bestSeller/presentation/cubit/best_sellers_cubit.dart';
 import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 import 'package:insta_food/presentation/features/filter/presentation/cubit/filter_cubit.dart';
 import 'package:insta_food/presentation/features/order/logic/order_cubit.dart';
@@ -112,8 +116,27 @@ Future<void> setupLocator() async {
   );
 
   // Orders (My Orders) repository and cubit
-  sl.registerLazySingleton<OrdersRepository>(() => OrdersRepositoryFs(sl<FirebaseFirestore>()));
-  sl.registerFactory<OrdersCubit>(() => OrdersCubit(repo: sl<OrdersRepository>(), auth: sl<AuthCubit>()));
+  sl.registerLazySingleton<OrdersRepository>(
+    () => OrdersRepositoryFs(sl<FirebaseFirestore>()),
+  );
+  sl.registerFactory<OrdersCubit>(
+    () => OrdersCubit(repo: sl<OrdersRepository>(), auth: sl<AuthCubit>()),
+  );
+  //best Sellers repository and cubit
+  sl.registerLazySingleton<BestSellersRemoteDataSourceImpl>(
+    () => BestSellersRemoteDataSourceImpl(
+      firebaseFirestore: sl<FirebaseFirestore>(),
+    ),
+  );
+  sl.registerLazySingleton<BestSellersRepoImpl>(
+    () => BestSellersRepoImpl(
+      remoteDataSource: sl<BestSellersRemoteDataSourceImpl>(),
+    ),
+  );
+
+  sl.registerFactory<BestSellersCubit>(
+    () => BestSellersCubit(repository: sl<BestSellersRepoImpl>()),
+  );
 
   // Favorites (session-scoped)
   sl.registerLazySingleton<FavoritesRepository>(() {
@@ -138,9 +161,9 @@ Future<void> setupLocator() async {
       return FavoritesRepositoryMemory();
     }
   });
-  sl.registerFactory<FavoritesCubit>(() => FavoritesCubit(repo: sl<FavoritesRepository>()));
-
-
+  sl.registerFactory<FavoritesCubit>(
+    () => FavoritesCubit(repo: sl<FavoritesRepository>()),
+  );
 
   // Register network services
   sl.registerLazySingleton<Connectivity>(() => Connectivity());
