@@ -4,28 +4,7 @@ import 'package:insta_food/presentation/features/filter/data/enum/catagories_enu
 import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 
 class BestSellerItem extends ItemModel {
-  // final int itemID;
-
-  // final String itemName;
-
-  // final String? itemDescription;
-
-  // final double itemPrice;
-
-  // final String restaurantName;
-
-  // final String imageUrl;
-
   final String? category;
-  // BestSellerItem({
-  //   required this.itemID,
-  //   this.category,
-  //   required this.imageUrl,
-  //   required this.itemPrice,
-  //   required this.itemName,
-  //   this.itemDescription,
-  //   required this.restaurantName,
-  // });
 
   BestSellerItem({
     required int itemID,
