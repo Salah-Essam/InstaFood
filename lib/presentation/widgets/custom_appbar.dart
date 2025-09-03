@@ -40,8 +40,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   Navigator.pop(context);
                 },
               )
-            : null,
-        leadingWidth: 35,
+            : SizedBox(),
+        leadingWidth: 20,
 
         title: title == null
             ? (inableSearch

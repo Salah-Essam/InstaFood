@@ -20,52 +20,54 @@ class ItemCard extends StatelessWidget {
         onTap: () {
           pushScreen(context, screen: ItemPage(item: item), withNavBar: true);
         },
-        child: SizedBox(
-          width: 323,
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(color: AppColors.border, width: 0.5),
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 4,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(36),
-                  child: CachedImage(width: 323, height: 174, item: item),
+        child: Center(
+          child: SizedBox(
+            width: 323,
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(color: AppColors.border, width: 0.5),
                 ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 4,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(36),
+                    child: CachedImage(width: 323, height: 174, item: item),
+                  ),
 
-                Container(
-                  width: 323,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    spacing: 8,
-                    children: [
-                      Text(item.itemName, style: AppTextStyles.header),
-                      CircleAvatar(
-                        radius: 2.5,
-                        backgroundColor: AppColors.primaryOrange,
-                      ),
-                      RatingContainer(padding: EdgeInsets.all(1)),
+                  Container(
+                    width: 323,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      spacing: 8,
+                      children: [
+                        Text(item.itemName, style: AppTextStyles.header),
+                        CircleAvatar(
+                          radius: 2.5,
+                          backgroundColor: AppColors.primaryOrange,
+                        ),
+                        RatingContainer(padding: EdgeInsets.all(1)),
 
-                      Expanded(
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: Text(
-                            "\$${item.itemPrice.toStringAsFixed(1)}",
-                            style: AppTextStyles.fontPrimaryMediumRagular,
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: Text(
+                              "\$${item.itemPrice.toStringAsFixed(1)}",
+                              style: AppTextStyles.fontPrimaryMediumRagular,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
 
-                Text(item.itemDescription ?? "", style: AppTextStyles.small),
-                SizedBox(height: 25),
-              ],
+                  Text(item.itemDescription ?? "", style: AppTextStyles.small),
+                  SizedBox(height: 25),
+                ],
+              ),
             ),
           ),
         ),
