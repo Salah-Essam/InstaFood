@@ -33,8 +33,6 @@ With built-in **account management, profile settings, and payment options**, Ins
 
 Follow these steps to run the project locally:  
 
-```bash
-
 ## 📸 Screenshots  
 
 <p float="left">
@@ -48,9 +46,9 @@ Follow these steps to run the project locally:
   <img src="assets/images/screenshots/8.png" width="200" />
   <img src="assets/images/screenshots/9.png" width="200" />
   <img src="assets/images/screenshots/10.png" width="200" />
-
 </p>
 
+```bash
 
 # Clone the repository
 git clone https://github.com/Salah-Essam/InstaFood.git
