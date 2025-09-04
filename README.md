@@ -23,9 +23,9 @@ With built-in **account management, profile settings, and payment options**, Ins
 ## 🛠 Tech Stack  
 
 - **Framework:** Flutter (Dart)  
-- **State Management:** Provider / Bloc (add what you use)  
-- **Backend/Database:** Firebase / REST API (specify what you use)  
-- **Authentication:** Firebase Auth / Custom auth system  
+- **State Management:** Bloc 
+- **Backend/Database:** Firebase / HTMl APIs (https://fakerestaurantapi.runasp.net/)
+- **Authentication:** Firebase Auth
 
 ---
 
