@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:insta_food/core/routes/router.dart';
 import 'package:insta_food/core/theme/app_theme.dart';
 import 'package:insta_food/core/utils/notifications_service.dart';
-import 'package:insta_food/presentation/features/Restaurants/data/repository/restaurants_repository.dart';
 import 'package:insta_food/presentation/features/Restaurants/presentation/cubit/restaurants_cubit.dart';
 import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:insta_food/presentation/features/drawer/presentation/cubit/drawer_cubit.dart';
@@ -40,9 +39,7 @@ void main() async {
               OrdersCubit(repo: sl(), auth: ctx.read<AuthCubit>())..init(),
         ),
         // Single RestaurantsCubit provider (removed duplicate)
-        BlocProvider(
-          create: (context) => sl<RestaurantsCubit>(),
-        ),
+        BlocProvider(create: (context) => sl<RestaurantsCubit>()),
       ],
       child: const InstaFood(),
     ),
