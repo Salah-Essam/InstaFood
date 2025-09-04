@@ -12,8 +12,6 @@ import 'package:insta_food/presentation/features/filter/presentation/cubit/filte
 import 'package:insta_food/presentation/features/home/presentation/widget/ad_slider.dart';
 import 'package:insta_food/presentation/features/home/presentation/widget/app_greeting.dart';
 import 'package:insta_food/presentation/features/home/presentation/widget/bestseller_row.dart';
-
-import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 import 'package:insta_food/presentation/features/recommended/presentation/cubit/recommendations_cubit.dart';
 import 'package:insta_food/presentation/features/recommended/presentation/view/recomendation_page.dart';
 

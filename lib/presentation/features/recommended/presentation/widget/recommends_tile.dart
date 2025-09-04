@@ -12,11 +12,9 @@ import 'package:insta_food/presentation/features/cart/data/models/cart_item_mode
 import 'package:insta_food/presentation/features/cart/logic/cart_cubit.dart';
 import 'package:insta_food/presentation/features/cart/logic/cart_state.dart';
 import 'package:insta_food/presentation/features/filter/data/enum/catagories_enum.dart';
-import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 import 'package:insta_food/presentation/features/items/data/model/item_size.dart';
 import 'package:insta_food/presentation/features/items/presentation/view/item_page.dart';
 import 'package:insta_food/presentation/features/items/presentation/widgets/app_counter.dart';
-import 'package:insta_food/presentation/features/items/presentation/widgets/fav_button.dart';
 import 'package:insta_food/presentation/widgets/cached_image.dart';
 import 'package:insta_food/presentation/widgets/rating_container.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
@@ -32,7 +30,7 @@ class RecommendsTile extends StatefulWidget {
 class _RecommendsTileState extends State<RecommendsTile> {
   @override
   Widget build(BuildContext context) {
-    ValueNotifier<int> _qty = ValueNotifier<int>(1);
+    ValueNotifier<int> qty = ValueNotifier<int>(1);
 
     return SizedBox(
       width: 158,
@@ -120,7 +118,7 @@ class _RecommendsTileState extends State<RecommendsTile> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 ValueListenableBuilder<int>(
-                  valueListenable: _qty,
+                  valueListenable: qty,
                   builder: (_, qty, __) {
                     final price = widget.item.itemPrice * qty;
                     return Text(
@@ -136,8 +134,8 @@ class _RecommendsTileState extends State<RecommendsTile> {
                     child: LayoutBuilder(
                       builder: (context, constraints) {
                         return Counter(
-                          initNumber: _qty.value,
-                          counterCallback: (v) => _qty.value = v,
+                          initNumber: qty.value,
+                          counterCallback: (v) => qty.value = v,
                         );
                       },
                     ),
@@ -149,7 +147,7 @@ class _RecommendsTileState extends State<RecommendsTile> {
                     final cartitem = CartItemModel.fromItem(
                       item: widget.item,
                       size: ItemSize.medium,
-                      quantity: _qty.value,
+                      quantity: qty.value,
                     );
                     final isAuthed =
                         context.read<AuthCubit>().state is! Unauthenticated;
