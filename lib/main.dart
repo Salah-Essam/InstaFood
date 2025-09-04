@@ -5,6 +5,8 @@ import 'package:insta_food/core/di/di.dart';
 import 'package:flutter/services.dart';
 import 'package:insta_food/core/routes/router.dart';
 import 'package:insta_food/core/theme/app_theme.dart';
+import 'package:insta_food/core/utils/notifications_service.dart';
+import 'package:insta_food/presentation/features/Restaurants/data/repository/restaurants_repository.dart';
 import 'package:insta_food/presentation/features/Restaurants/presentation/cubit/restaurants_cubit.dart';
 import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:insta_food/presentation/features/drawer/presentation/cubit/drawer_cubit.dart';
@@ -14,6 +16,7 @@ import 'package:insta_food/presentation/features/favorites/logic/favorites_cubit
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await NotificationsService.init();
   await setupLocator();
   runApp(
     MultiBlocProvider(
