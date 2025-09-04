@@ -14,47 +14,49 @@ class MenuPage extends StatefulWidget {
   const MenuPage({super.key, this.restaurant});
 
   @override
-  State<MenuPage> createState() => _MenuPageState();
+  State<MenuPage> createState() => MenuPageState();
 }
 
-class _MenuPageState extends State<MenuPage> {
+class MenuPageState extends State<MenuPage> {
   @override
   Widget build(BuildContext context) {
-    return SharedScaffold(
-      appBarTitle: widget.restaurant?.restaurantName ?? 'Menu',
-      contentPadding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-      headerAction: const PriceFilterIcon(),
-      pageDetails: BlocBuilder<MenuCubit, MenuState>(
-        builder: (context, state) {
-          if (state is MenuLoading || state is MenuInitial) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (state is MenuError) {
-            return Center(child: Text(state.message));
-          }
-          final loaded = state as MenuLoaded;
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              MenuCategoryBar(
-                categories: MenuConstants.categories,
-                active: loaded.activeCategory,
-                onSelect: (cat) => context.read<MenuCubit>().filterByCategory(cat),
-              ),
-              const SizedBox(height: 12),
-              Expanded(
-                child: loaded.visibleItems.isEmpty
-                    ? const Center(child: Text('No items'))
-                    : ListView.separated(
-                        padding: const EdgeInsets.only(bottom: 16, top: 4),
-                        itemCount: loaded.visibleItems.length,
-                        separatorBuilder: (_, __) => const SizedBox(height: 12),
-                        itemBuilder: (ctx, i) => MenuItemCard(item: loaded.visibleItems[i]),
-                      ),
-              ),
-            ],
-          );
-        },
+    return Scaffold(
+      body: SharedScaffold(
+        appBarTitle: widget.restaurant?.restaurantName ?? 'Menu',
+        contentPadding: const EdgeInsets.fromLTRB(25, 12, 25, 16),
+        headerAction: const PriceFilterIcon(),
+        pageDetails: BlocBuilder<MenuCubit, MenuState>(
+          builder: (context, state) {
+            if (state is MenuLoading || state is MenuInitial) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (state is MenuError) {
+              return Center(child: Text(state.message));
+            }
+            final loaded = state as MenuLoaded;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                MenuCategoryBar(
+                  categories: MenuConstants.categories,
+                  active: loaded.activeCategory,
+                  onSelect: (cat) => context.read<MenuCubit>().filterByCategory(cat),
+                ),
+                const SizedBox(height: 12),
+                Expanded(
+                  child: loaded.visibleItems.isEmpty
+                      ? const Center(child: Text('No items'))
+                      : ListView.separated(
+                          padding: const EdgeInsets.only(bottom: 16, top: 4),
+                          itemCount: loaded.visibleItems.length,
+                          separatorBuilder: (_, __) => const SizedBox(height: 12),
+                          itemBuilder: (ctx, i) => MenuItemCard(item: loaded.visibleItems[i]),
+                        ),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

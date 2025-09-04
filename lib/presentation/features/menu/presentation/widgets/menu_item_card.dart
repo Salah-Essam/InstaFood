@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
+import 'package:insta_food/presentation/widgets/cached_image.dart';
 
 class MenuItemCard extends StatelessWidget {
   final ItemModel item;
@@ -25,35 +26,17 @@ class MenuItemCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: double.infinity,
-            height: 120,
-            decoration: const BoxDecoration(
-              color: AppColors.splashOrange,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(12),
-                topRight: Radius.circular(12),
-              ),
+          ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(12),
+              topRight: Radius.circular(12),
             ),
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(12),
-                topRight: Radius.circular(12),
-              ),
-              child: Image.network(
-                item.imageUrl,
+            child: SizedBox(
+              width: double.infinity,
+              height: 200,
+              child: CachedImage(
+                item: item,
                 fit: BoxFit.cover,
-                width: double.infinity,
-                errorBuilder: (context, error, stackTrace) => Container(
-                  color: AppColors.splashOrange,
-                  child: const Center(
-                    child: Icon(
-                      Icons.image,
-                      color: AppColors.primaryOrange,
-                      size: 24,
-                    ),
-                  ),
-                ),
               ),
             ),
           ),
@@ -82,7 +65,7 @@ class MenuItemCard extends StatelessWidget {
                 ],
                 const SizedBox(height: 6),
                 Text(
-                  'EGP ${item.itemPrice.toStringAsFixed(2)}',
+                  '\$ ${item.itemPrice.toStringAsFixed(2)}',
                   style: AppTextStyles.mediumText.copyWith(
                     color: AppColors.primaryOrange,
                     fontWeight: FontWeight.bold,

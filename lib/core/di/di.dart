@@ -19,6 +19,7 @@ import 'package:insta_food/presentation/features/bestSeller/presentation/cubit/b
 import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 import 'package:insta_food/presentation/features/filter/presentation/cubit/filter_cubit.dart';
 import 'package:insta_food/presentation/features/order/logic/order_cubit.dart';
+import 'package:insta_food/presentation/features/recommended/presentation/cubit/recommendations_cubit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:insta_food/core/session/session_manager.dart';
 import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_cubit.dart';
@@ -135,6 +136,14 @@ Future<void> setupLocator() async {
 
   sl.registerFactory<BestSellersCubit>(
     () => BestSellersCubit(repository: sl<BestSellersRepoImpl>()),
+  );
+
+  //Recommendations  cubit
+  sl.registerFactory<RecommendationsCubit>(
+    () => RecommendationsCubit(
+      bestSellers: sl<BestSellersCubit>(),
+      favorites: sl<FavoritesCubit>(),
+    ),
   );
 
   // Favorites (session-scoped)

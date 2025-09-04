@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
+import 'package:go_router/go_router.dart';
+import 'package:insta_food/core/routes/router_constants.dart';
 import 'package:insta_food/core/theme/app_text_field.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/core/utils/app_strings.dart';
@@ -48,6 +50,8 @@ class SetPasswordPageState extends State<SetPasswordPage> {
               backgroundColor: AppColors.success,
             ),
           );
+          // Redirect to login so user can sign in after resetting via email link.
+          context.go(RouterConstants.login);
         } else if (state is PasswordResetEmailFailed) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

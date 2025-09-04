@@ -96,11 +96,11 @@ class BottomNavBar extends StatelessWidget {
         ),
         body: PopScope(
           canPop: false,
-          onPopInvoked: (didPop) {
-            
+          onPopInvokedWithResult: (bool didPop, dynamic result) async {
             if (!didPop) {
               if (BottomNavController.controller.index != 0) {
                 BottomNavController.switchTo(0);
+                return;
               }
             }
           },

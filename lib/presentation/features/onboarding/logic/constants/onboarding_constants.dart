@@ -14,10 +14,9 @@ class OnboardingConstants {
   static const int lastPageIndex = 2;
 
   // Asset paths
-  static const String transferDocumentIcon =
-      'assets/svgs/Transfer Document icon.svg';
-  static const String cardIcon = 'assets/svgs/Card icon.svg';
-  static const String deliverBoyIcon = 'assets/svgs/Deliver Boy Icon.svg';
+  static const String transferDocumentIcon ='assets/images/Transfer_Document_icon.png';
+  static const String cardIcon = 'assets/icons/Card_icon.svg';
+  static const String deliverBoyIcon = 'assets/icons/Deliver_Boy_Icon.svg';
 
   // Image paths
   static const String firstPageImage = 'assets/images/onboarding1.png';
