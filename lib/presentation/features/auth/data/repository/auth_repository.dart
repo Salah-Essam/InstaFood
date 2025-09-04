@@ -31,10 +31,7 @@ class AuthRepository {
       phone: phone,
     );
 
-    // Store ONLY public profile in Firestore (no password)
     await _firestoreService.addUser(profile);
-
-  // Optionally sign out after sign up (keep as-is or remove based on UX). Removing auto sign-out now.
 
   return profile;
   }

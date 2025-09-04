@@ -123,9 +123,9 @@ class ProfileDrawer extends StatelessWidget {
                     child: Center(
                       child: Column(
                         mainAxisAlignment:
-                            MainAxisAlignment.center, // يخليهم في النص رأسيًا
+                            MainAxisAlignment.center, 
                         crossAxisAlignment:
-                            CrossAxisAlignment.center, // يخليهم في النص أفقيًا
+                            CrossAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(

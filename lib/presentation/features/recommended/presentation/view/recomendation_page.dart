@@ -3,12 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:insta_food/core/di/di.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/core/utils/app_strings.dart';
-import 'package:insta_food/presentation/features/bestSeller/presentation/cubit/best_sellers_cubit.dart';
 import 'package:insta_food/presentation/features/recommended/presentation/cubit/recommendations_cubit.dart';
 import 'package:insta_food/presentation/features/recommended/presentation/widget/recommends_tile.dart';
 import 'package:insta_food/presentation/features/recommended/presentation/widget/thumbnail.dart';
 import 'package:insta_food/presentation/widgets/app_backbutton.dart';
-import 'package:insta_food/presentation/widgets/item_card.dart';
 import 'package:insta_food/presentation/widgets/shared_scaffold.dart';
 
 class RecommendationPage extends StatelessWidget {
@@ -31,7 +29,7 @@ class RecommendationPage extends StatelessWidget {
               return Center(
                 child: ListView(
                   children: [
-                    Container(
+                    SizedBox(
                       width: 100,
                       child: Column(
                         children: [

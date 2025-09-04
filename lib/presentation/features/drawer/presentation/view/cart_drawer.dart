@@ -70,7 +70,7 @@ Widget _header() => Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Image.asset('assets/icons/cart_drawer_icon.png', width: 24, height: 24),
+        Image.asset('assets/images/cart_drawer_icon.png', width: 24, height: 24),
         const SizedBox(width: 8),
         SizedBox(
           height: 24,
@@ -144,7 +144,7 @@ class _EmptyCart extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(51.54),
               child: Image.asset(
-                'assets/icons/Add to car Icon.png',
+                'assets/images/Add_to_cart_Icon.png',
                 width: 184,
                 height: 184,
                 fit: BoxFit.contain,

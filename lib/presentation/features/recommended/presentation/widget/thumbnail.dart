@@ -31,7 +31,7 @@ class Thumbnail extends StatefulWidget {
 class _ThumbnailState extends State<Thumbnail> {
   @override
   Widget build(BuildContext context) {
-    ValueNotifier<int> _qty = ValueNotifier<int>(1);
+    ValueNotifier<int> qty = ValueNotifier<int>(1);
 
     return SizedBox(
       width: 150,
@@ -142,7 +142,7 @@ class _ThumbnailState extends State<Thumbnail> {
                     spacing: 8,
                     children: [
                       ValueListenableBuilder<int>(
-                        valueListenable: _qty,
+                        valueListenable: qty,
                         builder: (_, qty, __) {
                           final price = widget.item.itemPrice * qty;
                           return Text(
@@ -158,8 +158,8 @@ class _ThumbnailState extends State<Thumbnail> {
                           child: LayoutBuilder(
                             builder: (context, constraints) {
                               return Counter(
-                                initNumber: _qty.value,
-                                counterCallback: (v) => _qty.value = v,
+                                initNumber: qty.value,
+                                counterCallback: (v) => qty.value = v,
                               );
                             },
                           ),
@@ -171,7 +171,7 @@ class _ThumbnailState extends State<Thumbnail> {
                           final cartitem = CartItemModel.fromItem(
                             item: widget.item,
                             size: ItemSize.medium,
-                            quantity: _qty.value,
+                            quantity: qty.value,
                           );
                           final isAuthed =
                               context.read<AuthCubit>().state

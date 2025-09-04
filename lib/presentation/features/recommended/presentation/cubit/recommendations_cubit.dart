@@ -1,4 +1,4 @@
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:insta_food/presentation/features/bestSeller/presentation/cubit/best_sellers_cubit.dart';
 import 'package:insta_food/presentation/features/favorites/logic/favorites_cubit.dart';

@@ -6,7 +6,7 @@ import 'package:insta_food/core/routes/router_constants.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/storage/shared_prefrences/shared_prefs_service.dart';
 import 'package:insta_food/presentation/features/BottomNavBar/presentation/pages/bottom_nav_bar.dart';
-import 'package:insta_food/presentation/features/ContactUs%20&%20FAQs/presentation/pages/help_faqs_page.dart';
+import 'package:insta_food/presentation/features/ContactUs_and_FAQs/presentation/pages/help_faqs_page.dart';
 import 'package:insta_food/presentation/features/DeliveryAddress/presentation/pages/add_new_address_page.dart';
 import 'package:insta_food/presentation/features/DeliveryAddress/presentation/pages/delivery_address_page.dart';
 import 'package:insta_food/presentation/features/PaymentMethods/presentation/pages/add_card_page.dart';

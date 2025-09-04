@@ -38,7 +38,7 @@ class ItemCard extends StatelessWidget {
                   ),
 
 
-                  Container(
+                  SizedBox(
                     width: 323,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,

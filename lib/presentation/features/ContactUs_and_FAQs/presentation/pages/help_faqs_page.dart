@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
 import 'package:insta_food/core/theme/app_text_styles.dart';
-import 'package:insta_food/presentation/features/ContactUs%20&%20FAQs/presentation/widgets/contact_us_widget.dart';
-import 'package:insta_food/presentation/features/ContactUs%20&%20FAQs/presentation/widgets/faqs_widget.dart';
+import 'package:insta_food/presentation/features/ContactUs_and_FAQs/presentation/widgets/contact_us_widget.dart';
+import 'package:insta_food/presentation/features/ContactUs_and_FAQs/presentation/widgets/faqs_widget.dart';
 import 'package:insta_food/presentation/widgets/app_button_onb.dart';
 import 'package:insta_food/presentation/widgets/shared_scaffold.dart';
 

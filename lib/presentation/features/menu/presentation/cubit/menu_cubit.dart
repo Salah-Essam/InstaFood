@@ -3,20 +3,16 @@ import 'package:insta_food/presentation/features/menu/presentation/cubit/menu_cu
 import 'package:insta_food/presentation/features/menu/data/Repository/menu_repository.dart';
 import 'package:insta_food/presentation/features/items/data/model/item_model.dart';
 import 'package:insta_food/presentation/features/Restaurants/data/model/restaurant_model.dart';
-import 'package:insta_food/core/storage/shared_prefrences/shared_prefs_service.dart';
 import 'package:insta_food/core/constants/menu_constants.dart';
 
 class MenuCubit extends Cubit<MenuState> {
   final MenuRepository repository;
-  SharedPrefsService? _prefs;
   MenuCubit({required this.repository}) : super(MenuInitial());
 
-  static const _imageCachePrefix = 'restaurant_menu_images_';
 
   Future<void> load(Restaurant? restaurant) async {
     emit(MenuLoading());
     try {
-      _prefs = await SharedPrefsService.getInstance();
       if (restaurant == null) {
         emit(MenuError('Restaurant not provided'));
         return;
@@ -25,7 +21,7 @@ class MenuCubit extends Cubit<MenuState> {
       result.fold(
         (failure) => emit(MenuError(failure.message)),
         (items) async {
-          await _cacheImageUrls(restaurant, items);
+          // Image caching now handled automatically by cached_network_image at UI layer.
           emit(MenuLoaded(
             restaurant: restaurant, 
             allItems: items, 
@@ -40,12 +36,6 @@ class MenuCubit extends Cubit<MenuState> {
     }
   }
 
-  Future<void> _cacheImageUrls(Restaurant? r, List<ItemModel> items) async {
-    if (_prefs == null || r == null) return;
-    final key = '$_imageCachePrefix${r.restaurantID}';
-    final urls = items.map((e) => e.imageUrl).where((u) => u.isNotEmpty).toList();
-    await _prefs!.setValue(key, urls);
-  }
 
   void filterByCategory(String? category) {
     final current = state;
@@ -84,7 +74,7 @@ class MenuCubit extends Cubit<MenuState> {
       result.fold(
         (failure) => emit(MenuError(failure.message)),
         (items) async {
-          await _cacheImageUrls(current.restaurant, items);
+          // Skip manual URL caching; rely on CachedNetworkImage.
           
           // Apply category filter if active
           List<ItemModel> visibleItems = items;
