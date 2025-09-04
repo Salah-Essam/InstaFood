@@ -36,7 +36,6 @@ class ItemCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(36),
                     child: CachedImage(width: 323, height: 174, item: item),
                   ),
-
                   SizedBox(
                     width: 323,
                     child: Row(
