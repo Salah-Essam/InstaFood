@@ -11,7 +11,7 @@ class PaymentMethodRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Image.asset(
-          'assets/icons/Card icon.png',
+          'assets/images/Card_icon.png',
           width: 22,
           height: 22,
           fit: BoxFit.contain,
