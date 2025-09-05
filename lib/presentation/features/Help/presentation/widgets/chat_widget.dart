@@ -6,6 +6,10 @@ import 'package:insta_food/core/theme/app_text_styles.dart';
 import 'package:insta_food/presentation/features/Help/data/datasources/dummy_chat_data_for_test.dart';
 import 'package:insta_food/presentation/features/Help/presentation/widgets/chat_bubble_widget.dart';
 import 'package:insta_food/presentation/features/drawer/presentation/widgets/app_text_field_drawer.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_cubit.dart';
+import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_state.dart';
 
 class ChatWidget extends StatefulWidget {
   const ChatWidget({super.key});
@@ -18,6 +22,16 @@ class _ChatWidgetState extends State<ChatWidget> {
   final List<Map<String, dynamic>> _messages = DummyChatDataForTest()
       .messages();
   final TextEditingController _controller = TextEditingController();
+  final Dio _dio = Dio(
+    BaseOptions(
+      baseUrl: const String.fromEnvironment(
+        'AGENT_BASE_URL',
+        defaultValue: 'http://127.0.0.1:8787',
+      ),
+      connectTimeout: const Duration(seconds: 5),
+      receiveTimeout: const Duration(seconds: 20),
+    ),
+  );
 
   void _sendMessage(bool isMe) {
     final text = _controller.text.trim();
@@ -25,6 +39,37 @@ class _ChatWidgetState extends State<ChatWidget> {
       setState(() {
         _messages.add({'text': text, 'isMe': isMe});
         _controller.clear();
+      });
+      _callAgent(text);
+    }
+  }
+
+  Future<void> _callAgent(String userText) async {
+    final auth = context.read<AuthCubit>().state;
+    final uid = auth is Authenticated ? (auth.user.id ?? '') : '';
+    if (uid.isEmpty) {
+      setState(() {
+        _messages.add({
+          'text': 'Please log in to use AI assistant.',
+          'isMe': false,
+        });
+      });
+      return;
+    }
+    try {
+      final resp = await _dio.post(
+        '/chat',
+        data: {'userId': uid, 'message': userText},
+      );
+      final reply = resp.data['reply']?.toString() ?? 'No reply';
+      if (!mounted) return;
+      setState(() {
+        _messages.add({'text': reply, 'isMe': false});
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _messages.add({'text': 'Agent error: $e', 'isMe': false});
       });
     }
   }
