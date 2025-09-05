@@ -39,15 +39,19 @@ class ButtonGrid extends StatelessWidget {
                 padding: const EdgeInsets.only(right: 19, left: 1),
                 child: ClipPath(
                   clipper: isSelected ? MyCustomClipper() : null,
+                  clipBehavior: Clip.antiAlias,
                   child: Container(
                     decoration: BoxDecoration(
                       border: isSelected
                           ? Border.all(color: AppColors.white, width: 6.0)
                           : null,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30),
-                        topRight: Radius.circular(30),
-                      ),
+                      // Use simple rounded top corners for unselected state.
+                      borderRadius: isSelected
+                          ? null
+                          : BorderRadius.only(
+                              topLeft: Radius.circular(30),
+                              topRight: Radius.circular(30),
+                            ),
                       color: isSelected ? AppColors.white : null,
                     ),
                     child: Column(
@@ -108,45 +112,55 @@ class ButtonGrid extends StatelessWidget {
 class MyCustomClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
-    final Path path = Path();
-    const double cornerRadius = 0.2; // Control the curve's intensity
+    final Path p = Path();
 
-    // Start from the top-left curve point
-    path.moveTo(size.width * cornerRadius, 0);
+    // Tunable constants (relative to size) to match the Figma selected-category halo.
+    // The idea: a rounded top, then fully smooth concave curves on both sides flowing into the bottom.
+    final double rTop = 24; // top corner radius (px-like)
+    final double topInset = 0; // tiny inset to avoid hairlines with background
 
-    // Draw the top line
-    path.lineTo(size.width * (1 - cornerRadius), 0);
-    // Draw top-right curve
-    path.quadraticBezierTo(
-      size.width,
-      0,
-      size.width,
-      size.height * cornerRadius,
+    // Make bottom corners match the top radius exactly (inverted).
+    final double anchorY = size.height - rTop;
+
+    // Small smoothing for vertical transitions.
+    const double vLift = 10; // vertical lift before anchor for softness
+    const double vMid = 14; // vertical continuity from top arc
+    final double rt = rTop.clamp(0, size.width / 2).toDouble();
+
+    final double w = size.width;
+    final double h = size.height;
+
+    // --- Top cap (soft rectangle top) ---
+    p.moveTo(rt, topInset);
+    p.lineTo(size.width - rt, topInset);
+    p.quadraticBezierTo(size.width, topInset, size.width, rt);
+
+    // --- Right side: smooth descent then exact inverted rounded corner ---
+    p.cubicTo(w, rt + vMid, w, anchorY - vLift, w, anchorY);
+    // Quarter-circle inward to the bottom with the same radius as the top.
+    p.arcToPoint(
+      Offset(w - rt, h),
+      radius: Radius.circular(rt),
+      clockwise: true,
     );
 
-    // Draw the right side line
-    path.lineTo(size.width, size.height * (1 - cornerRadius));
-    // Draw the bottom-right curve
-    path.quadraticBezierTo(
-      size.width,
-      size.height,
-      size.width * (1 - cornerRadius),
-      size.height,
+    // --- Bottom run ---
+    p.lineTo(rt, h);
+
+    // --- Left side: mirror of right ---
+    p.arcToPoint(
+      Offset(0, anchorY),
+      radius: Radius.circular(rt),
+      clockwise: true,
     );
+    // Smooth ascent into the top-left rounded corner.
+    p.cubicTo(0, anchorY - vLift, 0, rt + vMid, 0, rt);
 
-    // Draw the wider bottom line
-    path.lineTo(size.width * cornerRadius, size.height);
+    // Top-left corner back to start.
+    p.quadraticBezierTo(0, topInset, rt, topInset);
 
-    // Draw the bottom-left curve
-    path.quadraticBezierTo(0, size.height, 0, size.height * (1 - cornerRadius));
-
-    // Draw the left side line
-    path.lineTo(0, size.height * cornerRadius);
-    // Draw the top-left curve
-    path.quadraticBezierTo(0, 0, size.width * cornerRadius, 0);
-
-    path.close();
-    return path;
+    p.close();
+    return p;
   }
 
   @override
