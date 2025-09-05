@@ -11,7 +11,7 @@ class Doc:
 
 
 class SimpleBM25Index:
-    def _init_(self, docs: List[Doc]):
+    def __init__(self, docs: List[Doc]):
         self.docs = docs
         self.tokenized = [d.text.lower().split() for d in docs]
         self.bm25 = BM25Okapi(self.tokenized)

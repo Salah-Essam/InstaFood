@@ -6,12 +6,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from langchain.tools import tool
-from langchain.agents import AgentType, initialize_agent
-from langchain_community.llms.huggingface_hub import HuggingFaceHub
-from langchain_community.llms import Ollama
+from langchain.agents import create_react_agent, AgentExecutor
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_community.llms import HuggingFaceEndpoint, Ollama
 
-from rag_index import load_project_docs
-from firestore_tools import (
+from .rag_index import load_project_docs
+from .firestore_tools import (
     add_to_cart as fs_add_to_cart,
     place_order as fs_place_order,
     get_orders as fs_get_orders,
@@ -24,6 +24,17 @@ from firestore_tools import (
 INDEX = load_project_docs()
 
 
+# Helper to parse JSON payloads from single-string tool inputs
+def _parse_json(s: str) -> Dict[str, Any]:
+    import json
+    try:
+        if isinstance(s, (dict, list)):
+            return s  # already parsed
+        return json.loads(s)
+    except Exception:
+        return {}
+
+
 @tool
 def rag_search(query: str) -> str:
     """Search project docs to answer questions about InstaFood logic, data flow, and schema."""
@@ -32,52 +43,91 @@ def rag_search(query: str) -> str:
 
 
 @tool
-def add_to_cart(uid: str, item_id: int, item_name: str, image_url: str, restaurant_id: int,
-                restaurant_name: str, unit_price: float, quantity: int, size: str) -> str:
-    """Add or update an item in a user's cart in Firestore. Quantity replaces existing quantity for same item/size."""
-    fs_add_to_cart(uid, item_id, item_name, image_url, restaurant_id, restaurant_name, unit_price, quantity, size)
-    return "added"
+def add_to_cart(payload: str) -> str:
+    """Add or update item in cart. Input JSON keys: uid, item_id, item_name, image_url, restaurant_id, restaurant_name, unit_price, quantity, size."""
+    d = _parse_json(payload)
+    try:
+        fs_add_to_cart(
+            d.get("uid", ""),
+            int(d.get("item_id", 0)),
+            str(d.get("item_name", "")),
+            str(d.get("image_url", "")),
+            int(d.get("restaurant_id", 0)),
+            str(d.get("restaurant_name", "")),
+            float(d.get("unit_price", 0.0)),
+            int(d.get("quantity", 1)),
+            str(d.get("size", "regular")),
+        )
+        return "added"
+    except Exception as e:
+        return f"error: {e}"
 
 
 @tool
-def place_order(uid: str, shipping_address: str) -> str:
-    """Create an active order from the user's cart and return the orderId."""
-    order_id = fs_place_order(uid, shipping_address)
-    return order_id or "cart_empty"
+def place_order(payload: str) -> str:
+    """Create an active order from user's cart. Input JSON keys: uid, shipping_address. Returns orderId or 'cart_empty'."""
+    d = _parse_json(payload)
+    uid = d.get("uid", "")
+    addr = d.get("shipping_address", "")
+    try:
+        order_id = fs_place_order(uid, addr)
+        return order_id or "cart_empty"
+    except Exception as e:
+        return f"error: {e}"
 
 
 @tool
-def my_orders(uid: str, status: Optional[str] = None) -> str:
-    """Return user's orders; status can be 'active', 'completed', or 'cancelled'."""
-    return str(fs_get_orders(uid, status))
+def my_orders(payload: str) -> str:
+    """Return user's orders. Input JSON: { uid, status? ('active'|'completed'|'cancelled') }"""
+    d = _parse_json(payload)
+    try:
+        return str(fs_get_orders(d.get("uid", ""), d.get("status")))
+    except Exception as e:
+        return f"error: {e}"
 
 
 @tool
-def best_sellers() -> str:
-    """Return list of best seller items from Firestore."""
-    return str(fs_get_best_sellers())
+def best_sellers(payload: str) -> str:
+    """Return best seller items from Firestore. Input can be any string (ignored)."""
+    try:
+        return str(fs_get_best_sellers())
+    except Exception as e:
+        return f"error: {e}"
 
 @tool
-def add_by_item_id(uid: str, item_id: int, size: str, quantity: int = 1) -> str:
-    """Convenience: look up item details by Best Sellers doc id (numeric string) and add to cart."""
+def add_by_item_id(payload: str) -> str:
+    """Add by Best Sellers doc id. Input JSON: { uid, item_id, size, quantity? }"""
+    d = _parse_json(payload)
+    uid = d.get("uid", "")
+    item_id = d.get("item_id")
+    size = d.get("size", "regular")
+    quantity = int(d.get("quantity", 1))
+    if item_id is None:
+        return "error: missing item_id"
     db = get_db()
     doc = db.collection("Best Sellers").document(str(item_id)).get()
     if not doc.exists:
         return "item_not_found"
-    d = doc.to_dict() or {}
-    name = d.get("name", "")
-    image = d.get("imageUrl", "")
-    price = float(d.get("price", 0.0))
-    rest_name = d.get("resturant Name", "")
-    # No restaurant id in this collection; set 0
-    fs_add_to_cart(uid, int(item_id), name, image, 0, rest_name, price, int(quantity), size)
-    return "added"
+    data = doc.to_dict() or {}
+    name = data.get("name", "")
+    image = data.get("imageUrl", "")
+    price = float(data.get("price", 0.0))
+    rest_name = data.get("resturant Name", "")
+    try:
+        fs_add_to_cart(uid, int(item_id), name, image, 0, rest_name, price, int(quantity), size)
+        return "added"
+    except Exception as e:
+        return f"error: {e}"
 
 @tool
-def delivery_eta(uid: str, order_id: Optional[str] = None) -> str:
-    """Rough ETA for a user's latest active order (or a specific order). Returns human text."""
+def delivery_eta(payload: str) -> str:
+    """Get ETA for latest active order or specific one. Input JSON: { uid, order_id? }"""
     from datetime import datetime, timezone, timedelta
+    from google.cloud import firestore as _fs
     db = get_db()
+    d = _parse_json(payload)
+    uid = d.get("uid", "")
+    order_id = d.get("order_id")
     col = db.collection("users").document(uid).collection("orders")
     if order_id:
         doc = col.document(order_id).get()
@@ -85,7 +135,7 @@ def delivery_eta(uid: str, order_id: Optional[str] = None) -> str:
             return "order_not_found"
         data = doc.to_dict() or {}
     else:
-        q = col.where("status", "==", "active").order_by("createdAt", direction=_import_('google.cloud.firestore').Query.DESCENDING).limit(1)
+        q = col.where("status", "==", "active").order_by("createdAt", direction=_fs.Query.DESCENDING).limit(1)
         docs = list(q.stream())
         if not docs:
             return "no_active_orders"
@@ -103,17 +153,31 @@ def delivery_eta(uid: str, order_id: Optional[str] = None) -> str:
             elapsed = (now - created_dt).total_seconds() / 60.0
             remaining = max(5, base_eta - int(elapsed))
             eta_at = now + timedelta(minutes=remaining)
-            return f"Estimated delivery in ~{remaining} minutes (by {eta_at.astimezone().strftime('%-I:%M %p')})."
+            # Use %I (12-hour) which is Windows-safe (no leading zero stripping)
+            return f"Estimated delivery in ~{remaining} minutes (by {eta_at.astimezone().strftime('%I:%M %p')})."
         except Exception:
             pass
     return "Estimated delivery window: 20–40 minutes."
 
 
 def build_llm():
+    # Load .env lazily so local dev can set secrets without exporting system-wide
+    try:
+        from dotenv import load_dotenv
+        load_dotenv()
+    except Exception:
+        pass
+
     model = os.getenv("HF_MODEL")
     token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
     if model and token:
-        return HuggingFaceHub(repo_id=model, model_kwargs={"temperature": 0.2, "max_new_tokens": 256})
+        # Use HuggingFaceEndpoint which implements Runnable in LC 0.2+
+        return HuggingFaceEndpoint(
+            repo_id=model,
+            huggingfacehub_api_token=token,
+            temperature=0.2,
+            max_new_tokens=256,
+        )
     # Optional local Llama via Ollama
     ollama_model = os.getenv("OLLAMA_MODEL")
     if ollama_model:
@@ -121,21 +185,48 @@ def build_llm():
             return Ollama(model=ollama_model, temperature=0.2)
         except Exception:
             pass
-    # Fallback: a tiny echo-style baseline to support tool calls; encourages tool-first answers.
-    class DummyLLM:
-        def _call_(self, prompt: str) -> str:
-            return "Use tools to answer. If user asks to do something, call the appropriate tool with reasonable defaults."
-    return DummyLLM()
+    # No usable LLM configured for the modern agent API
+    raise RuntimeError("No LLM configured. Set HF_MODEL and HUGGINGFACEHUB_API_TOKEN or OLLAMA_MODEL.")
 
 
 TOOLS = [rag_search, add_to_cart, place_order, my_orders, best_sellers, add_by_item_id, delivery_eta]
-LLM = build_llm()
-AGENT = initialize_agent(
-    tools=TOOLS,
-    llm=LLM,
-    agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
-    verbose=False,
+
+# Build a ReAct agent using modern API
+SYSTEM_INSTRUCTIONS = (
+    '''You are an InstaFood assistant.
+Use tools by passing a SINGLE JSON STRING as the only argument. Keys must match each tool's docstring.
+Examples:
+- add_to_cart('{"uid":"<uid>","item_id":1,"item_name":"Burger","image_url":"...","restaurant_id":0,"restaurant_name":"Foo","unit_price":9.9,"quantity":1,"size":"regular"}')
+- place_order('{"uid":"<uid>","shipping_address":"Cairo"}')
+- my_orders('{"uid":"<uid>","status":"active"}')
+- best_sellers('any')
+- delivery_eta('{"uid":"<uid>"}')
+Use rag_search to recall schema. Keep answers concise.'''
 )
+
+PROMPT = ChatPromptTemplate.from_messages([
+    ("system", SYSTEM_INSTRUCTIONS),
+    ("human", "{input}"),
+    MessagesPlaceholder(variable_name="agent_scratchpad"),
+])
+
+EXECUTOR = None  # lazy-initialized
+
+def get_executor():
+    global EXECUTOR
+    if EXECUTOR is not None:
+        return EXECUTOR
+    # Ensure we load env from both root .env and agent_service/.env
+    try:
+        from dotenv import load_dotenv, find_dotenv
+        load_dotenv(find_dotenv(usecwd=True))
+        load_dotenv(os.path.join(os.path.dirname(__file__), ".env"), override=True)
+    except Exception:
+        pass
+    llm = build_llm()
+    agent = create_react_agent(llm, TOOLS, PROMPT)
+    EXECUTOR = AgentExecutor(agent=agent, tools=TOOLS, verbose=False)
+    return EXECUTOR
 
 
 class ChatReq(BaseModel):
@@ -158,19 +249,12 @@ app.add_middleware(
 
 @app.post("/chat", response_model=ChatRes)
 def chat(req: ChatReq) -> Any:
-    system = (
-        "You are an InstaFood assistant. \n"
-        "When user asks for: \n"
-        "- add to cart -> call add_to_cart(uid, item_id, item_name, image_url, restaurant_id, restaurant_name, unit_price, quantity, size).\n"
-        "- place order -> call place_order(uid, shipping_address).\n"
-        "- my orders/history or delivery status -> call my_orders(uid, status?).\n"
-        "- best seller -> call best_sellers.\n"
-        "Use rag_search to recall schema.\n"
-        "Keep answers short."
-    )
-    prompt = system + "\nUser: " + req.message
     try:
-        reply = AGENT.run(prompt)
+        executor = get_executor()
+        # Pass uid to the agent so it can construct JSON payloads for tools
+        user_input = f"uid:{req.userId}\n{req.message}"
+        result = executor.invoke({"input": user_input})
+        reply = result.get("output", "")
     except Exception as e:
         reply = f"Error: {e}"
     return ChatRes(reply=reply)
