@@ -35,6 +35,11 @@ def clear_cart(uid: str) -> None:
         d.reference.delete()
 
 
+def remove_from_cart(uid: str, cart_item_id: str) -> None:
+    db = get_db()
+    db.collection("users").document(uid).collection("cart").document(str(cart_item_id)).delete()
+
+
 def get_cart(uid: str) -> List[Dict[str, Any]]:
     db = get_db()
     col = db.collection("users").document(uid).collection("cart").order_by("addedAt")
@@ -83,6 +88,14 @@ def mark_order_paid(uid: str, order_id: str) -> None:
     })
 
 
+def cancel_order(uid: str, order_id: str) -> None:
+    db = get_db()
+    db.collection("users").document(uid).collection("orders").document(order_id).update({
+        "status": "cancelled",
+        "updatedAt": firestore.SERVER_TIMESTAMP,
+    })
+
+
 def get_best_sellers() -> List[Dict[str, Any]]:
     db = get_db()
     col = db.collection("Best Sellers")
@@ -92,3 +105,52 @@ def get_best_sellers() -> List[Dict[str, Any]]:
         data["id"] = d.id
         res.append(data)
     return res
+
+
+# Favorites helpers (assumes users/{uid}/favorites/{itemId})
+def add_favorite(uid: str, item_id: int, name: str, image_url: str, restaurant_name: str, price: float) -> None:
+    db = get_db()
+    doc_id = str(item_id)
+    data = {
+        "itemId": int(item_id),
+        "name": name,
+        "imageUrl": image_url,
+        "restaurantName": restaurant_name,
+        "price": float(price),
+        "addedAt": firestore.SERVER_TIMESTAMP,
+    }
+    db.collection("users").document(uid).collection("favorites").document(doc_id).set(data, merge=True)
+
+
+def remove_favorite(uid: str, item_id: int) -> None:
+    db = get_db()
+    db.collection("users").document(uid).collection("favorites").document(str(item_id)).delete()
+
+
+def get_favorites(uid: str) -> List[Dict[str, Any]]:
+    db = get_db()
+    col = db.collection("users").document(uid).collection("favorites").order_by("addedAt", direction=firestore.Query.DESCENDING)
+    return [doc.to_dict() | {"id": doc.id} for doc in col.stream()]
+
+
+# Chat history helpers: users/{uid}/chat/{autoId}
+def add_chat_message(uid: str, role: str, content: str) -> None:
+    db = get_db()
+    data = {
+        "role": role,  # "user" | "assistant" | "system"
+        "content": content,
+        "createdAt": firestore.SERVER_TIMESTAMP,
+    }
+    db.collection("users").document(uid).collection("chat").add(data)
+
+
+def get_chat_history(uid: str, limit: int = 50) -> List[Dict[str, Any]]:
+    db = get_db()
+    q = (
+        db.collection("users").document(uid).collection("chat")
+        .order_by("createdAt", direction=firestore.Query.DESCENDING)
+        .limit(max(1, int(limit)))
+    )
+    items = [doc.to_dict() | {"id": doc.id} for doc in q.stream()]
+    # return ascending by time for UI
+    return list(reversed(items))
