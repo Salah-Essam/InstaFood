@@ -173,27 +173,68 @@ def filter_items(payload: str) -> str:
     """
     d = _parse_json(payload)
     try:
+        import re
         items = fs_get_best_sellers() or []
+        # Robust price parsing: accept numbers embedded in strings (e.g., "₹150", "Rs 150")
+        def _parse_price(v) -> float:
+            try:
+                if isinstance(v, (int, float)):
+                    return float(v)
+                s = str(v)
+                m = re.findall(r"[\d]+(?:\.[\d]+)?", s)
+                return float(m[0]) if m else 0.0
+            except Exception:
+                return 0.0
+
         max_price = d.get("max_price")
         try:
             max_price = float(max_price) if max_price is not None else None
         except Exception:
             max_price = None
-        category = (d.get("category") or "").strip().lower()
+
+        # Category normalization + synonyms
+        raw_category = (d.get("category") or "").strip().lower()
         q = (d.get("query") or "").strip().lower()
+        cat_syn = {
+            "drink": [
+                "drink", "drinks", "beverage", "beverages", "soft drink", "soft drinks",
+                "juice", "juices", "mocktail", "shake", "lassi", "soda",
+                "مشروب", "مشروبات", "عصير", "مشروبات غازية"
+            ],
+            "dessert": ["dessert", "desserts", "sweet", "sweets", "حلو", "حلويات"],
+            "burger": ["burger", "burgers", "برجر"],
+            "pizza": ["pizza", "بيتزا"],
+        }
+        def _cat_match(item_cat: str, name: str) -> bool:
+            if not raw_category:
+                return True
+            ic = (item_cat or "").lower()
+            nm = (name or "").lower()
+            # direct substring
+            if raw_category in ic:
+                return True
+            # synonyms
+            for k, vals in cat_syn.items():
+                if raw_category == k or raw_category in vals:
+                    if any(v in ic for v in vals) or any(v in nm for v in vals):
+                        return True
+            return False
+
         out = []
         for it in items:
             name = str(it.get("name", ""))
-            price = float(it.get("price", 0.0))
-            cat = str(it.get("category", it.get("Category", ""))).lower()
+            price = _parse_price(it.get("price", 0.0))
+            cat = str(it.get("category", it.get("Category", "")))
             item_id = it.get("id") or it.get("item_id") or it.get("docId")
             if max_price is not None and price > max_price:
                 continue
-            if category and category not in cat:
+            if not _cat_match(cat, name):
                 continue
             if q and q not in name.lower():
                 continue
             out.append({"id": item_id, "name": name, "price": price})
+        # Sort ascending by price for budget-friendly display
+        out.sort(key=lambda x: x.get("price", 0.0))
         return str(out)
     except Exception as e:
         return f"error: {e}"
@@ -690,8 +731,12 @@ def chat(req: ChatReq) -> Any:
         with cf.ThreadPoolExecutor(max_workers=1) as ex:
             result = ex.submit(_invoke).result(timeout=45.0)
         reply = result.get("output", "")
-        fs_add_chat_message(req.userId, "user", req.message)
-        fs_add_chat_message(req.userId, "assistant", reply)
+        # Persist chat history, but never fail the request if Firestore is unavailable
+        try:
+            fs_add_chat_message(req.userId, "user", req.message)
+            fs_add_chat_message(req.userId, "assistant", reply)
+        except Exception:
+            pass
     except cf.TimeoutError:
         # Fallback to selective fast-paths if enabled by timeout policy
         if any(k in msg for k in ["best seller", "best sellers", "bestseller", "bestsellers"]):
@@ -727,6 +772,56 @@ def chat(req: ChatReq) -> Any:
         fb = os.getenv("HF_MODEL_FALLBACK")
         # Handle Groq/LLM rate limit errors gracefully
         if ("429" in err_text) or ("rate_limit" in err_text.lower()) or ("rate limit" in err_text.lower()):
+            # On rate limit: try to fulfill common intents without LLM
+            try:
+                low = msg
+                if "cart" in low:
+                    data = fs_get_cart(req.userId)
+                    items = [f"- {(it.get('itemName') or it.get('name') or '')} x{it.get('quantity',1)}" for it in (data or []) if (it.get('itemName') or it.get('name'))]
+                    return ChatRes(reply=("\n".join(items) or "Your cart is empty."))
+                if ("order" in low) or ("history" in low):
+                    data = fs_get_orders(req.userId, None)
+                    return ChatRes(reply=str(data))
+                # Budget/category quick path: "under 300", "less than 300", with optional drinks
+                import re
+                cap = None
+                m = re.search(r"(under|below|less than)\s*(\d+)", low)
+                if m:
+                    try:
+                        cap = float(m.group(2))
+                    except Exception:
+                        cap = None
+                is_drink = any(k in low for k in ["drink", "drinks", "beverage", "juice", "lassi", "مشروب", "مشروبات", "عصير"])  # quick synonyms
+                if cap is not None:
+                    items = fs_get_best_sellers() or []
+                    def _price(v):
+                        try:
+                            if isinstance(v, (int, float)):
+                                return float(v)
+                            import re as _re
+                            ms = _re.findall(r"[\d]+(?:\.[\d]+)?", str(v))
+                            return float(ms[0]) if ms else 0.0
+                        except Exception:
+                            return 0.0
+                    def _cat(it):
+                        return str(it.get("category", it.get("Category", "")).lower())
+                    filt = []
+                    for it in items:
+                        p = _price(it.get("price", 0.0))
+                        if p > cap:
+                            continue
+                        if is_drink and not any(x in (_cat(it) + " " + str(it.get("name",""))).lower() for x in ["drink","drinks","beverage","juice","lassi","مشروب","مشروبات","عصير","soda","shake","mocktail"]):
+                            continue
+                        filt.append((str(it.get("name","")), int(p)))
+                    filt.sort(key=lambda x: x[1])
+                    reply = (
+                        ("Here are some options: " + ", ".join(f"{n} (₹{pr})" for n, pr in filt[:5]) + ". Want me to add one? Which size and quantity?")
+                        if filt else "No matching items found under your budget."
+                    )
+                    return ChatRes(reply=reply)
+            except Exception:
+                # If any of the direct paths fail, continue with fallback handling below
+                pass
             # Try HF fallback first if available
             if fb:
                 try:
@@ -788,8 +883,11 @@ def chat(req: ChatReq) -> Any:
             except Exception:
                 pass
         reply = f"Error: {e}"
-        fs_add_chat_message(req.userId, "user", req.message)
-        fs_add_chat_message(req.userId, "assistant", reply)
+        try:
+            fs_add_chat_message(req.userId, "user", req.message)
+            fs_add_chat_message(req.userId, "assistant", reply)
+        except Exception:
+            pass
     return ChatRes(reply=reply)
 
 
