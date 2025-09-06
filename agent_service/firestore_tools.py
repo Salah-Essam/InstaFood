@@ -12,6 +12,22 @@ def add_to_cart(uid: str, item_id: int, item_name: str, image_url: str, restaura
                 restaurant_name: str, unit_price: float, quantity: int, size: str) -> None:
     db = get_db()
     cart_item_id = f"{item_id}size{size}"
+    # Auto-populate missing image from Best Sellers if available
+    if not image_url:
+        try:
+            doc = db.collection("Best Sellers").document(str(item_id)).get()
+            if doc.exists:
+                data = doc.to_dict() or {}
+                image_url = data.get("imageUrl", image_url)
+                if not restaurant_name:
+                    restaurant_name = data.get("resturant Name", restaurant_name)
+                if not unit_price and data.get("price") is not None:
+                    try:
+                        unit_price = float(data.get("price"))
+                    except Exception:
+                        pass
+        except Exception:
+            pass
     data = {
         "cartItemId": cart_item_id,
         "itemId": int(item_id),

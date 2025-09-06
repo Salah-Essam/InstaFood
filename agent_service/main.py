@@ -67,9 +67,22 @@ def rag_search(payload: str) -> str:
 
 @tool
 def add_to_cart(payload: str) -> str:
-    """Add or update item in cart. Input JSON keys: uid, item_id, item_name, image_url, restaurant_id, restaurant_name, unit_price, quantity, size."""
+    """Add or update item in cart. Strict input JSON keys: uid, item_id, item_name, image_url, restaurant_id, restaurant_name, unit_price, quantity, size, confirm.
+    Rules: confirm must be true, and both size and quantity must be provided.
+    """
     d = _parse_json(payload)
     try:
+        if not bool(d.get("confirm")):
+            return "error: confirmation_required"
+        size = d.get("size")
+        if not size:
+            return "error: missing_size"
+        try:
+            qty = int(d.get("quantity"))
+        except Exception:
+            return "error: missing_quantity"
+        if qty <= 0:
+            return "error: missing_quantity"
         fs_add_to_cart(
             d.get("uid", ""),
             int(d.get("item_id", 0)),
@@ -78,8 +91,8 @@ def add_to_cart(payload: str) -> str:
             int(d.get("restaurant_id", 0)),
             str(d.get("restaurant_name", "")),
             float(d.get("unit_price", 0.0)),
-            int(d.get("quantity", 1)),
-            str(d.get("size", "regular")),
+            int(qty),
+            str(size),
         )
         return "added"
     except Exception as e:
@@ -120,14 +133,24 @@ def best_sellers(payload: str) -> str:
 
 @tool
 def add_by_item_id(payload: str) -> str:
-    """Add by Best Sellers doc id. Input keys: uid, item_id, size, optional quantity."""
+    """Add by Best Sellers doc id. Input keys: uid, item_id, size, quantity, confirm. Rules: confirm must be true.
+    """
     d = _parse_json(payload)
     uid = d.get("uid", "")
     item_id = d.get("item_id")
-    size = d.get("size", "regular")
-    quantity = int(d.get("quantity", 1))
     if item_id is None:
         return "error: missing item_id"
+    if not bool(d.get("confirm")):
+        return "error: confirmation_required"
+    size = d.get("size")
+    if not size:
+        return "error: missing_size"
+    try:
+        quantity = int(d.get("quantity"))
+    except Exception:
+        return "error: missing_quantity"
+    if quantity <= 0:
+        return "error: missing_quantity"
     db = get_db()
     doc = db.collection("Best Sellers").document(str(item_id)).get()
     if not doc.exists:
@@ -140,6 +163,38 @@ def add_by_item_id(payload: str) -> str:
     try:
         fs_add_to_cart(uid, int(item_id), name, image, 0, rest_name, price, int(quantity), size)
         return "added"
+    except Exception as e:
+        return f"error: {e}"
+
+@tool
+def filter_items(payload: str) -> str:
+    """Filter Best Sellers by optional category and/or max_price. Input keys: max_price, category, query.
+    Returns a compact list of objects: [{id, name, price}].
+    """
+    d = _parse_json(payload)
+    try:
+        items = fs_get_best_sellers() or []
+        max_price = d.get("max_price")
+        try:
+            max_price = float(max_price) if max_price is not None else None
+        except Exception:
+            max_price = None
+        category = (d.get("category") or "").strip().lower()
+        q = (d.get("query") or "").strip().lower()
+        out = []
+        for it in items:
+            name = str(it.get("name", ""))
+            price = float(it.get("price", 0.0))
+            cat = str(it.get("category", it.get("Category", ""))).lower()
+            item_id = it.get("id") or it.get("item_id") or it.get("docId")
+            if max_price is not None and price > max_price:
+                continue
+            if category and category not in cat:
+                continue
+            if q and q not in name.lower():
+                continue
+            out.append({"id": item_id, "name": name, "price": price})
+        return str(out)
     except Exception as e:
         return f"error: {e}"
 
@@ -309,6 +364,7 @@ TOOLS = [
     my_orders,
     best_sellers,
     add_by_item_id,
+    filter_items,
     delivery_eta,
     my_cart,
     add_to_favorites,
@@ -339,6 +395,14 @@ Rules:
 - For rag_search, pass a JSON string with key "query" and the search text.
 - If a request isn't possible, say so briefly and suggest available options.
 - Keep answers concise and in the scope of InstaFood.
+- Never add to cart without explicit consent. First propose options, then ask: "Add X? What size and quantity?" Only after the user confirms, call add_to_cart/add_by_item_id with confirm:true, size, and quantity.
+- Ask for any missing details before calling tools (e.g., size, quantity, restaurant). Use a short clarifying question, then call the tool once you have enough info.
+- For budget/category requests (e.g., "drinks under 370"), first use filter_items with max_price and category to shortlist, then present 2–5 options with names and prices.
+- Never claim you've added/removed anything unless the tool Observation explicitly returns a success like 'added' or 'removed'. If you see errors like 'confirmation_required' or 'missing_size', ask the user and retry.
+ - LLM-first: reason over the user's intent and prior context before choosing tools. Only use tools when they can fulfill the intent.
+ - If the user's request is related to InstaFood but there is no tool to do it, explain how to achieve it in the app (navigation or steps) instead of calling tools.
+ - If the request is clearly out-of-scope (not related to InstaFood), politely say so and offer helpful InstaFood options.
+ - Mirror the user's language (Arabic/English/etc.) when replying and asking clarifying questions.
 """
 )
 
@@ -505,10 +569,11 @@ def debug_llm() -> Dict[str, Any]:
 
 @app.post("/chat", response_model=ChatRes)
 def chat(req: ChatReq) -> Any:
+    global EXECUTOR
     # Fast-path: handle a few simple intents without LLM to avoid cold-start latency
     msg = req.message.strip().lower()
-    # Small-talk greeting
-    if any(k in msg for k in ["hi", "hello", "hey", "salam", "مرحبا", "hola"]):
+    # Small-talk greeting (only when fast-path is enabled)
+    if _fastpath_enabled() and any(k in msg for k in ["hi", "hello", "hey", "salam", "مرحبا", "hola"]):
         reply = "Hey there! Craving something tasty today? I can recommend popular picks or add items to your cart."
         try:
             fs_add_chat_message(req.userId, "user", req.message)
@@ -529,6 +594,35 @@ def chat(req: ChatReq) -> Any:
             return ChatRes(reply=reply)
         except Exception:
             # Fall through to LLM path
+            pass
+
+    # Budget/category fast-path: "under 370" or "drinks under 370"
+    if _fastpath_enabled() and ("under " in msg or "below " in msg):
+        import re
+        try:
+            m = re.search(r"(under|below)\s*(\d+)", msg)
+            cap = None
+            if m:
+                cap = float(m.group(2))
+            category = None
+            if "drink" in msg or "drinks" in msg:
+                category = "drink"
+            items = fs_get_best_sellers() or []
+            filt = []
+            for it in items:
+                price = float(it.get("price", 0.0))
+                name = str(it.get("name", ""))
+                cat = str(it.get("category", it.get("Category", ""))).lower()
+                if cap is not None and price > cap:
+                    continue
+                if category and category not in cat:
+                    continue
+                filt.append(f"{name} (₹{int(price)})")
+            reply = "Here are some options: " + ", ".join(filt[:5]) + ". Want me to add one? Which size and quantity?"
+            fs_add_chat_message(req.userId, "user", req.message)
+            fs_add_chat_message(req.userId, "assistant", reply)
+            return ChatRes(reply=reply)
+        except Exception:
             pass
     if _fastpath_enabled() and any(k in msg for k in ["best seller", "best sellers", "bestseller", "bestsellers"]):
         # Wrap Firestore call in a short timeout to avoid long stalls when ADC/auth is cold
@@ -594,7 +688,7 @@ def chat(req: ChatReq) -> Any:
         def _invoke():
             return executor.invoke({"input": user_input})
         with cf.ThreadPoolExecutor(max_workers=1) as ex:
-            result = ex.submit(_invoke).result(timeout=90.0)
+            result = ex.submit(_invoke).result(timeout=45.0)
         reply = result.get("output", "")
         fs_add_chat_message(req.userId, "user", req.message)
         fs_add_chat_message(req.userId, "assistant", reply)
@@ -631,6 +725,35 @@ def chat(req: ChatReq) -> Any:
         # Try a fallback model if configured and the error looks like an HF 404/availability
         err_text = str(e)
         fb = os.getenv("HF_MODEL_FALLBACK")
+        # Handle Groq/LLM rate limit errors gracefully
+        if ("429" in err_text) or ("rate_limit" in err_text.lower()) or ("rate limit" in err_text.lower()):
+            # Try HF fallback first if available
+            if fb:
+                try:
+                    alt_executor = build_executor_with_model(fb)
+                    def _invoke_alt():
+                        return alt_executor.invoke({"input": user_input})
+                    with cf.ThreadPoolExecutor(max_workers=1) as ex:
+                        result = ex.submit(_invoke_alt).result(timeout=45.0)
+                    EXECUTOR = alt_executor
+                    reply = result.get("output", "")
+                    return ChatRes(reply=reply)
+                except Exception:
+                    pass
+            # No fallback: provide a friendly message and a quick suggestion
+            try:
+                items = fs_get_best_sellers() or []
+                names = [str(it.get("name", "")) for it in items]
+                top = ", ".join(filter(None, names[:3]))
+                reply = (
+                    "The AI reached its daily limit and will be available again soon. "
+                    + (f"Meanwhile, popular picks: {top}. Want one?" if top else "Meanwhile, I can still fetch your cart or orders.")
+                )
+                fs_add_chat_message(req.userId, "user", req.message)
+                fs_add_chat_message(req.userId, "assistant", reply)
+                return ChatRes(reply=reply)
+            except Exception:
+                return ChatRes(reply="The AI hit a temporary rate limit. Please try again in a few minutes.")
         if fb and ("404" in err_text or "Not Found" in err_text or "Model" in err_text):
             try:
                 alt_executor = build_executor_with_model(fb)
@@ -639,7 +762,6 @@ def chat(req: ChatReq) -> Any:
                 with cf.ThreadPoolExecutor(max_workers=1) as ex:
                     result = ex.submit(_invoke_alt).result(timeout=90.0)
                 # swap global executor to fallback so next calls are faster
-                global EXECUTOR
                 EXECUTOR = alt_executor
                 reply = result.get("output", "")
                 return ChatRes(reply=reply)
