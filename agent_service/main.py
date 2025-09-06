@@ -302,47 +302,6 @@ def cancel_order(payload: str) -> str:
         return f"error: {e}"
 
 
-@tool
-def add_by_name(payload: str) -> str:
-    """Add an item to cart by name (fuzzy). Input: uid, name, optional size, optional quantity."""
-    d = _parse_json(payload)
-    uid = d.get("uid", "")
-    name_q = str(d.get("name", "")).strip()
-    size = str(d.get("size", "regular"))
-    quantity = int(d.get("quantity", 1))
-    if not (uid and name_q):
-        return "error: missing uid or name"
-    db = get_db()
-    docs = list(db.collection("Best Sellers").stream())
-    if not docs:
-        return "item_not_found"
-    name_q_l = name_q.lower()
-    try:
-        from difflib import SequenceMatcher
-        def sim(a,b):
-            return SequenceMatcher(None, a, b).ratio()
-    except Exception:
-        def sim(a,b):
-            return 1.0 if a==b else (0.7 if a in b or b in a else 0.0)
-    best = None  # (score, id, data)
-    for doc in docs:
-        data = doc.to_dict() or {}
-        title = str(data.get("name", ""))
-        s = sim(name_q_l, title.lower())
-        if name_q_l in title.lower():
-            s += 0.15
-        if best is None or s > best[0]:
-            best = (s, doc.id, data)
-    if best is None or best[0] < 0.45:
-        return "item_not_found"
-    _, item_id, data = best
-    try:
-        fs_add_to_cart(uid, int(item_id), str(data.get("name","")), str(data.get("imageUrl","")), 0, str(data.get("resturant Name","")), float(data.get("price",0.0)), int(quantity), size)
-        return "added"
-    except Exception as e:
-        return f"error: {e}"
-
-
 TOOLS = [
     rag_search,
     add_to_cart,
@@ -350,7 +309,6 @@ TOOLS = [
     my_orders,
     best_sellers,
     add_by_item_id,
-    add_by_name,
     delivery_eta,
     my_cart,
     add_to_favorites,
@@ -365,12 +323,12 @@ SYSTEM_INSTRUCTIONS = (
     """
 You are an InstaFood assistant.
 
-Tools available:
-{tools}
+You have access to tools: {tool_names}
+Descriptions:\n{tools}
 
 Follow this ReAct format strictly:
 Thought: consider what to do
-Action: one of [{tool_names}]
+Action: call a tool by name
 Action Input: a SINGLE JSON STRING with the required keys
 Observation: result of the action
 ... (you can repeat Thought/Action/Action Input/Observation)
@@ -378,18 +336,16 @@ Final Answer: the final, helpful answer to the user
 
 Rules:
 - Always include the user's uid in tool inputs when required (we prepend it in the message as "uid:<uid>").
-- If the user names a dish (e.g., "shahi tukda"), try add_by_name first.
-- For reads: my_cart, my_orders, best_sellers, delivery_eta. For updates: add_to_cart, add_to_favorites, remove_from_favorites, remove_cart_item, cancel_order, place_order.
-- Use rag_search when you need project logic.
-- Keep answers concise and helpful.
+- For rag_search, pass a JSON string with key "query" and the search text.
+- If a request isn't possible, say so briefly and suggest available options.
+- Keep answers concise and in the scope of InstaFood.
 """
 )
 
-from langchain_core.prompts import MessagesPlaceholder
 PROMPT = ChatPromptTemplate.from_messages([
     ("system", SYSTEM_INSTRUCTIONS),
     ("human", "{input}"),
-    MessagesPlaceholder(variable_name="agent_scratchpad"),
+    ("ai", "{agent_scratchpad}"),
 ])
 
 EXECUTOR = None  # lazy-initialized
@@ -551,11 +507,8 @@ def debug_llm() -> Dict[str, Any]:
 def chat(req: ChatReq) -> Any:
     # Fast-path: handle a few simple intents without LLM to avoid cold-start latency
     msg = req.message.strip().lower()
-    # Small-talk greeting (match whole words only to avoid 'sHAHI' false positives)
-    import re as _re
-    tokens = _re.findall(r"\b\w+\b", msg)
-    greetings = {"hi", "hello", "hey", "salam", "hola", "مرحبا"}
-    if any(t in greetings for t in tokens) and len(tokens) <= 4:
+    # Small-talk greeting
+    if any(k in msg for k in ["hi", "hello", "hey", "salam", "مرحبا", "hola"]):
         reply = "Hey there! Craving something tasty today? I can recommend popular picks or add items to your cart."
         try:
             fs_add_chat_message(req.userId, "user", req.message)
