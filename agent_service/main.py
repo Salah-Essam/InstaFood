@@ -13,6 +13,8 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_google_genai import ChatGoogleGenerativeAI
 import difflib
 import time
+import re
+import ast
 
 from .rag_index import load_project_docs
 from .firestore_tools import (
@@ -74,7 +76,7 @@ def find_product(payload: str) -> str:
         if not query:
             return "[]"
         # Load all items then apply fuzzy selection locally (mirrors Flutter filtering-on-list approach)
-        all_items = list_items() or []
+        all_items = _get_items_cached(ttl=60.0) or []
 
         def score(item_name: str) -> float:
             nm = (item_name or "").strip().lower()
@@ -496,6 +498,23 @@ _CACHE = {
     "best_sellers_names": (0.0, []),  # (ts, [names])
 }
 
+# Items list cache to reduce API calls and enable offline fuzzy matching under LLM rate limits
+_ITEMS_CACHE = {
+    "items": (0.0, []),  # (timestamp, items)
+}
+
+def _get_items_cached(ttl: float = 60.0):
+    now = time.time()
+    ts, items = _ITEMS_CACHE.get("items", (0.0, []))
+    if (now - ts) < ttl and items:
+        return items
+    try:
+        data = list_items() or []
+        _ITEMS_CACHE["items"] = (now, data)
+        return data
+    except Exception:
+        return items or []
+
 def _fastpath_enabled() -> bool:
     v = os.getenv(FASTPATH_ENV_KEY, "false").strip().lower()
     return v in ("1", "true", "yes", "on")
@@ -768,6 +787,45 @@ async def chat(req: ChatReq, background_tasks: BackgroundTasks) -> Any:
                     names = [str(it.get("name", "")) for it in items]
                     top = ", ".join(filter(None, names[:3]))
                     return ChatRes(reply=f"Here are some hits today: {top}.")
+
+                # Fallback for add intent when LLM is throttled
+                if any(k in msg for k in ["add", "order", "buy", "put", "أضف", "اضف", "اطلب"]):
+                    # Try structured pattern: add <id> <size> <qty>
+                    m = re.search(r"\badd\s+(?P<id>\d+)(?:\s+(?P<size>small|medium|large|xlarge))?(?:\s+(?P<qty>\d+))?", msg)
+                    if m:
+                        item_id = m.group("id")
+                        size = (m.group("size") or "").strip()
+                        qty = m.group("qty")
+                        if item_id and size and qty:
+                            payload = {
+                                "uid": req.userId,
+                                "item_id": int(item_id),
+                                "size": size,
+                                "quantity": int(qty),
+                                "confirm": True,
+                            }
+                            res = add_by_item_id(str(payload))
+                            if str(res).strip().lower() == "added":
+                                return ChatRes(reply=f"Added item #{item_id} ({size}) x{qty} to your cart.")
+                            else:
+                                return ChatRes(reply=f"Couldn't add item #{item_id}: {res}")
+
+                    # Suggest top fuzzy matches with IDs and next-step instruction
+                    suggestions_raw = find_product(req.message)
+                    items_list = []
+                    try:
+                        items_list = ast.literal_eval(str(suggestions_raw))
+                    except Exception:
+                        items_list = []
+                    if isinstance(items_list, list) and items_list:
+                        lines = []
+                        for it in items_list[:5]:
+                            nm = str(it.get("name", ""))
+                            iid = it.get("id")
+                            price = it.get("price")
+                            lines.append(f"- {nm} (id {iid}) — {price}")
+                        lines.append("Reply like: add <id> <size> <qty>, e.g., 'add 123 medium 1'.")
+                        return ChatRes(reply="I hit a temporary limit. I can still help—pick one:\n" + "\n".join(lines))
             except Exception:
                 return ChatRes(reply="The AI hit a temporary rate limit. I can still help with your cart or orders.")
             return ChatRes(reply="The AI hit a temporary rate limit. Please try again in a few minutes.")
