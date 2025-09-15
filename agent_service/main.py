@@ -1,7 +1,12 @@
 import os
+import json
 import concurrent.futures as cf
 import threading
-from typing import Any, Dict, Optional
+import re
+import ast
+import difflib
+import time
+from typing import Any, Dict, List, Optional
 
 from fastapi import FastAPI, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,10 +16,6 @@ from langchain.tools import tool
 from langchain.agents import create_react_agent, AgentExecutor
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_google_genai import ChatGoogleGenerativeAI
-import difflib
-import time
-import re
-import ast
 
 from .rag_index import load_project_docs
 from .firestore_tools import (
@@ -48,12 +49,18 @@ INDEX = load_project_docs()
 
 # Helper to parse JSON payloads from single-string tool inputs
 def _parse_json(s: Any) -> Any:
-    import json
     if isinstance(s, (dict, list)):
         return s  # already parsed
     try:
         return json.loads(s)
     except Exception:
+        # Fallback: try Python literal eval (for inputs mistakenly passed as str(dict))
+        try:
+            val = ast.literal_eval(s)
+            if isinstance(val, (dict, list)):
+                return val
+        except Exception:
+            pass
         return {}
 
 
@@ -75,34 +82,17 @@ def find_product(payload: str) -> str:
         query = (payload or "").strip().lower()
         if not query:
             return "[]"
-        # Load all items then apply fuzzy selection locally (mirrors Flutter filtering-on-list approach)
-        all_items = _get_items_cached(ttl=60.0) or []
-
-        def score(item_name: str) -> float:
-            nm = (item_name or "").strip().lower()
-            if not nm:
-                return 0.0
-            if query == nm:
-                return 1.0
-            if query in nm:
-                return 0.95
-            base = difflib.SequenceMatcher(None, query, nm).ratio()
-            qtokens = set(query.split())
-            ntokens = set(nm.split())
-            overlap = len(qtokens & ntokens) / max(1, len(qtokens))
-            return max(base, 0.7 * base + 0.3 * overlap)
-
-        scored = []
-        for it in all_items:
-            name = str(it.get("itemName") or it.get("name") or "")
-            s = score(name)
-            if s >= 0.55:
-                it2 = dict(it)
-                it2["_score"] = round(s, 3)
-                scored.append(it2)
-        scored.sort(key=lambda x: x.get("_score", 0.0), reverse=True)
+        items = _get_items_cached(ttl=60.0) or []
+        ranked = _fuzzy_find_all(query, items)
+        if not ranked:
+            # Remote fallback to API search if cache-based fuzzy has no results
+            try:
+                remote = search_items(query) or []
+            except Exception:
+                remote = []
+            ranked = _fuzzy_find_all(query, remote)
         out = []
-        for it in scored[:5]:
+        for it in ranked[:5]:
             out.append({
                 "id": it.get("itemID") or it.get("id") or it.get("docId"),
                 "name": it.get("itemName") or it.get("name"),
@@ -219,66 +209,126 @@ def add_by_item_id(payload: str) -> str:
 
 @tool
 def filter_items(payload: str) -> str:
-    """Filter items (via Items API) by optional category and/or max_price. Input keys: max_price, category, query.
-    Returns a compact list of objects: [{id, name, price}].
+    """Filter and search items similar to Flutter's ListFilter, with extra options.
+    Input keys:
+      - category: snacks|meals|vegan|desserts|drinks
+      - sub_category: string contained in description
+      - max_price: number
+      - exclude_terms: list[str]
+      - restaurant_name: optional string to restrict to a restaurant (substring, case-insensitive)
+      - query: optional free-text fuzzy search over name+description (misspellings allowed)
+    Returns: list of {id, name, price, restaurantName} sorted by relevance then price.
     """
     d = _parse_json(payload)
     try:
-        import re
         items = list_items() or []
-        def _parse_price(v) -> float:
-            try:
-                if isinstance(v, (int, float)):
-                    return float(v)
-                s = str(v)
-                m = re.findall(r"[\d]+(?:\.[\d]+)?", s)
-                return float(m[0]) if m else 0.0
-            except Exception:
-                return 0.0
 
-        max_price = d.get("max_price")
+        # Mirror Flutter FoodCategory keywords and exclusionKeywords
+        CATEGORIES = {
+            "snacks": {
+                "keywords": [
+                    "fried", "fritter", "in a bun", "wrapped", "street food", "skewers", "tandoor",
+                ],
+                "exclude": [],
+            },
+            "meals": {
+                "keywords": ["curry", "biryani", "grilled", "cooked", "seafood"],
+                "exclude": [],
+            },
+            "vegan": {
+                "keywords": ["mango", "vegetables", "pizza", "green"],
+                "exclude": [
+                    "meat", "chicken", "mutton", "fish", "prawn", "cream", "butter", "yogurt", "milk", "prawn", "lamb",
+                ],
+            },
+            "desserts": {
+                "keywords": ["sweet", "syrup", "sugar", "pudding", "vermicelli", "mango", "fruits"],
+                "exclude": ["sweet churma", "drink"],
+            },
+            "drinks": {
+                "keywords": ["drink", "brewed", "coffee", "beer"],
+                "exclude": ["coffee-soaked"],
+            },
+        }
+
+        def norm(s: str) -> str:
+            return (str(s or "").lower())
+
+        category = norm(d.get("category")) or None
+        sub_category = norm(d.get("sub_category")) or None
+        max_price_raw = d.get("max_price")
         try:
-            max_price = float(max_price) if max_price is not None else None
+            max_price = float(max_price_raw) if max_price_raw is not None else None
         except Exception:
             max_price = None
 
-        raw_category = (d.get("category") or "").strip().lower()
-        q = (d.get("query") or "").strip().lower()
-        cat_syn = {
-            "drink": [
-                "drink", "drinks", "beverage", "beverages", "soft drink", "soft drinks",
-                "juice", "juices", "mocktail", "shake", "lassi", "soda",
-                "مشروب", "مشروبات", "عصير", "مشروبات غازية"
-            ],
-            "dessert": ["dessert", "desserts", "sweet", "sweets", "حلو", "حلويات"],
-            "burger": ["burger", "burgers", "برجر"],
-            "pizza": ["pizza", "بيتزا"],
-        }
-        def _cat_match(name: str) -> bool:
-            if not raw_category:
-                return True
-            nm = (name or "").lower()
-            if raw_category in nm:
-                return True
-            for k, vals in cat_syn.items():
-                if raw_category == k or raw_category in vals:
-                    if any(v in nm for v in vals):
-                        return True
-            return False
+        exclude_terms = [
+            str(x).lower() for x in (d.get("exclude_terms") or []) if str(x).strip()
+        ]
+        restaurant_name = norm(d.get("restaurant_name")) or None
+        query_text = norm(d.get("query")) or None
+
+        # Optional restaurant filter first (cheap)
+        if restaurant_name:
+            items = [it for it in items if restaurant_name in norm(it.get("restaurantName") or "")]
+
+        # Optional fuzzy search over name+description to narrow candidates (algorithmic, no hard-coded synonyms)
+        ranked_map = None
+        if query_text:
+            ranked = _fuzzy_find_all(query_text, items)
+            if ranked:
+                ids = {it.get("itemID") or it.get("id") or it.get("docId") for it in ranked}
+                score_by_id = {
+                    (it.get("itemID") or it.get("id") or it.get("docId")): it.get("_score", 0.0)
+                    for it in ranked
+                }
+                items = [it for it in items if (it.get("itemID") or it.get("id") or it.get("docId")) in ids]
+                ranked_map = score_by_id
+
+        def include_item(it: dict) -> bool:
+            desc = norm(it.get("itemDescription") or it.get("description"))
+            price = float(it.get("itemPrice", 0.0))
+
+            # Price filter
+            if max_price is not None and price > max_price:
+                return False
+
+            # Category/subcategory filter
+            if category:
+                cfg = CATEGORIES.get(category)
+                if not cfg:
+                    return True  # unknown category -> don't block
+                kws = cfg.get("keywords", [])
+                exs = cfg.get("exclude", [])
+                has_excl = any(e in desc for e in exs)
+                # Add runtime excludes (e.g., soft drinks)
+                if exclude_terms:
+                    if any(e in desc for e in exclude_terms):
+                        return False
+                if sub_category is None:
+                    has_kw = any(k in desc for k in kws)
+                    if not has_kw or has_excl:
+                        return False
+                else:
+                    has_kw = (sub_category in desc)
+                    if not has_kw or has_excl:
+                        return False
+            return True
 
         out = []
         for it in items:
-            name = str(it.get("itemName") or it.get("name") or "")
-            price = _parse_price(it.get("itemPrice", 0.0))
-            item_id = it.get("itemID") or it.get("id")
-            if max_price is not None and price > max_price:
+            if not include_item(it):
                 continue
-            if not _cat_match(name):
-                continue
-            if q and q not in name.lower():
-                continue
-            out.append({"id": item_id, "name": name, "price": price})
-        out.sort(key=lambda x: x.get("price", 0.0))
+            oid = it.get("itemID") or it.get("id")
+            out.append({
+                "id": it.get("itemID") or it.get("id"),
+                "name": it.get("itemName") or it.get("name"),
+                "price": float(it.get("itemPrice", 0.0)),
+                "restaurantName": it.get("restaurantName") or "",
+                "_score": (ranked_map.get(oid, 0.0) if ranked_map else 0.0),
+            })
+        # Sort by score desc then price asc for stability
+        out.sort(key=lambda x: (-x.get("_score", 0.0), x.get("price", 0.0)))
         return str(out)
     except Exception as e:
         return f"error: {e}"
@@ -353,28 +403,37 @@ def build_llm():
 
     # Allow tuning retries to avoid long backoffs on 429 (free tier limits)
     try:
-        max_retries = int(os.getenv("GEMINI_MAX_RETRIES", "0"))
+        max_retries = int(os.getenv("GEMINI_MAX_RETRIES", "1"))
     except Exception:
-        max_retries = 0
+        max_retries = 1
 
+    # Prefer no convert_system_message_to_human (newer versions deprecate this), with fallbacks
     try:
         return ChatGoogleGenerativeAI(
             model=model_name,
             google_api_key=api_key,
             temperature=0.2,
             max_tokens=max_toks,
-            convert_system_message_to_human=True,
             max_retries=max_retries,
         )
     except TypeError:
-        # Older versions may not support max_retries; fall back gracefully
-        return ChatGoogleGenerativeAI(
-            model=model_name,
-            google_api_key=api_key,
-            temperature=0.2,
-            max_tokens=max_toks,
-            convert_system_message_to_human=True,
-        )
+        try:
+            # Older versions may not support max_retries
+            return ChatGoogleGenerativeAI(
+                model=model_name,
+                google_api_key=api_key,
+                temperature=0.2,
+                max_tokens=max_toks,
+            )
+        except TypeError:
+            # Very old versions needed convert_system_message_to_human
+            return ChatGoogleGenerativeAI(
+                model=model_name,
+                google_api_key=api_key,
+                temperature=0.2,
+                max_tokens=max_toks,
+                convert_system_message_to_human=True,
+            )
 
 
 @tool
@@ -491,7 +550,10 @@ PROMPT = ChatPromptTemplate.from_messages([
 ])
 
 EXECUTOR = None
+_LLM_POOL: Optional[cf.ThreadPoolExecutor] = None
 FASTPATH_ENV_KEY = "AGENT_FASTPATH"
+# Global cooldown marker for LLM attempts (set when we hit timeout/429 in /chat)
+_LLM_BACKOFF_UNTIL: float = 0.0
 
 # Simple in-memory cache for quick fast-paths
 _CACHE = {
@@ -503,22 +565,565 @@ _ITEMS_CACHE = {
     "items": (0.0, []),  # (timestamp, items)
 }
 
-def _get_items_cached(ttl: float = 60.0):
+# Memory of last item suggestions per user (for "option 2" / "from <restaurant>")
+LAST_SUGGESTIONS: Dict[str, List[dict]] = {}
+
+# Light per-user LLM rate guard to avoid bursts that trigger provider 429s
+_LLM_LAST_CALL: Dict[str, float] = {}
+_LLM_RECENT_CALLS: Dict[str, List[float]] = {}
+
+# No hard-coded synonyms; rely on algorithmic fuzzy matching
+
+_DEF_SIZES = ["small", "medium", "large", "xlarge"]
+
+
+def _fastpath_enabled() -> bool:
+    try:
+        v = os.environ.get(FASTPATH_ENV_KEY, "true").strip().lower()
+        return v in ("1", "true", "yes", "on")
+    except Exception:
+        return True
+
+
+def _get_items_cached(ttl: float = 60.0) -> list:
     now = time.time()
     ts, items = _ITEMS_CACHE.get("items", (0.0, []))
     if (now - ts) < ttl and items:
         return items
     try:
-        data = list_items() or []
+        from .item_api import list_items as _li  # local import to avoid cycles
+        data = _li() or []
         _ITEMS_CACHE["items"] = (now, data)
         return data
     except Exception:
         return items or []
 
-def _fastpath_enabled() -> bool:
-    v = os.getenv(FASTPATH_ENV_KEY, "false").strip().lower()
-    return v in ("1", "true", "yes", "on")
 
+def _norm(s: str) -> str:
+    s = (s or "").lower().strip()
+    s = re.sub(r"[^a-z0-9\s]", " ", s)
+    s = re.sub(r"\s+", " ", s)
+    return s
+
+
+def _score_name(q: str, name: str) -> float:
+    qn = _norm(q)
+    nm = _norm(name)
+    if not qn or not nm:
+        return 0.0
+    if qn == nm:
+        return 1.0
+    if qn in nm:
+        return 0.96
+    base = difflib.SequenceMatcher(None, qn, nm).ratio()
+    qtok = set(qn.split())
+    ntok = set(nm.split())
+    overlap = len(qtok & ntok) / max(1, len(qtok))
+    return max(base, 0.7 * base + 0.3 * overlap)
+
+
+def _expand_query(query: str) -> List[str]:
+    # Algorithmic expansion: include original, singular/plural variants, and common spacing variations
+    q = _norm(query)
+    if not q:
+        return []
+    alts = {q}
+    # pluralization simplistic toggle (s/es); helps kebab/kebabs, drink/drinks
+    if q.endswith("s"):
+        alts.add(q[:-1])
+    else:
+        alts.add(q + "s")
+        if not q.endswith("es"):
+            alts.add(q + "es")
+    # remove/insert spaces (e.g., "icecream" vs "ice cream") for short tokens
+    if " " in q:
+        alts.add(q.replace(" ", ""))
+    else:
+        # insert space between two words if camel-ish or long
+        if len(q) > 6:
+            mid = len(q)//2
+            alts.add(q[:mid] + " " + q[mid:])
+    return list(alts)
+
+
+# Improve find_product by using synonyms and lower threshold; cache assumed available in existing code
+try:
+    from .item_api import list_items  # type: ignore
+except Exception:
+    list_items = None  # fallback if not present for safety
+
+
+def _rf_ratio(a: str, b: str) -> float:
+    """Compute a robust fuzzy ratio.
+    Lazily attempts to use rapidfuzz if available; otherwise falls back to difflib.
+    Returns a score in [0,100].
+    """
+    try:
+        import importlib
+        rf = importlib.import_module("rapidfuzz.fuzz")
+        return max(
+            getattr(rf, "token_set_ratio")(a, b),
+            getattr(rf, "partial_ratio")(a, b),
+            getattr(rf, "token_sort_ratio")(a, b),
+        )
+    except Exception:
+        return difflib.SequenceMatcher(None, a, b).ratio() * 100
+
+
+def _fuzzy_find_all(query: str, items: List[dict]) -> List[dict]:
+    q = _norm(query)
+    if not q:
+        return []
+    candidates: List[dict] = []
+    for it in items or []:
+        name = str(it.get("itemName") or it.get("name") or "")
+        desc = str(it.get("itemDescription") or it.get("description") or "")
+        text = (name + " " + desc).strip().lower()
+        score = _rf_ratio(q, text)
+        # Threshold tuned for misspellings while avoiding noise
+        if score >= 58:
+            it2 = dict(it)
+            it2["_score"] = round(score / 100.0, 3)
+            candidates.append(it2)
+    candidates.sort(key=lambda x: x.get("_score", 0.0), reverse=True)
+    return candidates
+
+
+def _norm_words(s: str) -> str:
+    s = (s or "").lower()
+    s = re.sub(r"[^a-z0-9\s]+", " ", s)
+    s = re.sub(r"\s+", " ", s).strip()
+    return s
+
+
+def _choose_best_match(query: str, ranked: List[dict]) -> dict:
+    """Prefer exact/phrase matches over generic fuzzy top.
+    Rules:
+    1) Exact normalized equality match on item name wins.
+    2) Whole-phrase containment (item contains full query) beats others.
+    3) Token coverage: prefer items covering all query tokens with minimal extras.
+    4) Fallback to first ranked.
+    """
+    qn = _norm_words(query)
+    qtok = set(qn.split())
+    best = None
+    best_score = -1.0
+    # Precompute normalized names
+    norms = []
+    for it in ranked:
+        nm = str(it.get("itemName") or it.get("name") or "")
+        nn = _norm_words(nm)
+        norms.append((it, nm, nn))
+    # 1) Exact normalized equality
+    for it, _, nn in norms:
+        if nn == qn and nn:
+            return it
+    # 2) Whole-phrase containment
+    for it, _, nn in norms:
+        if nn and qn and (qn in nn):
+            return it
+    # 3) Token coverage heuristic
+    for it, _, nn in norms:
+        ntok = set(nn.split())
+        if qtok and qtok.issubset(ntok):
+            # higher score for fewer extra tokens and higher fuzzy score if present
+            extra = max(0, len(ntok) - len(qtok))
+            fuzzy = float(it.get("_score", 0.0))
+            score = 1.0 - 0.05 * extra + 0.01 * fuzzy
+            if score > best_score:
+                best = it
+                best_score = score
+    return best or (ranked[0] if ranked else {})
+
+
+def _remember_suggestions(uid: str, items: List[dict]) -> None:
+    LAST_SUGGESTIONS[uid] = [
+        {
+            "id": it.get("itemID") or it.get("id") or it.get("docId"),
+            "name": it.get("itemName") or it.get("name"),
+            "restaurantName": it.get("restaurantName"),
+            "price": it.get("itemPrice") or it.get("price"),
+            "_score": it.get("_score"),
+        }
+        for it in items[:5]
+    ]
+
+
+def _remember_suggestions_from_text(uid: str, text: str) -> None:
+    """Extract item names from LLM free-text replies and map them to real items.
+    Supports bullet styles: '1. Name — ...', '* Name (..)', '- Name — ...'.
+    """
+    try:
+        if not text:
+            return
+        pattern = re.compile(r"^\s*(?:\d+\.|\*|-)\s*([^\n\(—\-]{2,})", re.MULTILINE)
+        names = [m.group(1).strip() for m in pattern.finditer(text)]
+        if not names:
+            return
+        items = _get_items_cached(ttl=60.0)
+        ranked: List[dict] = []
+        seen_ids = set()
+        for nm in names:
+            r = _fuzzy_find_all(nm, items)
+            if not r:
+                continue
+            top = r[0]
+            iid = top.get("itemID") or top.get("id") or top.get("docId")
+            if iid in seen_ids:
+                continue
+            seen_ids.add(iid)
+            ranked.append(top)
+        if ranked:
+            _remember_suggestions(uid, ranked)
+    except Exception:
+        # Don't block on heuristic memory
+        pass
+
+
+def _pick_from_memory(uid: str, msg: str) -> Optional[dict]:
+    opts = LAST_SUGGESTIONS.get(uid) or []
+    if not opts:
+        return None
+    m = re.search(r"\boption\s*(\d+)\b", msg, flags=re.I)
+    if m:
+        idx = int(m.group(1)) - 1
+        if 0 <= idx < len(opts):
+            return opts[idx]
+    # Match by restaurant name if present
+    for it in opts:
+        r = (it.get("restaurantName") or "").lower()
+        if r and r in msg.lower():
+            return it
+    # Prefer exact/phrase match on item name
+    qn = _norm_words(msg)
+    # exact equality
+    for it in opts:
+        nm = _norm_words(it.get("name") or "")
+        if nm and nm == qn:
+            return it
+    # phrase containment
+    for it in opts:
+        nm = _norm_words(it.get("name") or "")
+        if nm and qn and qn in nm:
+            return it
+    # token overlap fallback
+    qtok = set(qn.split())
+    for it in opts:
+        nm = _norm_words(it.get("name") or "")
+        if nm:
+            ntok = set(nm.split())
+            if qtok and qtok.issubset(ntok):
+                return it
+    return None
+
+
+# Hook into chat flow: deterministic pre-parser before LLM
+try:
+    from fastapi import BackgroundTasks
+    from pydantic import BaseModel
+
+    class ChatReq(BaseModel):
+        userId: str
+        message: str
+
+    class ChatRes(BaseModel):
+        reply: str
+        meta: Optional[dict] = None
+except Exception:
+    pass
+
+
+from typing import Tuple
+
+
+def _parse_size_qty(msg: str) -> Tuple[Optional[str], Optional[int]]:
+    size = None
+    qty = None
+    text = msg or ""
+    # Tolerant size aliases (no single-letter forms to avoid false positives)
+    SIZE_ALIASES: List[tuple[str, List[str]]] = [
+        ("xlarge", [r"\bx[-\s]?large\b", r"\bextra[-\s]?large\b", r"\bxl\b", r"\bxlarge\b"]),
+        ("large", [r"\blarge\b", r"\blarg\b", r"\blrg\b", r"\blg\b"]),
+        ("medium", [r"\bmedium\b", r"\bmedu?i?um\b", r"\bmed\b", r"\bmd\b"]),
+        ("small", [r"\bsmall\b", r"\bsm\b"]),
+    ]
+    for canonical, pats in SIZE_ALIASES:
+        for p in pats:
+            if re.search(p, text, flags=re.I):
+                size = canonical
+                break
+        if size:
+            break
+    # quantity
+    mq = re.search(r"\b(\d{1,2})\b", text)
+    if mq:
+        try:
+            qty = int(mq.group(1))
+        except Exception:
+            qty = None
+    return size, qty
+
+
+def prehandle_message(req) -> Optional["ChatRes"]:
+    uid = getattr(req, "userId", "")
+    msg = getattr(req, "message", "")
+    if not uid or not msg:
+        return None
+    low = msg.lower().strip()
+
+    # Resolve pronoun adds like "add it/that/this" using last suggestions
+    if re.search(r"\b(?:add|order|buy|put)\s+(?:it|that|this)\b", low):
+        chosen = _pick_from_memory(uid, low) or (LAST_SUGGESTIONS.get(uid) or [None])[0]
+        if chosen:
+            size, qty = _parse_size_qty(low)
+            size = size or "small"
+            qty = qty or 1
+            payload = {
+                "uid": uid,
+                "item_id": int(chosen.get("id")),
+                "size": size,
+                "quantity": qty,
+                "confirm": True,
+            }
+            try:
+                res = add_by_item_id(json.dumps(payload))  # type: ignore
+                if str(res).strip().lower() == "added":
+                    return ChatRes(reply=f"Added {chosen.get('name')} ({size}) x{qty} to your cart.")
+                else:
+                    return ChatRes(reply=f"Couldn't add {chosen.get('name')}: {res}")
+            except Exception as e:
+                return ChatRes(reply=f"Sorry, couldn't add it right now: {e}")
+        # If nothing in memory, ask for a name
+        return ChatRes(reply="Tell me the item name, e.g., 'add vada pav small 1'.")
+
+    # Option selection / refer back to previous suggestions
+    chosen = _pick_from_memory(uid, low)
+    if chosen:
+        size, qty = _parse_size_qty(low)
+        if size and qty:
+            payload = {
+                "uid": uid,
+                "item_id": int(chosen.get("id")),
+                "size": size,
+                "quantity": qty,
+                "confirm": True,
+            }
+            try:
+                res = add_by_item_id(json.dumps(payload))  # type: ignore
+                if str(res).strip().lower() == "added":
+                    return ChatRes(reply=f"Added {chosen.get('name')} ({size}) x{qty} to your cart.")
+                else:
+                    return ChatRes(reply=f"Couldn't add {chosen.get('name')}: {res}")
+            except Exception as e:
+                return ChatRes(reply=f"Sorry, couldn't add it right now: {e}")
+        # Ask for the missing details explicitly
+        return ChatRes(reply=f"Got it: {chosen.get('name')}. What size and quantity would you like?")
+
+    def _ranked_matches(name_part: str, restaurant_filter: Optional[str] = None) -> List[dict]:
+        # Try local cache first (fast, mirrors Flutter)
+        items_local = _get_items_cached(ttl=60.0)
+        if restaurant_filter:
+            rnorm = _norm(restaurant_filter)
+            items_local = [it for it in items_local if rnorm in _norm(str(it.get("restaurantName") or ""))]
+        ranked = _fuzzy_find_all(name_part, items_local)
+        if ranked:
+            return ranked
+        # Fallback: query API search endpoint with synonyms if local fuzzy found nothing
+        ranked_remote: List[dict] = []
+        try:
+            alts = _expand_query(name_part)
+            seen_ids = set()
+            for q in alts:
+                try:
+                    remote = search_items(q) or []
+                except Exception:
+                    remote = []
+                for it in remote:
+                    # Normalize shape to local structure
+                    iid = it.get("itemID") or it.get("id") or it.get("docId")
+                    if iid in seen_ids:
+                        continue
+                    seen_ids.add(iid)
+                    it2 = dict(it)
+                    it2["_score"] = round(_score_name(name_part, str(it.get("itemName") or it.get("name") or "")), 3)
+                    ranked_remote.append(it2)
+        except Exception:
+            pass
+        ranked_remote.sort(key=lambda x: x.get("_score", 0.0), reverse=True)
+        return ranked_remote
+
+    # Direct add intent by name
+    if any(k in low for k in ["add", "order", "buy", "put", "أضف", "اضف", "اطلب"]):
+        # Extract candidate name after the verb
+        m = re.search(r"(?:add|order|buy|put|أضف|اضف|اطلب)\s+(.+)", low)
+        if m:
+            name_part = m.group(1)
+        else:
+            name_part = low
+        # Pattern: "<item> from <restaurant>"
+        mfrom = re.search(r"(.+?)\s+from\s+([a-z0-9\s]+)$", name_part)
+        rest_filter = None
+        if mfrom:
+            name_part = mfrom.group(1).strip()
+            rest_filter = mfrom.group(2).strip()
+        # Ranked search with local+remote fallback
+        ranked = _ranked_matches(name_part, rest_filter)
+        if ranked:
+            _remember_suggestions(uid, ranked)
+            top = _choose_best_match(name_part, ranked)
+            size, qty = _parse_size_qty(low)
+            if size and qty:
+                payload = {
+                    "uid": uid,
+                    "item_id": int(top.get("itemID") or top.get("id")),
+                    "size": size,
+                    "quantity": qty,
+                    "confirm": True,
+                }
+                try:
+                    res = add_by_item_id(json.dumps(payload))  # type: ignore
+                    if str(res).strip().lower() == "added":
+                        return ChatRes(reply=f"Added {top.get('itemName') or top.get('name')} ({size}) x{qty}.")
+                    else:
+                        return ChatRes(reply=f"Couldn't add: {res}")
+                except Exception as e:
+                    return ChatRes(reply=f"Sorry, couldn't add it right now: {e}")
+            else:
+                # Ask for size/qty and show top 3 options
+                lines = []
+                for i, it in enumerate(ranked[:3], start=1):
+                    nm = (it.get('itemName') or it.get('name') or '')
+                    rn = (it.get('restaurantName') or '')
+                    pr = it.get('itemPrice') or it.get('price')
+                    lines.append(f"{i}. {nm} — {rn} — {pr}")
+                return ChatRes(
+                    reply=(
+                        "I found these matches:\n" + "\n".join(lines) +
+                        "\nReply like: 'option 1 small 1' or 'add <name> medium 2' or 'from <restaurant> large 1'"
+                    )
+                )
+        else:
+            # No matches at all – suggest trying close spellings
+            return ChatRes(reply="I couldn't find that yet. Try a close spelling or tell me the restaurant, e.g., 'kebab from Peter Cat'.")
+
+    # Delete intent made more robust: try cart fuzzy match
+    if any(w in low for w in ["delete", "remove", "cancel item"]):
+        try:
+            cart = fs_get_cart(uid)  # type: ignore
+            if cart:
+                target = None
+                best = 0.0
+                for it in cart:
+                    nm = str(it.get("itemName") or it.get("name") or "")
+                    s = _score_name(low, nm)
+                    if s > best:
+                        best = s
+                        target = it
+                if target and best >= 0.55:
+                    item_id = target.get("itemID") or target.get("id") or target.get("docId")
+                    size = (target.get("size") or (target.get("options") or {}).get("size") or "").lower()
+                    key = f"{item_id}_size_{size}" if item_id and size else str(item_id)
+                    payload = {"uid": uid, "cart_item_id": key}
+                    _ = remove_cart_item(json.dumps(payload))  # type: ignore
+                    return ChatRes(reply=f"{target.get('itemName') or target.get('name')} removed from your cart.")
+        except Exception:
+            pass
+        # Fall back to default flow if not handled
+        return None
+
+    # Natural language filter intent: e.g., "drinks under 200", "show desserts below 150"
+    try:
+        # Quick exclusion intent like: "no soft drinks", "no soda", "no cola"
+        no_soft = bool(re.search(r"\bno\s+(soft\s+drinks?|sodas?|cola|pepsi|coke)\b", low))
+
+        # Category with max price
+        m = re.search(r"\b(?P<cat>drinks?|desserts?|snacks?|meals?|vegan)\b(?:[^0-9]{0,30})?(?:under|below|less than)\s*\$?\s*(?P<price>\d{1,4})", low)
+        if m:
+            cat_raw = m.group("cat")
+            price = float(m.group("price"))
+            cat_map = {
+                "drink": "drinks", "drinks": "drinks",
+                "dessert": "desserts", "desserts": "desserts",
+                "snack": "snacks", "snacks": "snacks",
+                "meal": "meals", "meals": "meals",
+                "vegan": "vegan",
+            }
+            cat = cat_map.get(cat_raw.rstrip('s'), cat_map.get(cat_raw, cat_raw))
+            payload = {"category": cat, "max_price": price}
+            if no_soft and cat == "drinks":
+                payload["exclude_terms"] = ["soft drink", "soda", "cola", "pepsi", "coke"]
+            raw = filter_items(json.dumps(payload))  # type: ignore
+            items_list = []
+            try:
+                items_list = ast.literal_eval(str(raw))
+            except Exception:
+                items_list = []
+            if isinstance(items_list, list) and items_list:
+                lines = []
+                for it in items_list[:5]:
+                    nm = str(it.get("name", ""))
+                    rn = str(it.get("restaurantName", ""))
+                    pr = it.get("price")
+                    lines.append(f"- {nm} — {rn} — {pr}")
+                return ChatRes(reply=f"Top {cat} under {int(price)}:\n" + "\n".join(lines) + "\nReply like: 'add <name> <size> <qty>' or 'option 1 small 1'.")
+            else:
+                return ChatRes(reply=f"I couldn't find {cat} under {int(price)} right now.")
+
+        # Category only (no price): "show me drinks" / "any desserts?"
+        m2 = re.search(r"\b(show|any|list|recommend|عرض|قائمة)?\s*(?P<cat>drinks?|desserts?|snacks?|meals?|vegan)\b", low)
+        if m2:
+            cat_raw = m2.group("cat")
+            cat_map = {
+                "drink": "drinks", "drinks": "drinks",
+                "dessert": "desserts", "desserts": "desserts",
+                "snack": "snacks", "snacks": "snacks",
+                "meal": "meals", "meals": "meals",
+                "vegan": "vegan",
+            }
+            cat = cat_map.get(cat_raw.rstrip('s'), cat_map.get(cat_raw, cat_raw))
+            payload = {"category": cat}
+            raw = filter_items(json.dumps(payload))  # type: ignore
+            items_list = []
+            try:
+                items_list = ast.literal_eval(str(raw))
+            except Exception:
+                items_list = []
+            if isinstance(items_list, list) and items_list:
+                lines = []
+                for it in items_list[:5]:
+                    nm = str(it.get("name", ""))
+                    rn = str(it.get("restaurantName", ""))
+                    pr = it.get("price")
+                    lines.append(f"- {nm} — {rn} — {pr}")
+                return ChatRes(reply=f"Here are some {cat} options:\n" + "\n".join(lines) + "\nReply like: 'add <name> <size> <qty>' or 'option 1 small 1'.")
+    except Exception:
+        pass
+
+    # Bare name query (e.g., "butter chicken") – shortlist and ask for size/qty
+    try:
+        tokens = low.split()
+        if 1 <= len(tokens) <= 5 and not any(w in low for w in ["cart", "order status", "orders", "history", "help"]):
+            ranked = _ranked_matches(low)
+            if ranked:
+                _remember_suggestions(uid, ranked)
+                lines = []
+                for i, it in enumerate(ranked[:3], start=1):
+                    nm = (it.get('itemName') or it.get('name') or '')
+                    rn = (it.get('restaurantName') or '')
+                    pr = it.get('itemPrice') or it.get('price')
+                    lines.append(f"{i}. {nm} — {rn} — {pr}")
+                return ChatRes(
+                    reply=(
+                        "I found these matches:\n" + "\n".join(lines) +
+                        "\nReply like: 'option 1 small 1' or 'add <name> medium 2'."
+                    )
+                )
+    except Exception:
+        pass
+
+    return None
+
+# ...existing code...
 def get_executor():
     global EXECUTOR
     if EXECUTOR is not None:
@@ -534,10 +1139,19 @@ def get_executor():
     EXECUTOR = AgentExecutor(agent=agent, tools=TOOLS, verbose=False, handle_parsing_errors=True)
     return EXECUTOR
 
+def get_llm_pool() -> cf.ThreadPoolExecutor:
+    global _LLM_POOL
+    if _LLM_POOL is None:
+        _LLM_POOL = cf.ThreadPoolExecutor(max_workers=4, thread_name_prefix="llm")
+    return _LLM_POOL
+
 
 def _try_fastpath(uid: str, msg: str) -> Optional[str]:
     """Ultra-fast handling for common intents: greetings, best sellers, cart, orders, ETA."""
     m = (msg or "").strip().lower()
+    # If the user is clearly trying to add/order/buy something, skip fastpath entirely
+    if any(k in m for k in ["add", "order", "buy", "put", "أضف", "اضف", "اطلب"]):
+        return None
     # Helper: run a callable with a small timeout
     def _with_timeout(fn, seconds: float, default=None):
         try:
@@ -546,8 +1160,8 @@ def _try_fastpath(uid: str, msg: str) -> Optional[str]:
         except Exception:
             return default
     try:
-        # Greetings
-        if any(k in m for k in ["hi", "hello", "hey", "salam", "مرحبا", "hola", "السلام", "اهلا"]):
+        # Greetings (word-boundary only to avoid matching 'hi' inside 'chicken')
+        if re.search(r"^(hi|hello|hey|salam|مرحبا|hola|السلام|اهلا)\b", m):
             return "Hey there! Craving something tasty today? I can recommend popular picks or add items to your cart."
 
         # Popular / recommendations
@@ -574,7 +1188,7 @@ def _try_fastpath(uid: str, msg: str) -> Optional[str]:
                 return f"Some popular picks: {top}. Say a name and I can add it to your cart (size and quantity)."
             return "I couldn't fetch best sellers right now. You can still tell me what you're craving."
 
-        # Cart overview
+        # Cart overview (instant)
         CART_KEYS = [
             "cart", "my cart", "basket", "bag", "what's in my cart", "what in my cart",
             "سلة", "سله", "عربة", "العربة", "عربة التسوق"
@@ -655,7 +1269,7 @@ def _warm_start():
                 def _run():
                     return ex.invoke({"input": "ping"})
                 with cf.ThreadPoolExecutor(max_workers=1) as pool:
-                    pool.submit(_run).result(timeout=10.0)
+                    _ = pool.submit(_run).result(timeout=10.0)
             except Exception:
                 pass
         try:
@@ -745,94 +1359,196 @@ def debug_llm(probe: bool = False) -> Dict[str, Any]:
     return out
 
 
+@app.get("/debug/llm_status")
+def debug_llm_status() -> Dict[str, Any]:
+    """Expose whether LLM is currently in cooldown and for how long.
+    Useful for showing a client banner like: 'AI in fast mode (pre-parser only)'.
+    """
+    try:
+        quick_timeout_s = float(os.getenv("AGENT_LLM_QUICK_TIMEOUT", "10.0"))
+    except Exception:
+        quick_timeout_s = 10.0
+    try:
+        cooldown_window_s = float(os.getenv("AGENT_LLM_429_BACKOFF_SECONDS", "300"))
+    except Exception:
+        cooldown_window_s = 300.0
+    now = time.time()
+    remaining = max(0.0, _LLM_BACKOFF_UNTIL - now)
+    in_cooldown = remaining > 0
+    mode = "fast-mode" if in_cooldown else "llm-first"
+    return {
+        "is_in_cooldown": in_cooldown,
+        "remaining_seconds": int(round(remaining)),
+        "mode": mode,
+        "llm_quick_timeout_seconds": quick_timeout_s,
+        "cooldown_window_seconds": int(round(cooldown_window_s)),
+        "preparser_enabled": True,
+        "fastpath_enabled": _fastpath_enabled(),
+    }
+
+
 @app.post("/chat", response_model=ChatRes)
 async def chat(req: ChatReq, background_tasks: BackgroundTasks) -> Any:
     global EXECUTOR
     msg = req.message.strip().lower()
 
-    if _fastpath_enabled():
-        quick = _try_fastpath(req.userId, msg)
-        if quick:
-            # Log to Firestore in background so we don't block the response
-            background_tasks.add_task(fs_add_chat_message, req.userId, "user", req.message)
-            background_tasks.add_task(fs_add_chat_message, req.userId, "assistant", quick)
-            return ChatRes(reply=quick)
+    # Always try fastpath first for instant replies (greetings, cart, orders, ETA), regardless of env flags
+    quick = _try_fastpath(req.userId, msg)
+    if quick:
+        # Log to Firestore in background so we don't block the response
+        background_tasks.add_task(fs_add_chat_message, req.userId, "user", req.message)
+        background_tasks.add_task(fs_add_chat_message, req.userId, "assistant", quick)
+        return ChatRes(reply=quick)
 
+    # We no longer short-circuit common flows before LLM to avoid duplicate side effects.
+    # Fastpath remains first; for all other intents, we try a short LLM attempt and then pre-parser fallback.
+
+    # LLM-first (quick) for smart reasoning; deterministic pre-parser as fast fallback
+    # Use a 10s window by default so we bail out fast on throttling but still let quick answers through
+    quick_timeout_s = 10.0
     try:
-        executor = get_executor()
-        user_input = f"uid:{req.userId}\n{req.message}"
-        def _invoke():
-            return executor.invoke({"input": user_input})
-        with cf.ThreadPoolExecutor(max_workers=1) as ex:
-            result = ex.submit(_invoke).result(timeout=25.0)
-        reply = result.get("output", "")
-        
-        background_tasks.add_task(fs_add_chat_message, req.userId, "user", req.message)
-        background_tasks.add_task(fs_add_chat_message, req.userId, "assistant", reply)
-    except cf.TimeoutError:
-        reply = "The assistant timed out. Please try again."
-    except Exception as e:
-        err_text = str(e)
-        if ("429" in err_text) or ("rate_limit" in err_text.lower()) or ("rate limit" in err_text.lower()):
+        quick_timeout_s = float(os.getenv("AGENT_LLM_QUICK_TIMEOUT", "10.0"))
+    except Exception:
+        pass
+
+    # If we recently hit a 429, skip LLM for a cooldown window to avoid slow backoffs
+    global _LLM_BACKOFF_UNTIL
+    try:
+        _ = _LLM_BACKOFF_UNTIL
+    except NameError:
+        _LLM_BACKOFF_UNTIL = 0.0
+    now_ts = time.time()
+    llm_cooldown_s = float(os.getenv("AGENT_LLM_429_BACKOFF_SECONDS", "300"))
+    skip_llm_due_to_429 = now_ts < _LLM_BACKOFF_UNTIL
+    entered_cooldown = False
+
+    # Optional lightweight per-user rate limiter to avoid burst 429s
+    soft_skip_llm = False
+    try:
+        max_calls = int(os.getenv("AGENT_LLM_RATELIMIT_COUNT", "3"))
+        window_s = float(os.getenv("AGENT_LLM_RATELIMIT_WINDOW", "10"))
+        if max_calls > 0 and window_s > 0:
+            now = time.time()
+            hist = _LLM_RECENT_CALLS.get(req.userId, [])
+            hist = [t for t in hist if now - t < window_s]
+            if len(hist) >= max_calls:
+                soft_skip_llm = True
+            else:
+                hist.append(now)
+                _LLM_RECENT_CALLS[req.userId] = hist
+    except Exception:
+        pass
+
+    # Try LLM with a short timeout
+    if not skip_llm_due_to_429 and not soft_skip_llm:
+        try:
+            executor = get_executor()
+            # Build brief conversation context (last 5 messages) and light parsing hints
+            hist_lines: List[str] = []
             try:
-                if "cart" in msg:
-                    data = fs_get_cart(req.userId)
-                    items = [f"- {(it.get('itemName') or it.get('name') or '')} x{it.get('quantity',1)}" for it in (data or []) if (it.get('itemName') or it.get('name'))]
-                    return ChatRes(reply=("\n".join(items) or "Your cart is empty."))
-                if ("order" in msg) or ("history" in msg):
-                    data = fs_get_orders(req.userId, None)
-                    return ChatRes(reply=str(data))
-                if any(k in msg for k in ["best seller", "bestseller"]):
-                    items = fs_get_best_sellers() or []
-                    names = [str(it.get("name", "")) for it in items]
-                    top = ", ".join(filter(None, names[:3]))
-                    return ChatRes(reply=f"Here are some hits today: {top}.")
-
-                # Fallback for add intent when LLM is throttled
-                if any(k in msg for k in ["add", "order", "buy", "put", "أضف", "اضف", "اطلب"]):
-                    # Try structured pattern: add <id> <size> <qty>
-                    m = re.search(r"\badd\s+(?P<id>\d+)(?:\s+(?P<size>small|medium|large|xlarge))?(?:\s+(?P<qty>\d+))?", msg)
-                    if m:
-                        item_id = m.group("id")
-                        size = (m.group("size") or "").strip()
-                        qty = m.group("qty")
-                        if item_id and size and qty:
-                            payload = {
-                                "uid": req.userId,
-                                "item_id": int(item_id),
-                                "size": size,
-                                "quantity": int(qty),
-                                "confirm": True,
-                            }
-                            res = add_by_item_id(str(payload))
-                            if str(res).strip().lower() == "added":
-                                return ChatRes(reply=f"Added item #{item_id} ({size}) x{qty} to your cart.")
-                            else:
-                                return ChatRes(reply=f"Couldn't add item #{item_id}: {res}")
-
-                    # Suggest top fuzzy matches with IDs and next-step instruction
-                    suggestions_raw = find_product(req.message)
-                    items_list = []
-                    try:
-                        items_list = ast.literal_eval(str(suggestions_raw))
-                    except Exception:
-                        items_list = []
-                    if isinstance(items_list, list) and items_list:
-                        lines = []
-                        for it in items_list[:5]:
-                            nm = str(it.get("name", ""))
-                            iid = it.get("id")
-                            price = it.get("price")
-                            lines.append(f"- {nm} (id {iid}) — {price}")
-                        lines.append("Reply like: add <id> <size> <qty>, e.g., 'add 123 medium 1'.")
-                        return ChatRes(reply="I hit a temporary limit. I can still help—pick one:\n" + "\n".join(lines))
+                hist = fs_get_chat_history(req.userId, 5) or []
+                for h in hist:
+                    role = str(h.get("role") or h.get("sender") or "").lower()
+                    text = str(h.get("text") or h.get("message") or h.get("content") or "")
+                    if role in ("user", "assistant") and text:
+                        hist_lines.append(f"- {role}: {text}")
             except Exception:
-                return ChatRes(reply="The AI hit a temporary rate limit. I can still help with your cart or orders.")
-            return ChatRes(reply="The AI hit a temporary rate limit. Please try again in a few minutes.")
-        
-        reply = f"Error: {e}"
+                pass
+            # Light hint extraction without side effects
+            size_hint, qty_hint = _parse_size_qty(msg)
+            r_hint = None
+            mfrom = re.search(r"(.+?)\s+from\s+([a-z0-9\s]+)$", msg)
+            if mfrom:
+                r_hint = mfrom.group(2).strip()
+            hints: List[str] = []
+            if size_hint:
+                hints.append(f"size={size_hint}")
+            if qty_hint:
+                hints.append(f"qty={qty_hint}")
+            if r_hint:
+                hints.append(f"restaurant={r_hint}")
+            hints_text = ("; ".join(hints)) if hints else ""
+            hist_text = ("\n".join(hist_lines)) if hist_lines else ""
+            user_input = (
+                f"uid:{req.userId}\n"
+                f"last_messages:\n{hist_text}\n\n"
+                f"hints:{(' ' + hints_text) if hints_text else ''}\n\n"
+                f"message:\n{req.message}"
+            )
+            def _invoke():
+                return executor.invoke({"input": user_input})
+            pool = get_llm_pool()
+            fut = pool.submit(_invoke)
+            result = fut.result(timeout=quick_timeout_s)
+            reply = result.get("output", "")
+            # Learn suggestions (so user can say 'kofta' / 'option 1' next)
+            try:
+                _remember_suggestions_from_text(req.userId, reply)
+            except Exception:
+                pass
+            background_tasks.add_task(fs_add_chat_message, req.userId, "user", req.message)
+            background_tasks.add_task(fs_add_chat_message, req.userId, "assistant", reply)
+            return ChatRes(reply=reply)
+        except cf.TimeoutError:
+            try:
+                fut.cancel()
+            except Exception:
+                pass
+            # Enter cooldown for a while to avoid repeated slow attempts
+            try:
+                _LLM_BACKOFF_UNTIL = time.time() + llm_cooldown_s
+                entered_cooldown = True
+            except Exception:
+                pass
+        except Exception as e:
+            # On rate limits or other LLM errors, proceed to pre-parser
+            err_text = str(e)
+            if ("429" in err_text) or ("rate_limit" in err_text.lower()) or ("rate limit" in err_text.lower()):
+                try:
+                    _LLM_BACKOFF_UNTIL = time.time() + llm_cooldown_s
+                    entered_cooldown = True
+                except Exception:
+                    pass
+            
+    # Deterministic pre-parser: handle option selection and add/remove by name
+    try:
+        pre = prehandle_message(req)
+    except Exception:
+        pre = None
+    if pre:
+        # If we just entered cooldown, prepend a short notice for the user
+        reply_text = pre.reply
+        if soft_skip_llm and not entered_cooldown:
+            reply_text = (
+                "Note: Using fast mode briefly to keep things responsive. I'll try the AI model again in a few seconds.\n\n"
+                + reply_text
+            )
+        if entered_cooldown:
+            mins = int(llm_cooldown_s // 60)
+            reply_text = (
+                f"Note: The AI model hit a temporary limit. I’ll switch to fast mode for about {mins} minutes, then try the model again.\n\n"
+                + reply_text
+            )
+        background_tasks.add_task(fs_add_chat_message, req.userId, "user", req.message)
+        background_tasks.add_task(fs_add_chat_message, req.userId, "assistant", reply_text)
+        return ChatRes(reply=reply_text)
+
+    # No pre-parser match. If we entered cooldown or are in cooldown, inform the user and provide guidance.
+    if entered_cooldown or skip_llm_due_to_429:
+        mins = int(llm_cooldown_s // 60)
+        reply = (
+            f"Note: The AI model hit a temporary limit. I’ll switch to fast mode for about {mins} minutes, then try the model again.\n\n"
+            "You can still ask me to: show best sellers, find items (e.g., 'butter chicken'), add by name ('add mango lassi small 1'),"
+            " or check 'what's in my cart'."
+        )
         background_tasks.add_task(fs_add_chat_message, req.userId, "user", req.message)
         background_tasks.add_task(fs_add_chat_message, req.userId, "assistant", reply)
+        return ChatRes(reply=reply)
+
+    # Final guidance when neither LLM nor pre-parser produced a direct answer
+    reply = "Please tell me what you’d like to do: ‘find <item>’, ‘add <name> <size> <qty>’, ‘best sellers’, or ‘what’s in my cart’."
+    background_tasks.add_task(fs_add_chat_message, req.userId, "user", req.message)
+    background_tasks.add_task(fs_add_chat_message, req.userId, "assistant", reply)
     return ChatRes(reply=reply)
 
 

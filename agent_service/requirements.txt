@@ -11,3 +11,4 @@ rank-bm25==0.2.2
 google-cloud-firestore==2.17.1
 google-auth==2.34.0
 typing-extensions==4.12.2
+rapidfuzz==3.9.7
