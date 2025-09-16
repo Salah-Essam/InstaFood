@@ -45,15 +45,15 @@ class PaymentMethodsPage extends StatelessWidget {
                 ),
               ),
 
-              Padding(
-                padding: const EdgeInsets.only(bottom: 128),
+              SafeArea(
+                minimum: const EdgeInsets.fromLTRB(16, 8, 16, 16),
                 child: Center(
                   child: AppButton(
                     onPressed: () {
                       context.push(RouterConstants.addNewPaymentPage);
                     },
                     backgroundColor: AppColors.lightOrange,
-                    width: 150,
+                    width: 200,
                     borderRadius: 24,
                     child: Text(
                       "Add New Card",

@@ -73,41 +73,48 @@ class AppAlerts {
       context: context,
       builder: (context) {
         return Dialog(
+          insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          child: SizedBox(
-            height: 190,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 420),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'You can\'t add to cart. Please login or create an account.',
-                    style: AppTextStyles.dialogTitle,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final maxW = constraints.maxWidth;
+                  final double rawBtnW = (maxW - 8) / 2; // 1 spacing of 8px
+                  final double btnW = rawBtnW.clamp(110.0, 180.0);
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      AppButton(
-                        backgroundColor: AppColors.lightOrange,
-                        width: 120,
-                        height: 35,
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: Text(
-                          'Cancel',
-                          style: AppTextStyles.dialogGreetingDialogeOrange,
-                        ),
+                      Text(
+                        'You can\'t add to cart. Please login or create an account.',
+                        style: AppTextStyles.dialogTitle,
+                        textAlign: TextAlign.center,
                       ),
-                      Row(
+                      const SizedBox(height: 16),
+                      OverflowBar(
+                        alignment: MainAxisAlignment.spaceBetween,
+                        spacing: 8,
+                        overflowSpacing: 8,
                         children: [
                           AppButton(
+                            backgroundColor: AppColors.lightOrange,
+                            width: btnW,
+                            height: 40,
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: Text(
+                              'Cancel',
+                              style: AppTextStyles.dialogGreetingDialogeOrange,
+                            ),
+                          ),
+                          AppButton(
                             backgroundColor: AppColors.primaryOrange,
-                            width: 110,
-                            height: 35,
+                            width: btnW,
+                            height: 40,
                             onPressed: () {
                               Navigator.of(context).pop();
                               context.go(RouterConstants.login);
@@ -117,25 +124,11 @@ class AppAlerts {
                               style: AppTextStyles.dialogGreetingDialogeWhite,
                             ),
                           ),
-                          const SizedBox(width: 8),
-                          AppButton(
-                            backgroundColor: AppColors.primaryYellow,
-                            width: 110,
-                            height: 35,
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                              context.go(RouterConstants.signup);
-                            },
-                            child: Text(
-                              'Create',
-                              style: AppTextStyles.dialogGreetingDialogeOrange,
-                            ),
-                          ),
                         ],
                       ),
                     ],
-                  ),
-                ],
+                  );
+                },
               ),
             ),
           ),
