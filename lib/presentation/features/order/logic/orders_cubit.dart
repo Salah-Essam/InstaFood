@@ -19,7 +19,8 @@ class OrdersCubit extends Cubit<OrdersState> {
   StreamSubscription<List<OrderModel>>? _subCancelled;
   StreamSubscription<AuthState>? _authSub;
 
-  OrdersCubit({required this.repo, required this.auth}) : super(OrdersState.initial());
+  OrdersCubit({required this.repo, required this.auth})
+    : super(OrdersState.initial());
 
   void init() {
     // Always attach auth listener (once)
@@ -81,11 +82,14 @@ class OrdersCubit extends Cubit<OrdersState> {
       final created = o.createdAt ?? DateTime.now();
       final now = DateTime.now();
       final diff = now.difference(created).inMinutes;
-  final remaining = 5 - diff; // ~5 minutes simulation per requirements
+      final remaining = 5 - diff; // ~5 minutes simulation per requirements
       if (remaining <= 0) {
         _completeIfActive(uid, o.id);
       } else {
-        Future.delayed(Duration(minutes: remaining), () => _completeIfActive(uid, o.id));
+        Future.delayed(
+          Duration(minutes: remaining),
+          () => _completeIfActive(uid, o.id),
+        );
       }
     }
   }
@@ -98,14 +102,16 @@ class OrdersCubit extends Cubit<OrdersState> {
     try {
       // Direct write using Firebase since repository lacks complete() API for brevity
       await (repo as OrdersRepositoryFs).db
-          .collection('users').doc(uid)
-          .collection('orders').doc(orderId)
+          .collection('users')
+          .doc(uid)
+          .collection('orders')
+          .doc(orderId)
           .update({
-        'status': 'completed',
-        'payment.status': 'paid',
-        'completedAt': FieldValue.serverTimestamp(),
-        'updatedAt': FieldValue.serverTimestamp(),
-      });
+            'status': 'completed',
+            'payment.status': 'paid',
+            'completedAt': FieldValue.serverTimestamp(),
+            'updatedAt': FieldValue.serverTimestamp(),
+          });
     } catch (_) {}
   }
 }

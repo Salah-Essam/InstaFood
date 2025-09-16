@@ -38,7 +38,10 @@ class _ChatWidgetState extends State<ChatWidget> {
       final raw = prefs.getString(_cacheKey(uid));
       if (raw != null && raw.isNotEmpty) {
         final List<dynamic> arr = jsonDecode(raw);
-        final list = arr.whereType<Map>().map((m) => m.map((k, v) => MapEntry(k.toString(), v))).toList();
+        final list = arr
+            .whereType<Map>()
+            .map((m) => m.map((k, v) => MapEntry(k.toString(), v)))
+            .toList();
         if (!mounted) return;
         setState(() {
           _messages
@@ -160,7 +163,11 @@ class _ChatWidgetState extends State<ChatWidget> {
     final text = _controller.text.trim();
     if (text.isNotEmpty) {
       setState(() {
-        _messages.add({'text': text, 'isMe': isMe, 'ts': DateTime.now().millisecondsSinceEpoch});
+        _messages.add({
+          'text': text,
+          'isMe': isMe,
+          'ts': DateTime.now().millisecondsSinceEpoch,
+        });
         _controller.clear();
       });
       final auth = context.read<AuthCubit>().state;
@@ -200,7 +207,11 @@ class _ChatWidgetState extends State<ChatWidget> {
         final reply = resp.data['reply']?.toString() ?? 'No reply';
         if (!mounted) return;
         setState(() {
-          _messages.add({'text': reply, 'isMe': false, 'ts': DateTime.now().millisecondsSinceEpoch});
+          _messages.add({
+            'text': reply,
+            'isMe': false,
+            'ts': DateTime.now().millisecondsSinceEpoch,
+          });
         });
         _saveCachedMessages(uid);
         return;
@@ -215,7 +226,8 @@ class _ChatWidgetState extends State<ChatWidget> {
     final tried = _baseUrls.join(', ');
     setState(() {
       _messages.add({
-        'text': 'Agent is unreachable. Tried: $tried. Ensure your phone can reach the dev server (USB reverse, emulator 10.0.2.2, or set AGENT_BASE_URL to your PC\'s LAN IP).\nLast error: $lastError',
+        'text':
+            'Agent is unreachable. Tried: $tried. Ensure your phone can reach the dev server (USB reverse, emulator 10.0.2.2, or set AGENT_BASE_URL to your PC\'s LAN IP).\nLast error: $lastError',
         'isMe': false,
         'ts': DateTime.now().millisecondsSinceEpoch,
       });
@@ -232,59 +244,59 @@ class _ChatWidgetState extends State<ChatWidget> {
         }
       },
       child: Column(
-      children: [
-        Expanded(
-          child: ListView.builder(
-            padding: EdgeInsets.all(16),
-            itemCount: _messages.length,
-            itemBuilder: (context, index) => ChatBubbleWidget(
-              isMe: _messages[index]['isMe'],
-              text: _messages[index]['text'],
-            ),
-          ),
-        ),
-
-        SizedBox(
-          height: 80,
-          child: DecoratedBox(
-            decoration: BoxDecoration(color: AppColors.lightOrange),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Row(
-                children: [
-                  InkWell(child: SvgPicture.asset(AppAssets.attachIcon)),
-                  SizedBox(width: 8),
-                  Expanded(
-                    child: SizedBox(
-                      height: 30,
-                      child: AppTextFieldDrawer(
-                        controller: _controller,
-                        hint: "Write Here ... ",
-                        hintStyle: AppTextStyles.fontBlackSmall,
-                        maxLines: 1,
-                        // maxLength: 30,
-                        height: 30,
-                        backgroundColor: AppColors.white,
-                        onChange: (v) {},
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 8),
-                  InkWell(child: SvgPicture.asset(AppAssets.microphoneIcon)),
-                  SizedBox(width: 8),
-                  InkWell(
-                    child: SvgPicture.asset(AppAssets.sendIcon),
-                    onTap: () {
-                      _sendMessage(true);
-                    },
-                  ),
-                ],
+        children: [
+          Expanded(
+            child: ListView.builder(
+              padding: EdgeInsets.all(16),
+              itemCount: _messages.length,
+              itemBuilder: (context, index) => ChatBubbleWidget(
+                isMe: _messages[index]['isMe'],
+                text: _messages[index]['text'],
               ),
             ),
           ),
-        ),
-      ],
-  ),
-  );
+
+          SizedBox(
+            height: 80,
+            child: DecoratedBox(
+              decoration: BoxDecoration(color: AppColors.lightOrange),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Row(
+                  children: [
+                    InkWell(child: SvgPicture.asset(AppAssets.attachIcon)),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: SizedBox(
+                        height: 30,
+                        child: AppTextFieldDrawer(
+                          controller: _controller,
+                          hint: "Write Here ... ",
+                          hintStyle: AppTextStyles.fontBlackSmall,
+                          maxLines: 1,
+                          // maxLength: 30,
+                          height: 30,
+                          backgroundColor: AppColors.white,
+                          onChange: (v) {},
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    InkWell(child: SvgPicture.asset(AppAssets.microphoneIcon)),
+                    SizedBox(width: 8),
+                    InkWell(
+                      child: SvgPicture.asset(AppAssets.sendIcon),
+                      onTap: () {
+                        _sendMessage(true);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
