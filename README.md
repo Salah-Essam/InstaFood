@@ -16,7 +16,9 @@ With built-in **account management, profile settings, and payment options**, Ins
 - 🏠 **Addresses** – Save and manage multiple delivery addresses  
 - 💳 **Payment** – Manage payment methods (cash, card, wallet, etc.)  
 - ⚙️ **Settings** – Customize app preferences  
-- 🎨 **User-Friendly Design** – Simple and intuitive interface  
+- 🎨 **User-Friendly Design** – Simple and intuitive interface
+- AI AGENT  SUPPORT
+- شه 
 
 ---
 
