@@ -33,8 +33,7 @@ class PaymentRow extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            SizedBox(
-              width: 200,
+            Expanded(
               child: Text(
                 payment.title,
                 style: AppTextStyles.header,
@@ -42,7 +41,6 @@ class PaymentRow extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            const Spacer(),
             Radio<int>(
               activeColor: AppColors.primaryOrange,
               value: payment.id,

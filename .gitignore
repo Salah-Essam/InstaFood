@@ -46,5 +46,19 @@ app.*.map.json
 /android/app/google-services.json
 
 
+
 # FVM Version Cache
 .fvm/
+
+agent_service/service-account.json
+agent_service/.env
+.env
+.env.*
+
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+env/
+venv/
