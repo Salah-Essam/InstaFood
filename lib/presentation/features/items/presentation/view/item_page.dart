@@ -22,7 +22,6 @@ import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_c
 import 'package:insta_food/presentation/features/auth/presentation/cubits/auth_state.dart';
 import 'package:insta_food/presentation/features/drawer/presentation/cubit/drawer_cubit.dart';
 import 'package:insta_food/presentation/features/drawer/presentation/view/app_drawer.dart';
-import 'package:insta_food/presentation/widgets/app_backbutton.dart';
 
 class ItemPage extends StatefulWidget {
   final ItemModel item;
@@ -66,7 +65,21 @@ class _ItemPageState extends State<ItemPage> {
             child: Row(
               spacing: 3,
               children: [
-                const AppBackButton(),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 16, right: 2),
+                    child: InkWell(
+                      child: SvgPicture.asset(
+                        AppAssets.backArrow,
+                        fit: BoxFit.fill,
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                ),
                 Text(widget.item.itemName, style: AppTextStyles.header),
 
                 Spacer(),

@@ -567,6 +567,7 @@ _ITEMS_CACHE = {
 
 # Memory of last item suggestions per user (for "option 2" / "from <restaurant>")
 LAST_SUGGESTIONS: Dict[str, List[dict]] = {}
+LAST_PENDING_ADD: Dict[str, Dict[str, Any]] = {}
 
 # Light per-user LLM rate guard to avoid bursts that trigger provider 429s
 _LLM_LAST_CALL: Dict[str, float] = {}
@@ -674,16 +675,58 @@ def _fuzzy_find_all(query: str, items: List[dict]) -> List[dict]:
     q = _norm(query)
     if not q:
         return []
+    # Dynamic threshold: allow more permissive matching for single-token queries to improve suggestions
+    tok_count = len(q.split())
+    threshold = 45 if tok_count <= 1 else 58
     candidates: List[dict] = []
     for it in items or []:
         name = str(it.get("itemName") or it.get("name") or "")
         desc = str(it.get("itemDescription") or it.get("description") or "")
-        text = (name + " " + desc).strip().lower()
+        name_l = name.strip().lower()
+        desc_l = desc.strip().lower()
+        text = (name_l + " " + desc_l)
         score = _rf_ratio(q, text)
+        # If the normalized query is a substring, give a strong boost
+        if q in text:
+            score = max(score, 80)
+        # Determine which field matched best (for explanation and gating)
+        nscore = _rf_ratio(q, name_l) if name_l else 0
+        dscore = _rf_ratio(q, desc_l) if desc_l else 0
+        match_field: Optional[str] = None
+        if tok_count <= 1:
+            if (q in name_l) or (nscore >= 60):
+                match_field = "name"
+            elif q in desc_l:
+                # For single tokens, allow description match only if exact substring appears
+                match_field = "description"
+            else:
+                # Avoid unrelated desc-only fuzzy hits for single-word queries
+                continue
+        else:
+            if (q in name_l) or (nscore >= 65):
+                match_field = "name"
+            elif (q in desc_l) or (dscore >= 65):
+                match_field = "description"
+
         # Threshold tuned for misspellings while avoiding noise
-        if score >= 58:
+        if score >= threshold and match_field is not None:
             it2 = dict(it)
             it2["_score"] = round(score / 100.0, 3)
+            if match_field == "description":
+                # Attach a short snippet from description around the match
+                try:
+                    idx = desc_l.find(q)
+                    if idx >= 0:
+                        start = max(0, idx - 20)
+                        end = min(len(desc), idx + len(q) + 20)
+                        snippet = desc[start:end].strip()
+                    else:
+                        snippet = ""
+                except Exception:
+                    snippet = ""
+                it2["_match_reason"] = {"field": "description", "snippet": snippet}
+            else:
+                it2["_match_reason"] = {"field": "name"}
             candidates.append(it2)
     candidates.sort(key=lambda x: x.get("_score", 0.0), reverse=True)
     return candidates
@@ -706,8 +749,8 @@ def _choose_best_match(query: str, ranked: List[dict]) -> dict:
     """
     qn = _norm_words(query)
     qtok = set(qn.split())
-    best = None
-    best_score = -1.0
+    if not ranked:
+        return {}
     # Precompute normalized names
     norms = []
     for it in ranked:
@@ -716,24 +759,25 @@ def _choose_best_match(query: str, ranked: List[dict]) -> dict:
         norms.append((it, nm, nn))
     # 1) Exact normalized equality
     for it, _, nn in norms:
-        if nn == qn and nn:
+        if nn and nn == qn:
             return it
     # 2) Whole-phrase containment
     for it, _, nn in norms:
-        if nn and qn and (qn in nn):
+        if nn and qn and qn in nn:
             return it
     # 3) Token coverage heuristic
+    best = None
+    best_score = -1.0
     for it, _, nn in norms:
         ntok = set(nn.split())
         if qtok and qtok.issubset(ntok):
-            # higher score for fewer extra tokens and higher fuzzy score if present
             extra = max(0, len(ntok) - len(qtok))
             fuzzy = float(it.get("_score", 0.0))
-            score = 1.0 - 0.05 * extra + 0.01 * fuzzy
+            score = 1.0 - 0.05 * extra + 0.02 * fuzzy
             if score > best_score:
                 best = it
                 best_score = score
-    return best or (ranked[0] if ranked else {})
+    return best or ranked[0]
 
 
 def _remember_suggestions(uid: str, items: List[dict]) -> None:
@@ -840,6 +884,7 @@ def _parse_size_qty(msg: str) -> Tuple[Optional[str], Optional[int]]:
     size = None
     qty = None
     text = msg or ""
+    low = text.lower()
     # Tolerant size aliases (no single-letter forms to avoid false positives)
     SIZE_ALIASES: List[tuple[str, List[str]]] = [
         ("xlarge", [r"\bx[-\s]?large\b", r"\bextra[-\s]?large\b", r"\bxl\b", r"\bxlarge\b"]),
@@ -849,16 +894,21 @@ def _parse_size_qty(msg: str) -> Tuple[Optional[str], Optional[int]]:
     ]
     for canonical, pats in SIZE_ALIASES:
         for p in pats:
-            if re.search(p, text, flags=re.I):
+            if re.search(p, low, flags=re.I):
                 size = canonical
                 break
         if size:
             break
-    # quantity
-    mq = re.search(r"\b(\d{1,2})\b", text)
-    if mq:
+    # quantity: choose the LAST numeric token, ignoring the option index and supporting 'x3'
+    # Remove 'option <n>' from consideration
+    msg_wo_option = re.sub(r"\boption\s*\d+\b", " ", low)
+    nums = re.findall(r"\b(\d{1,2})\b", msg_wo_option)
+    if not nums:
+        # Also support patterns like 'x3'
+        nums = re.findall(r"x\s*(\d{1,2})\b", msg_wo_option)
+    if nums:
         try:
-            qty = int(mq.group(1))
+            qty = int(nums[-1])
         except Exception:
             qty = None
     return size, qty
@@ -870,6 +920,30 @@ def prehandle_message(req) -> Optional["ChatRes"]:
     if not uid or not msg:
         return None
     low = msg.lower().strip()
+
+    # Quick correction: messages like 'i said 3' or just '3' -> treat as quantity update for last pending add
+    m_qty_only = re.match(r"^(?:i\s+said\s+)?(\d{1,2})\s*$", low)
+    if m_qty_only:
+        try:
+            qty = int(m_qty_only.group(1))
+        except Exception:
+            qty = None
+        if qty and qty > 0:
+            pend = LAST_PENDING_ADD.get(uid) or {}
+            iid = pend.get("item_id")
+            sz = pend.get("size") or "small"
+            if iid:
+                payload = {"uid": uid, "item_id": int(iid), "size": sz, "quantity": int(qty), "confirm": True}
+                try:
+                    res = add_by_item_id(json.dumps(payload))  # type: ignore
+                    if str(res).strip().lower() == "added":
+                        return ChatRes(reply=f"Updated to x{qty} ({sz}).")
+                    else:
+                        return ChatRes(reply=f"Couldn't update quantity: {res}")
+                except Exception as e:
+                    return ChatRes(reply=f"Sorry, couldn't update quantity now: {e}")
+            # No pending item – ask for item/size
+            return ChatRes(reply="Which item and size should I set to that quantity?")
 
     # Resolve pronoun adds like "add it/that/this" using last suggestions
     if re.search(r"\b(?:add|order|buy|put)\s+(?:it|that|this)\b", low):
@@ -911,12 +985,16 @@ def prehandle_message(req) -> Optional["ChatRes"]:
             try:
                 res = add_by_item_id(json.dumps(payload))  # type: ignore
                 if str(res).strip().lower() == "added":
+                    # Remember last add for quick quantity corrections
+                    LAST_PENDING_ADD[uid] = {"item_id": int(chosen.get("id")), "size": size}
                     return ChatRes(reply=f"Added {chosen.get('name')} ({size}) x{qty} to your cart.")
                 else:
                     return ChatRes(reply=f"Couldn't add {chosen.get('name')}: {res}")
             except Exception as e:
                 return ChatRes(reply=f"Sorry, couldn't add it right now: {e}")
         # Ask for the missing details explicitly
+        # Remember pending item with unknown size yet
+        LAST_PENDING_ADD[uid] = {"item_id": int(chosen.get("id")), "size": (size or None)}
         return ChatRes(reply=f"Got it: {chosen.get('name')}. What size and quantity would you like?")
 
     def _ranked_matches(name_part: str, restaurant_filter: Optional[str] = None) -> List[dict]:
@@ -983,6 +1061,7 @@ def prehandle_message(req) -> Optional["ChatRes"]:
                 try:
                     res = add_by_item_id(json.dumps(payload))  # type: ignore
                     if str(res).strip().lower() == "added":
+                        LAST_PENDING_ADD[uid] = {"item_id": int(top.get("itemID") or top.get("id")), "size": size}
                         return ChatRes(reply=f"Added {top.get('itemName') or top.get('name')} ({size}) x{qty}.")
                     else:
                         return ChatRes(reply=f"Couldn't add: {res}")
@@ -995,7 +1074,24 @@ def prehandle_message(req) -> Optional["ChatRes"]:
                     nm = (it.get('itemName') or it.get('name') or '')
                     rn = (it.get('restaurantName') or '')
                     pr = it.get('itemPrice') or it.get('price')
-                    lines.append(f"{i}. {nm} — {rn} — {pr}")
+                    note = ""
+                    mr = it.get('_match_reason') or {}
+                    if isinstance(mr, dict) and (mr.get('field') == 'description'):
+                        snip = str(mr.get('snippet') or '')
+                        if snip:
+                            # keep it short
+                            if len(snip) > 60:
+                                snip = snip[:57] + '...'
+                            note = f" (matched in description: '{snip}')"
+                        else:
+                            note = " (matched via description)"
+                    lines.append(f"{i}. {nm} — {rn} — {pr}{note}")
+                # Set pending to top suggestion so quick numeric reply can update quantity later
+                try:
+                    topid = int((ranked[0].get('itemID') or ranked[0].get('id')))
+                    LAST_PENDING_ADD[uid] = {"item_id": topid, "size": (size or None)}
+                except Exception:
+                    pass
                 return ChatRes(
                     reply=(
                         "I found these matches:\n" + "\n".join(lines) +
@@ -1003,7 +1099,30 @@ def prehandle_message(req) -> Optional["ChatRes"]:
                     )
                 )
         else:
-            # No matches at all – suggest trying close spellings
+            # No matches at all – try expanded remote search to propose suggestions
+            try:
+                alts = _expand_query(name_part)
+            except Exception:
+                alts = [name_part]
+            sugg_map: Dict[str, float] = {}
+            try:
+                for qx in alts:
+                    try:
+                        remote = search_items(qx) or []
+                    except Exception:
+                        remote = []
+                    for it in remote:
+                        nm = str(it.get("itemName") or it.get("name") or "")
+                        sc = _rf_ratio(_norm(name_part), _norm(nm))
+                        if sc >= 40:
+                            prev = sugg_map.get(nm, 0.0)
+                            if sc > prev:
+                                sugg_map[nm] = sc
+            except Exception:
+                pass
+            if sugg_map:
+                top = [n for n, _ in sorted(sugg_map.items(), key=lambda kv: kv[1], reverse=True)[:3]]
+                return ChatRes(reply=f"Did you mean: {', '.join(top)}? You can reply like 'add <name> small 1'.")
             return ChatRes(reply="I couldn't find that yet. Try a close spelling or tell me the restaurant, e.g., 'kebab from Peter Cat'.")
 
     # Delete intent made more robust: try cart fuzzy match
@@ -1111,7 +1230,17 @@ def prehandle_message(req) -> Optional["ChatRes"]:
                     nm = (it.get('itemName') or it.get('name') or '')
                     rn = (it.get('restaurantName') or '')
                     pr = it.get('itemPrice') or it.get('price')
-                    lines.append(f"{i}. {nm} — {rn} — {pr}")
+                    note = ""
+                    mr = it.get('_match_reason') or {}
+                    if isinstance(mr, dict) and (mr.get('field') == 'description'):
+                        snip = str(mr.get('snippet') or '')
+                        if snip:
+                            if len(snip) > 60:
+                                snip = snip[:57] + '...'
+                            note = f" (matched in description: '{snip}')"
+                        else:
+                            note = " (matched via description)"
+                    lines.append(f"{i}. {nm} — {rn} — {pr}{note}")
                 return ChatRes(
                     reply=(
                         "I found these matches:\n" + "\n".join(lines) +
@@ -1136,7 +1265,7 @@ def get_executor():
         pass
     llm = build_llm()
     agent = create_react_agent(llm, TOOLS, PROMPT)
-    EXECUTOR = AgentExecutor(agent=agent, tools=TOOLS, verbose=False, handle_parsing_errors=True)
+    EXECUTOR = AgentExecutor(agent=agent, tools=TOOLS, verbose=False, handle_parsing_errors=True, return_intermediate_steps=True)
     return EXECUTOR
 
 def get_llm_pool() -> cf.ThreadPoolExecutor:
@@ -1400,10 +1529,30 @@ async def chat(req: ChatReq, background_tasks: BackgroundTasks) -> Any:
         background_tasks.add_task(fs_add_chat_message, req.userId, "assistant", quick)
         return ChatRes(reply=quick)
 
-    # We no longer short-circuit common flows before LLM to avoid duplicate side effects.
-    # Fastpath remains first; for all other intents, we try a short LLM attempt and then pre-parser fallback.
+    # Pre-parse first for actionable flows to provide deterministic behavior
+    def _should_preparse_first(text: str) -> bool:
+        if re.search(r"\b(add|order|buy|put|أضف|اضف|اطلب)\b", text):
+            return True
+        if re.search(r"\boption\s*\d+\b", text):
+            return True
+        if re.search(r"\b(delete|remove|cancel item)\b", text):
+            return True
+        toks = text.split()
+        if 1 <= len(toks) <= 4 and not any(k in text for k in ["help", "orders", "history", "status", "cart"]):
+            return True
+        return False
 
-    # LLM-first (quick) for smart reasoning; deterministic pre-parser as fast fallback
+    if _should_preparse_first(msg):
+        try:
+            pre = prehandle_message(req)
+        except Exception:
+            pre = None
+        if pre:
+            background_tasks.add_task(fs_add_chat_message, req.userId, "user", req.message)
+            background_tasks.add_task(fs_add_chat_message, req.userId, "assistant", pre.reply)
+            return ChatRes(reply=pre.reply)
+
+    # LLM-first (quick) for smart reasoning; deterministic pre-parser remains as a fallback
     # Use a 10s window by default so we bail out fast on throttling but still let quick answers through
     quick_timeout_s = 10.0
     try:
@@ -1481,6 +1630,21 @@ async def chat(req: ChatReq, background_tasks: BackgroundTasks) -> Any:
             fut = pool.submit(_invoke)
             result = fut.result(timeout=quick_timeout_s)
             reply = result.get("output", "")
+            # Validate that any claimed add/remove actually had a successful tool observation
+            try:
+                steps = result.get("intermediate_steps") or []
+            except Exception:
+                steps = []
+            def _saw_success(tag: str) -> bool:
+                try:
+                    for _act, obs in steps:
+                        if isinstance(obs, str) and tag in obs.lower():
+                            return True
+                except Exception:
+                    return False
+                return False
+            if ("added to your cart" in reply.lower() or reply.lower().startswith("i have added")) and not _saw_success("added"):
+                reply = "I’m ready to add that — please confirm the size and quantity (e.g., 'small 1' or 'large 2')."
             # Learn suggestions (so user can say 'kofta' / 'option 1' next)
             try:
                 _remember_suggestions_from_text(req.userId, reply)

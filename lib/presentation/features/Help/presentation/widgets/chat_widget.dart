@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
+import 'dart:io' show Platform;
 import 'package:flutter_svg/svg.dart';
 import 'package:insta_food/core/theme/app_assets.dart';
 import 'package:insta_food/core/theme/app_colors.dart';
@@ -23,16 +24,9 @@ class ChatWidget extends StatefulWidget {
 class _ChatWidgetState extends State<ChatWidget> {
   final List<Map<String, dynamic>> _messages = [];
   final TextEditingController _controller = TextEditingController();
-  final Dio _dio = Dio(
-    BaseOptions(
-      baseUrl: const String.fromEnvironment(
-        'AGENT_BASE_URL',
-        defaultValue: 'http://127.0.0.1:8787',
-      ),
-      connectTimeout: const Duration(seconds: 5),
-  receiveTimeout: const Duration(seconds: 90),
-    ),
-  );
+  late final Dio _dio;
+  late List<String> _baseUrls;
+  int _baseUrlIndex = 0;
 
   bool _loadedFromCache = false;
 
@@ -82,6 +76,84 @@ class _ChatWidgetState extends State<ChatWidget> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _ensureLoadedOnce();
     });
+    _setupHttpClient();
+  }
+
+  void _setupHttpClient() {
+    // Resolve base URLs with platform-aware fallbacks
+    final envUrl = const String.fromEnvironment(
+      'AGENT_BASE_URL',
+      // Default to localhost:8787 to match common mobile dev reverse-port setups
+      defaultValue: 'http://127.0.0.1:8787',
+    );
+    final candidates = <String>[];
+    void add(String url) {
+      if (url.isEmpty) return;
+      if (!candidates.contains(url)) candidates.add(url);
+    }
+
+    String sanitize(String url) {
+      // Ensure trailing slash is NOT present for Dio baseUrl
+      return url.endsWith('/') ? url.substring(0, url.length - 1) : url;
+    }
+
+    String swapPort(String url, int port) {
+      try {
+        final u = Uri.parse(url);
+        final scheme = u.scheme.isNotEmpty ? u.scheme : 'http';
+        final host = u.host.isNotEmpty ? u.host : '127.0.0.1';
+        final p = port;
+        return sanitize(Uri(scheme: scheme, host: host, port: p).toString());
+      } catch (_) {
+        return url;
+      }
+    }
+
+    String swapHost(String url, String host) {
+      try {
+        final u = Uri.parse(url);
+        final scheme = u.scheme.isNotEmpty ? u.scheme : 'http';
+        final p = (u.hasPort && u.port > 0) ? u.port : 8787;
+        return sanitize(Uri(scheme: scheme, host: host, port: p).toString());
+      } catch (_) {
+        return url;
+      }
+    }
+
+    final base = sanitize(envUrl);
+    add(base);
+
+    // Parse host/port
+    String host = '127.0.0.1';
+    int port = 8787;
+    try {
+      final u = Uri.parse(base);
+      if (u.host.isNotEmpty) host = u.host;
+      if (u.hasPort && u.port > 0) port = u.port;
+    } catch (_) {}
+
+    final isLocalHost = host == '127.0.0.1' || host == 'localhost';
+
+    // Android emulator maps host loopback to 10.0.2.2
+    if (Platform.isAndroid && isLocalHost) {
+      add(swapHost(base, '10.0.2.2'));
+    }
+
+    // Try alternate common port (8000) if mismatch with server
+    final altPort = (port == 8787) ? 8000 : 8787;
+    add(swapPort(base, altPort));
+    if (Platform.isAndroid && isLocalHost) {
+      add(swapPort(swapHost(base, '10.0.2.2'), altPort));
+    }
+
+    _baseUrls = candidates;
+    _dio = Dio(
+      BaseOptions(
+        baseUrl: _baseUrls[_baseUrlIndex],
+        connectTimeout: const Duration(seconds: 5),
+        receiveTimeout: const Duration(seconds: 90),
+      ),
+    );
   }
 
   void _sendMessage(bool isMe) {
@@ -113,24 +185,42 @@ class _ChatWidgetState extends State<ChatWidget> {
       });
       return;
     }
-    try {
-      final resp = await _dio.post(
-        '/chat',
-        data: {'userId': uid, 'message': userText},
-      );
-      final reply = resp.data['reply']?.toString() ?? 'No reply';
-      if (!mounted) return;
-      setState(() {
-        _messages.add({'text': reply, 'isMe': false, 'ts': DateTime.now().millisecondsSinceEpoch});
-      });
-      _saveCachedMessages(uid);
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _messages.add({'text': 'Agent error: $e', 'isMe': false, 'ts': DateTime.now().millisecondsSinceEpoch});
-      });
-      _saveCachedMessages(uid);
+    // Try all base URLs until one works; remember the working one
+    dynamic lastError;
+    for (var i = 0; i < _baseUrls.length; i++) {
+      try {
+        if (_baseUrlIndex != i) {
+          _baseUrlIndex = i;
+          _dio.options.baseUrl = _baseUrls[_baseUrlIndex];
+        }
+        final resp = await _dio.post(
+          '/chat',
+          data: {'userId': uid, 'message': userText},
+        );
+        final reply = resp.data['reply']?.toString() ?? 'No reply';
+        if (!mounted) return;
+        setState(() {
+          _messages.add({'text': reply, 'isMe': false, 'ts': DateTime.now().millisecondsSinceEpoch});
+        });
+        _saveCachedMessages(uid);
+        return;
+      } catch (err) {
+        lastError = err;
+        // Try next candidate on connection-type errors
+        continue;
+      }
     }
+    // All attempts failed
+    if (!mounted) return;
+    final tried = _baseUrls.join(', ');
+    setState(() {
+      _messages.add({
+        'text': 'Agent is unreachable. Tried: $tried. Ensure your phone can reach the dev server (USB reverse, emulator 10.0.2.2, or set AGENT_BASE_URL to your PC\'s LAN IP).\nLast error: $lastError',
+        'isMe': false,
+        'ts': DateTime.now().millisecondsSinceEpoch,
+      });
+    });
+    _saveCachedMessages(uid);
   }
 
   @override

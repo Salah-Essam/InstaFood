@@ -17,20 +17,28 @@ class OrdersCubit extends Cubit<OrdersState> {
   StreamSubscription<List<OrderModel>>? _subActive;
   StreamSubscription<List<OrderModel>>? _subCompleted;
   StreamSubscription<List<OrderModel>>? _subCancelled;
+  StreamSubscription<AuthState>? _authSub;
 
   OrdersCubit({required this.repo, required this.auth}) : super(OrdersState.initial());
 
   void init() {
-    final a = auth.state;
-    if (a is! Authenticated || (a.user.id ?? '').isEmpty) {
-      emit(state.copyWith(error: 'login_required'));
-      return;
-    }
-    final uid = a.user.id!;
-    _subActive?.cancel();
-    _subCompleted?.cancel();
-    _subCancelled?.cancel();
+    // Always attach auth listener (once)
+    _authSub ??= auth.stream.listen(_handleAuthChange);
+    // Immediately handle the current auth state
+    _handleAuthChange(auth.state);
+  }
 
+  void _handleAuthChange(AuthState authState) {
+    if (authState is Authenticated && (authState.user.id ?? '').isNotEmpty) {
+      _startOrderStreams(authState.user.id!);
+    } else if (authState is Unauthenticated) {
+      _stopOrderStreams(reset: true);
+    }
+  }
+
+  void _startOrderStreams(String uid) {
+    // restart streams for provided uid
+    _stopOrderStreams(reset: false);
     _subActive = repo.watchByStatus(uid, 'active').listen((data) {
       emit(state.copyWith(active: data));
       _maybeScheduleAutoComplete(uid, data);
@@ -41,6 +49,16 @@ class OrdersCubit extends Cubit<OrdersState> {
     _subCancelled = repo.watchByStatus(uid, 'cancelled').listen((data) {
       emit(state.copyWith(cancelled: data));
     });
+  }
+
+  void _stopOrderStreams({required bool reset}) {
+    _subActive?.cancel();
+    _subCompleted?.cancel();
+    _subCancelled?.cancel();
+    _subActive = null;
+    _subCompleted = null;
+    _subCancelled = null;
+    if (reset) emit(OrdersState.initial());
   }
 
   Future<void> cancel(String orderId, {String? reason}) async {
@@ -54,6 +72,7 @@ class OrdersCubit extends Cubit<OrdersState> {
     _subActive?.cancel();
     _subCompleted?.cancel();
     _subCancelled?.cancel();
+    _authSub?.cancel();
     return super.close();
   }
 
