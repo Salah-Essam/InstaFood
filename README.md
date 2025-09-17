@@ -187,5 +187,3 @@ $env:GEMINI_MODEL="gemini-1.5-flash"
 Notes:
 - This repo does not include `agent_services.json`. Point `GOOGLE_APPLICATION_CREDENTIALS` to your Firebase service account JSON file, or use `agent_service/.env` which the agent loads automatically.
 - Firewall rules above allow outbound traffic for the Python executable that runs the agent. If you bind the agent to a LAN IP and want inbound access from other devices, you may also need an inbound rule for the chosen port (8787 by default).
-
-RF 
